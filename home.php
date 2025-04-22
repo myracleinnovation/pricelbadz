@@ -100,6 +100,23 @@
                 </ul>
             </li>
         </div>
+        <?php
+        include './config/connect.php';
+        include './controllers/CustomerOrderController.php';
+        include './controllers/RiderRegistrationController.php';
+        
+        if (isset($_POST['place_order'])) {
+            createCustomerOrder($conn, $_POST['name'], $_POST['contact_number'], $_POST['pickup_address'], $_POST['dropoff_address'], $_POST['dropoff_contact_person'], $_POST['dropoff_contact_number'], $_POST['remarks']);
+            header('Location: home.php');
+            exit();
+        }
+        
+        if (isset($_POST['submit'])) {
+            createRider($conn, $_POST['first_name'], $_POST['middle_name'], $_POST['surname'], $_POST['license_number'], $_POST['vehicle_plate_number']);
+            header('Location: home.php');
+            exit();
+        }
+        ?>
         <div class="card mt-4">
             <div class="card-body">
                 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -141,56 +158,57 @@
                     <h5 class="card-title fw-bold text-white my-4"><i class='bx bxs-notepad me-2'></i>Customer Order
                         Form
                     </h5>
-                    <form class="row g-3">
+                    <form method="POST" class="row g-3">
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingName" placeholder="Your Name">
-                                <label for="floatingName">Name:</label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Your Name">
+                                <label for="name">Name:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingContactNumber"
+                                <input type="text" class="form-control" id="contact_number" name="contact_number"
                                     placeholder="Contact Number">
-                                <label for="floatingContactNumber">Contact Number:</label>
+                                <label for="contact_number">Contact Number:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingPickUp"
+                                <input type="text" class="form-control" id="pickup_address" name="pickup_address"
                                     placeholder="Pick Up Address">
-                                <label for="floatingPickUp">Pick Up Address:</label>
+                                <label for="pickup_address">Pick Up Address:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingDropOff"
-                                    placeholder="Drop Off">
-                                <label for="floatingDropOff">Drop off Address:</label>
+                                <input type="text" class="form-control" id="dropoff_address"
+                                    name="dropoff_address" placeholder="Drop Off">
+                                <label for="dropoff_address">Drop off Address:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingDropOffContactPerson"
-                                    placeholder="Drop Off Contact Person">
-                                <label for="floatingDropOffContactPerson">Drop off Contact Person:</label>
+                                <input type="text" class="form-control" id="dropoff_contact_person"
+                                    name="dropoff_contact_person" placeholder="Drop Off Contact Person">
+                                <label for="dropoff_contact_person">Drop off Contact Person:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingDropOffContactNumber"
-                                    placeholder="Drop Off Contact Number">
-                                <label for="floatingDropOffContactNumber">Drop off Contact Number:</label>
+                                <input type="text" class="form-control" id="dropoff_contact_number"
+                                    name="dropoff_contact_number" placeholder="Drop Off Contact Number">
+                                <label for="dropoff_contact_number">Drop off Contact Number:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <textarea class="form-control" placeholder="Remarks" id="floatingRemarks" style="height: 100px;"></textarea>
-                                <label for="floatingRemarks">Remarks:</label>
+                                <textarea class="form-control" placeholder="Remarks" id="remarks" name="remarks" style="height: 100px;"></textarea>
+                                <label for="remarks">Remarks:</label>
                             </div>
                         </div>
                         <div class="text-center">
-                            <button type="submit"
+                            <button type="submit" name="place_order"
                                 class="btn btn-primary bg-white text-black py-2 px-4 rounded-pill border-none">Place
                                 Order</button>
                         </div>
@@ -201,44 +219,44 @@
                 <div class="card-body">
                     <h5 class="card-title fw-bold text-white my-4"><i class='bx bxs-car me-2'></i>Rider Registration
                         Form</h5>
-                    <form class="row g-3">
+                    <form method="POST" class="row g-3">
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingFirstName"
+                                <input type="text" class="form-control" id="first_name" name="first_name"
                                     placeholder="First Name">
-                                <label for="floatingFirstName">First Name:</label>
+                                <label for="first_name">First Name:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingMiddleName"
+                                <input type="text" class="form-control" id="middle_name" name="middle_name"
                                     placeholder="Middle Name">
-                                <label for="floatingMiddleName">Middle Name:</label>
+                                <label for="middle_name">Middle Name:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingSurname"
+                                <input type="text" class="form-control" id="surname" name="surname"
                                     placeholder="Surname">
-                                <label for="floatingSurname">Surname:</label>
+                                <label for="surname">Surname:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="floatingLicenseNumber"
+                                <input type="number" class="form-control" id="license_number" name="license_number"
                                     placeholder="License Number">
-                                <label for="floatingLicenseNumber">License Number:</label>
+                                <label for="license_number">License Number:</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="floatingVehiclePlateNumber"
-                                    placeholder="Vehicle Plate Number">
-                                <label for="floatingVehiclePlateNumber">Vehicle Plate Number:</label>
+                                <input type="number" class="form-control" id="vehicle_plate_number"
+                                    name="vehicle_plate_number" placeholder="Vehicle Plate Number">
+                                <label for="vehicle_plate_number">Vehicle Plate Number:</label>
                             </div>
                         </div>
                         <div class="text-center">
-                            <button type="submit"
+                            <button type="submit" name="submit"
                                 class="btn btn-primary bg-white text-black py-2 px-4 rounded-pill border-none">Submit</button>
                         </div>
                     </form>
