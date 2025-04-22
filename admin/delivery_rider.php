@@ -85,7 +85,22 @@ $result = $stmt->get_result();
                                     <td><?= htmlspecialchars($row['license_number']) ?></td>
                                     <td><?= htmlspecialchars($row['vehicle_type']) ?></td>
                                     <td><?= htmlspecialchars($row['vehicle_plate_number']) ?></td>
-                                    <td><?= htmlspecialchars($row['rider_status']) ?></td>
+                                    <td>
+                                        <span class="badge <?php
+                                        switch ($row['rider_status']) {
+                                            case 'Active':
+                                                echo 'bg-success';
+                                                break;
+                                            case 'Inactive':
+                                                echo 'bg-danger';
+                                                break;
+                                            default:
+                                                echo 'bg-secondary';
+                                        }
+                                        ?>">
+                                            <?= htmlspecialchars($row['rider_status']) ?>
+                                        </span>
+                                    </td>
                                     <td>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#riderModal<?= urlencode($row['id']) ?>">
@@ -141,7 +156,21 @@ $result = $stmt->get_result();
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-4 fw-bold">Status:</div>
-                                                    <div class="col-md-8"><?= htmlspecialchars($row['rider_status']) ?>
+                                                    <div class="col-md-8">
+                                                        <span class="badge <?php
+                                                        switch ($row['rider_status']) {
+                                                            case 'Active':
+                                                                echo 'bg-success';
+                                                                break;
+                                                            case 'Inactive':
+                                                                echo 'bg-danger';
+                                                                break;
+                                                            default:
+                                                                echo 'bg-secondary';
+                                                        }
+                                                        ?>">
+                                                            <?= htmlspecialchars($row['rider_status']) ?>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -168,6 +197,14 @@ $result = $stmt->get_result();
         </div>
     </section>
 </main>
+
+<footer id="footer" class="footer fixed-bottom border-top py-3">
+    <div class="container">
+        <div class="copyright text-center">
+            &copy; 2025 <strong><span>PricelBadz</span></strong>. All Rights Reserved
+        </div>
+    </div>
+</footer>
 
 <?php
 mysqli_close($conn);

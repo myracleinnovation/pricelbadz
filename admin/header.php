@@ -47,8 +47,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <body>
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
-            <a href="index.html" class="logo d-flex align-items-center">
-                <img src="assets/img/logo.png" alt="">
+            <a href="analytics.php" class="logo d-flex align-items-center">
                 <span class="d-none d-lg-block"><img src="../public/img/logo.png" alt="PricelBadz Image"></span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -71,7 +70,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                            <a class="dropdown-item d-flex align-items-center" href="profile.php">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
@@ -80,7 +79,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="account-settings.html">
+                            <a class="dropdown-item d-flex align-items-center" href="account_settings.php">
                                 <i class="bi bi-gear"></i>
                                 <span>Account Settings</span>
                             </a>
@@ -158,5 +157,4 @@ $current_page = basename($_SERVER['PHP_SELF']);
         data-cf-beacon='{"rayId":"93419b31590b08d9","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.4.0-1-g37f21b1","token":"68c5ca450bae485a842ff76066d69420"}'
         crossorigin="anonymous"></script>
 </body>
-
 </html>

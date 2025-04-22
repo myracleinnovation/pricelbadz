@@ -82,7 +82,25 @@ $result = $stmt->get_result();
                                     <td><?= htmlspecialchars($row['customer_name']) ?></td>
                                     <td><?= htmlspecialchars($row['merchant_name']) ?></td>
                                     <td><?= htmlspecialchars($row['assigned_rider']) ?></td>
-                                    <td><?= htmlspecialchars($row['order_status']) ?></td>
+                                    <td>
+                                        <span class="badge <?php
+                                        switch ($row['order_status']) {
+                                            case 'Pending':
+                                                echo 'bg-warning';
+                                                break;
+                                            case 'In Progress':
+                                                echo 'bg-info';
+                                                break;
+                                            case 'Completed':
+                                                echo 'bg-success';
+                                                break;
+                                            default:
+                                                echo 'bg-secondary';
+                                        }
+                                        ?>">
+                                            <?= htmlspecialchars($row['order_status']) ?>
+                                        </span>
+                                    </td>
                                     <td>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
@@ -135,7 +153,24 @@ $result = $stmt->get_result();
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-4 fw-bold">Order Status:</div>
-                                                    <div class="col-md-8"><?= htmlspecialchars($row['order_status']) ?>
+                                                    <div class="col-md-8">
+                                                        <span class="badge <?php
+                                                        switch ($row['order_status']) {
+                                                            case 'Pending':
+                                                                echo 'bg-warning';
+                                                                break;
+                                                            case 'In Progress':
+                                                                echo 'bg-info';
+                                                                break;
+                                                            case 'Completed':
+                                                                echo 'bg-success';
+                                                                break;
+                                                            default:
+                                                                echo 'bg-secondary';
+                                                        }
+                                                        ?>">
+                                                            <?= htmlspecialchars($row['order_status']) ?>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -162,6 +197,14 @@ $result = $stmt->get_result();
         </div>
     </section>
 </main>
+
+<footer id="footer" class="footer fixed-bottom border-top py-3">
+    <div class="container">
+        <div class="copyright text-center">
+            &copy; 2025 <strong><span>PricelBadz</span></strong>. All Rights Reserved
+        </div>
+    </div>
+</footer>
 
 <?php
 mysqli_close($conn);
