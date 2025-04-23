@@ -47,8 +47,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <body>
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
-            <a href="analytics.php" class="logo d-flex align-items-center">
-                <span class="d-none d-lg-block"><img src="../public/img/logo.png" alt="PricelBadz Image"></span>
+            <a href="dashboard.php" class="logo d-flex align-items-center">
+                <span class="d-none d-lg-block"><img src="../public/img/logo.png" alt="PricelBadz Image"
+                        style="max-height: 50px; width: auto;"></span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div>
@@ -57,7 +58,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                         data-bs-toggle="dropdown">
-                        <img src="../public/img/bg.jpg" alt="Profile" class="rounded-circle">
+                        <img src="../public/img/bg.jpg" alt="Profile" class="rounded-circle"
+                            style="width: 36px; height: 36px; object-fit: cover;">
                         <span
                             class="d-none d-md-block dropdown-toggle ps-2"><?= htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']) ?></span>
                     </a>
@@ -65,15 +67,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <li class="dropdown-header">
                             <h6><?= htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']) ?></h6>
                             <span><?= htmlspecialchars($_SESSION['access_type']) ?></span>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="profile.php">
-                                <i class="bi bi-person"></i>
-                                <span>My Profile</span>
-                            </a>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -90,7 +83,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <?php
                         if (isset($_POST['logout'])) {
                             session_destroy();
-                            header('Location: ../login.php');
+                            header('Location: ../home.php');
                             exit();
                         }
                         ?>
@@ -110,16 +103,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
             <li class="nav-item">
-                <a class="nav-link <?= $current_page === 'analytics.php' ? '' : 'collapsed' ?>" href="analytics.php">
+                <a class="nav-link <?= $current_page === 'dashboard.php' ? '' : 'collapsed' ?>" href="dashboard.php">
                     <i class="bi bi-grid"></i>
-                    <span>Analytics</span>
+                    <span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $current_page === 'customers_order.php' ? '' : 'collapsed' ?>"
-                    href="customers_order.php">
+                <a class="nav-link <?= $current_page === 'customer_orders.php' ? '' : 'collapsed' ?>"
+                    href="customer_orders.php">
                     <i class="bi bi-person"></i>
-                    <span>Customers Order</span>
+                    <span>Customer Orders</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -157,4 +150,5 @@ $current_page = basename($_SERVER['PHP_SELF']);
         data-cf-beacon='{"rayId":"93419b31590b08d9","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.4.0-1-g37f21b1","token":"68c5ca450bae485a842ff76066d69420"}'
         crossorigin="anonymous"></script>
 </body>
+
 </html>

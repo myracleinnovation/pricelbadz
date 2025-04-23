@@ -2,8 +2,8 @@
 function createCustomerOrder($conn, $customer_name, $contact_number, $merchant_name, $pickup_address, $pickup_note, $order_description, $quantity, $estimated_price, $dropoff_address, $dropoff_note, $assigned_rider = null, $order_status = 'Pending')
 {
     try {
-        $order_number = 'ORD-' . date('Ymd') . '-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6));
-        
+        $order_number = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
+
         $sql = "INSERT INTO tcustomer_order (
             order_number, customer_name, contact_number, merchant_name,
             pickup_address, pickup_note, order_description, quantity,
@@ -12,13 +12,8 @@ function createCustomerOrder($conn, $customer_name, $contact_number, $merchant_n
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql) ?? throw new Exception('Prepare failed: ' . $conn->error);
-        $stmt->bind_param('sssssssiddsss', 
-            $order_number, $customer_name, $contact_number, $merchant_name,
-            $pickup_address, $pickup_note, $order_description, $quantity,
-            $estimated_price, $dropoff_address, $dropoff_note, $assigned_rider,
-            $order_status
-        );
-        
+        $stmt->bind_param('sssssssiddsss', $order_number, $customer_name, $contact_number, $merchant_name, $pickup_address, $pickup_note, $order_description, $quantity, $estimated_price, $dropoff_address, $dropoff_note, $assigned_rider, $order_status);
+
         if (!$stmt->execute()) {
             throw new Exception('Execute failed: ' . $stmt->error);
         }

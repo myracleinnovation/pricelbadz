@@ -1,22 +1,4 @@
 <?php
-session_start();
-
-if (isset($_POST['logout'])) {
-    session_destroy();
-    header('Location: login.php');
-    exit();
-}
-
-if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
-    exit();
-}
-
-if (isset($_SESSION['username'])) {
-    $first_name = $_SESSION['first_name'];
-    $last_name = $_SESSION['last_name'];
-}
-
 include './config/connect.php';
 include './controllers/CustomerOrderController.php';
 include './controllers/RiderRegistrationController.php';
@@ -50,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $riderData = [
             'first_name' => sanitizeInput($_POST['first_name']),
             'middle_name' => sanitizeInput($_POST['middle_name']),
-            'last_name' => sanitizeInput($_POST['surname']),
+            'last_name' => sanitizeInput($_POST['last_name']),
             'license_number' => sanitizeInput($_POST['license_number']),
             'vehicle_type' => sanitizeInput($_POST['vehicle_type']),
             'vehicle_cor' => sanitizeInput($_POST['vehicle_cor']),
@@ -112,106 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         background-repeat: no-repeat;
         background-position: center;
     }
-
-    .header {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        z-index: 1000;
-    }
-
-    .profile-dropdown {
-        position: absolute;
-        right: 0;
-        top: 100%;
-        min-width: 200px;
-        max-height: calc(100vh - 100px);
-        overflow-y: auto;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .nav-profile img {
-        width: 36px;
-        height: 36px;
-        object-fit: cover;
-    }
-
-    .dropdown-menu {
-        margin-top: 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-        #profileDropdown {
-            margin-left: -9rem !important;
-        }
-    }
 </style>
 
 <body>
-    <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center">
-            <header id="header" class="header fixed-top d-flex align-items-center p-2">
-                <div class="d-flex align-items-center justify-content-between">
-                    <a href="home.php" class="logo d-flex align-items-center">
-                        <img src="./public/img/logo.png" alt="PricelBadz Logo">
-                    </a>
-                </div>
-                <nav class="header-nav ms-auto">
-                    <ul class="d-flex align-items-center">
-                        <li class="nav-item dropdown">
-                            <a href="#" id="profileToggle"
-                                class="nav-link nav-profile d-flex align-items-center pe-0">
-                                <img src="./public/img/bg.jpg" alt="Profile" class="rounded-circle" width="36"
-                                    height="36">
-                                <span class="d-none d-md-block dropdown-toggle ps-2">
-                                    <?php echo $first_name . ' ' . $last_name; ?>
-                                </span>
-                            </a>
-
-                            <ul id="profileDropdown" class="dropdown-menu dropdown-menu-end shadow-lg border-0"
-                                style="display: none;">
-                                <li class="dropdown-header">
-                                    <h6 class="mb-0"><?php echo $first_name . ' ' . $last_name; ?></h6>
-                                    <small class="text-muted"><?php echo $_SESSION['access_type']; ?></small>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                        <i class="bi bi-person me-2"></i>
-                                        <span>My Profile</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="account-settings.html">
-                                        <i class="bi bi-gear me-2"></i>
-                                        <span>Account Settings</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li>
-                                    <form action="home.php" method="POST">
-                                        <button type="submit" class="dropdown-item d-flex align-items-center"
-                                            name="logout">
-                                            <i class="bi bi-box-arrow-right me-2"></i>
-                                            <span>Sign Out</span>
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-            </header>
-        </div>
-        <div class="row mt-5 pt-5">
+    <div class="container container-fluid">
+        <div class="row mt-5 justify-content-center my-8">
+            <img src="./public/img/logo.png" class="w-50 py-4 px-0" alt="PricelBadz Logo">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
@@ -251,164 +139,192 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
         <div class="d-flex flex-wrap justify-content-center gap-4 mt-4 mb-4">
-            <!-- CUSTOMER ORDER FORM -->
-            <div class="card p-3 m-2 flex-fill"
-                style="background-color: #0E76BC; min-width: 320px; max-width: 600px;">
-                <div class="card-body p-0">
-                    <h5 class="card-title fw-bold text-white my-4">
-                        <i class='bx bxs-notepad me-2'></i>Customer Order Form
-                    </h5>
-                    <form method="POST" class="row g-3">
-                        <div class="col-12 col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="name" name="name"
-                                    placeholder="Customer Name">
-                                <label for="name">Customer Name</label>
-                            </div>
+            <div class="row w-100 justify-content-center">
+                <!-- CUSTOMER ORDER FORM -->
+                <div class="col-md-6">
+                    <div class="card p-4" style="background-color: #0E76BC;">
+                        <div class="card-body p-0">
+                            <h5 class="card-title fw-bold text-white my-4 text-center fs-4">
+                                <i class='bx bxs-notepad me-2'></i>Customer Order Form
+                            </h5>
+                            <form method="POST" class="row g-4 px-3">
+                                <div class="col-12 col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            placeholder="Customer Name">
+                                        <label for="name">Customer Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="contact_number"
+                                            name="contact_number" placeholder="Contact Number">
+                                        <label for="contact_number">Contact Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <select class="form-control" id="merchant_name" name="merchant_name">
+                                            <option value="PABILI">PABILI (Food Delivery / Item Delivery)</option>
+                                            <option value="PAANGKAS">PAANGKAS (Pahatid / Pasundo)</option>
+                                            <option value="PADALA">PADALA</option>
+                                        </select>
+                                        <label for="merchant_name">Merchant Name / Pick-up Location</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="order_description" name="order_description" placeholder="Order Description"
+                                            style="height: 100px;"></textarea>
+                                        <label for="order_description">Order Description</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="quantity" name="quantity"
+                                            placeholder="Quantity">
+                                        <label for="quantity">Quantity</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="estimated_price"
+                                            name="estimated_price" step="0.01" placeholder="Estimated Price">
+                                        <label for="estimated_price">Estimated Price (₱)</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="pickup_address"
+                                            name="pickup_address" placeholder="Pickup Address">
+                                        <label for="pickup_address">Pick-up Address</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="pickup_note" name="pickup_note" placeholder="Pickup Note" style="height: 80px;"></textarea>
+                                        <label for="pickup_note">Note to Rider (Pickup)</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="dropoff_address"
+                                            name="dropoff_address" placeholder="Dropoff Address">
+                                        <label for="dropoff_address">Drop-off Address</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="dropoff_note" name="dropoff_note" placeholder="Dropoff Note"
+                                            style="height: 80px;"></textarea>
+                                        <label for="dropoff_note">Note to Rider (Drop-off)</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <select class="form-control" id="assigned_rider" name="assigned_rider">
+                                            <option value="">Select Rider</option>
+                                            <?php
+                                            // Get riders with positive balance
+                                            $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
+                                                                                                                                                  FROM triders 
+                                                                                                                                                  WHERE rider_status = 'Active' AND topup_balance > 0 
+                                                                                                                                                  ORDER BY rider_name";
+                                            $rider_result = $conn->query($rider_query);
+                                            
+                                            if ($rider_result && $rider_result->num_rows > 0) {
+                                                while ($rider = $rider_result->fetch_assoc()) {
+                                                    echo "<option value='" . $rider['rider_name'] . "'>" . $rider['rider_name'] . '</option>';
+                                                }
+                                            } else {
+                                                echo "<option value='' disabled>No available riders</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                        <label for="assigned_rider">Assigned Rider</label>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <button type="submit" name="place_order"
+                                        class="btn btn-light text-black py-3 px-5 rounded-pill border-none fs-5">
+                                        Place Order
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_number" name="contact_number"
-                                    placeholder="Contact Number">
-                                <label for="contact_number">Contact Number</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="merchant_name" name="merchant_name"
-                                    placeholder="Merchant Name">
-                                <label for="merchant_name">Merchant Name / Pick-up Location</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <textarea class="form-control" id="order_description" name="order_description" placeholder="Order Description"
-                                    style="height: 100px;"></textarea>
-                                <label for="order_description">Order Description</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-floating">
-                                <input type="number" class="form-control" id="quantity" name="quantity"
-                                    placeholder="Quantity">
-                                <label for="quantity">Quantity</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-floating">
-                                <input type="number" class="form-control" id="estimated_price"
-                                    name="estimated_price" step="0.01" placeholder="Estimated Price">
-                                <label for="estimated_price">Estimated Price (₱)</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="pickup_address" name="pickup_address"
-                                    placeholder="Pickup Address">
-                                <label for="pickup_address">Pick-up Address</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <textarea class="form-control" id="pickup_note" name="pickup_note" placeholder="Pickup Note" style="height: 80px;"></textarea>
-                                <label for="pickup_note">Note to Rider (Pickup)</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="dropoff_address"
-                                    name="dropoff_address" placeholder="Dropoff Address">
-                                <label for="dropoff_address">Drop-off Address</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <textarea class="form-control" id="dropoff_note" name="dropoff_note" placeholder="Dropoff Note"
-                                    style="height: 80px;"></textarea>
-                                <label for="dropoff_note">Note to Rider (Drop-off)</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="assigned_rider" name="assigned_rider"
-                                    placeholder="Assigned Rider">
-                                <label for="assigned_rider">Assigned Rider</label>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" name="place_order"
-                                class="btn btn-light text-black py-2 px-4 rounded-pill border-none">
-                                Place Order
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
 
-            <!-- RIDER REGISTRATION FORM -->
-            <div class="card p-3 m-2 flex-fill"
-                style="background-color: #F26522; min-width: 320px; max-width: 600px;">
-                <div class="card-body p-0">
-                    <h5 class="card-title fw-bold text-white my-4">
-                        <i class='bx bxs-car me-2'></i>Rider Registration Form
-                    </h5>
-                    <form method="POST" class="row g-3">
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="first_name" name="first_name"
-                                    placeholder="First Name">
-                                <label for="first_name">First Name</label>
-                            </div>
+                <!-- RIDER REGISTRATION FORM -->
+                <div class="col-md-6">
+                    <div class="card p-4" style="background-color: #F26522;">
+                        <div class="card-body p-0">
+                            <h5 class="card-title fw-bold text-white my-4 text-center fs-4">
+                                <i class='bx bxs-car me-2'></i>Rider Registration Form
+                            </h5>
+                            <form method="POST" class="row g-4 px-3">
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="first_name" name="first_name"
+                                            placeholder="First Name">
+                                        <label for="first_name">First Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="middle_name"
+                                            name="middle_name" placeholder="Middle Name">
+                                        <label for="middle_name">Middle Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="last_name" name="last_name"
+                                            placeholder="Last Name">
+                                        <label for="last_name">Last Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="license_number"
+                                            name="license_number" placeholder="License Number">
+                                        <label for="license_number">License Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-control" id="vehicle_type" name="vehicle_type">
+                                            <option value="" disabled selected>Select Vehicle Type</option>
+                                            <option value="Motorcycle">Motorcycle</option>
+                                            <option value="Tricycle">Tricycle</option>
+                                            <option value="Car">Car</option>
+                                        </select>
+                                        <label for="vehicle_type">Vehicle Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="vehicle_cor"
+                                            name="vehicle_cor" placeholder="Vehicle COR">
+                                        <label for="vehicle_cor">Vehicle COR</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="vehicle_plate_number"
+                                            name="vehicle_plate_number" placeholder="Vehicle Plate Number">
+                                        <label for="vehicle_plate_number">Vehicle Plate Number</label>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <button type="submit" name="submit"
+                                        class="btn btn-light text-black py-3 px-5 rounded-pill border-none fs-5">
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="middle_name" name="middle_name"
-                                    placeholder="Middle Name">
-                                <label for="middle_name">Middle Name</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="surname" name="surname"
-                                    placeholder="Surname">
-                                <label for="surname">Surname</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="license_number" name="license_number"
-                                    placeholder="License Number">
-                                <label for="license_number">License Number</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="vehicle_type" name="vehicle_type"
-                                    placeholder="Vehicle Type">
-                                <label for="vehicle_type">Vehicle Type</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="vehicle_cor" name="vehicle_cor"
-                                    placeholder="Vehicle COR">
-                                <label for="vehicle_cor">Vehicle COR</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="vehicle_plate_number"
-                                    name="vehicle_plate_number" placeholder="Vehicle Plate Number">
-                                <label for="vehicle_plate_number">Vehicle Plate Number</label>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" name="submit"
-                                class="btn btn-light text-black py-2 px-4 rounded-pill border-none">
-                                Submit
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -448,28 +364,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        $(document).ready(function() {
-            // Profile dropdown toggle
-            $('#profileToggle').on('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                $('#profileDropdown').slideToggle(200);
-            });
-
-            // Close dropdown when clicking outside
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('#profileToggle, #profileDropdown').length) {
-                    $('#profileDropdown').slideUp(200);
-                }
-            });
-
-            // Close dropdown when clicking on a menu item
-            $('.dropdown-item').on('click', function() {
-                $('#profileDropdown').slideUp(200);
-            });
-        });
-    </script>
 </body>
 
 </html>

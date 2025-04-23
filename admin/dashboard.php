@@ -36,17 +36,49 @@ while ($row = $monthlyResult->fetch_assoc()) {
 
 // Get order status distribution
 $statusQuery = "SELECT 
-    order_status,
+    CASE 
+        WHEN order_status = 'Pending' THEN 'Pending'
+        WHEN order_status = 'Assigned' THEN 'Assigned'
+        WHEN order_status = 'Completed' THEN 'Completed'
+        WHEN order_status = 'Cancelled' THEN 'Cancelled'
+        ELSE 'Other'
+    END as order_status,
     COUNT(*) as status_count
 FROM tcustomer_order 
-GROUP BY order_status";
+GROUP BY 
+    CASE 
+        WHEN order_status = 'Pending' THEN 'Pending'
+        WHEN order_status = 'Assigned' THEN 'Assigned'
+        WHEN order_status = 'Completed' THEN 'Completed'
+        WHEN order_status = 'Cancelled' THEN 'Cancelled'
+        ELSE 'Other'
+    END";
 $statusResult = $conn->query($statusQuery);
 
 $statusLabels = [];
 $statusCounts = [];
+$totalOrders = 0;
+
+// First, get all status counts and calculate total
 while ($row = $statusResult->fetch_assoc()) {
     $statusLabels[] = $row['order_status'];
     $statusCounts[] = $row['status_count'];
+    $totalOrders += $row['status_count'];
+}
+
+// Ensure all statuses are included even if they have zero count
+$allStatuses = ['Pending', 'Assigned', 'Completed', 'Cancelled'];
+$statusMap = array_combine($statusLabels, $statusCounts);
+
+$statusLabels = [];
+$statusCounts = [];
+$statusPercentages = [];
+
+foreach ($allStatuses as $status) {
+    $statusLabels[] = $status;
+    $count = isset($statusMap[$status]) ? $statusMap[$status] : 0;
+    $statusCounts[] = $count;
+    $statusPercentages[] = $totalOrders > 0 ? round(($count / $totalOrders) * 100, 1) : 0;
 }
 ?>
 
@@ -55,7 +87,7 @@ while ($row = $statusResult->fetch_assoc()) {
         <h1>Dashboard</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="analytics.php">Home</a></li>
+                <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
                 <li class="breadcrumb-item active">Dashboard</li>
             </ol>
         </nav>
@@ -139,9 +171,22 @@ while ($row = $statusResult->fetch_assoc()) {
             <div class="col-lg-4">
                 <!-- Order Status Distribution -->
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Order Status Distribution</h5>
-                        <div id="orderStatusChart"></div>
+                    <div class="filter">
+                        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                            <li class="dropdown-header text-start">
+                                <h6>Filter</h6>
+                            </li>
+                            <li><a class="dropdown-item" href="#">Today</a></li>
+                            <li><a class="dropdown-item" href="#">This Week</a></li>
+                            <li><a class="dropdown-item" href="#">This Month</a></li>
+                            <li><a class="dropdown-item" href="#">All Time</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="card-body pb-0">
+                        <h5 class="card-title">Order Status Distribution <span>| All Time</span></h5>
+                        <div id="orderStatusChart" style="min-height: 400px;" class="echart"></div>
                     </div>
                 </div>
             </div>
@@ -216,32 +261,71 @@ while ($row = $statusResult->fetch_assoc()) {
             }
         }).render();
 
-        // Order Status Distribution Chart
-        new ApexCharts(document.querySelector("#orderStatusChart"), {
-            series: <?= json_encode($statusCounts) ?>,
-            chart: {
-                type: 'donut',
-                height: 350
+        // Order Status Distribution Chart using ECharts
+        echarts.init(document.querySelector("#orderStatusChart")).setOption({
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
             },
-            labels: <?= json_encode($statusLabels) ?>,
-            colors: ['#ffc107', '#0dcaf0', '#198754', '#6c757d'],
             legend: {
-                position: 'bottom'
+                top: '5%',
+                left: 'center'
             },
-            plotOptions: {
-                pie: {
-                    donut: {
-                        size: '70%'
+            series: [{
+                name: 'Order Status',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                itemStyle: {
+                    borderRadius: 10,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                },
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold'
                     }
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                formatter: function(val) {
-                    return val.toFixed(1) + '%'
-                }
-            }
-        }).render();
+                },
+                labelLine: {
+                    show: false
+                },
+                data: [{
+                        value: <?= isset($statusMap['Pending']) ? $statusMap['Pending'] : 0 ?>,
+                        name: 'Pending',
+                        itemStyle: {
+                            color: '#ffc107'
+                        }
+                    },
+                    {
+                        value: <?= isset($statusMap['Assigned']) ? $statusMap['Assigned'] : 0 ?>,
+                        name: 'Assigned',
+                        itemStyle: {
+                            color: '#0dcaf0'
+                        }
+                    },
+                    {
+                        value: <?= isset($statusMap['Completed']) ? $statusMap['Completed'] : 0 ?>,
+                        name: 'Completed',
+                        itemStyle: {
+                            color: '#198754'
+                        }
+                    },
+                    {
+                        value: <?= isset($statusMap['Cancelled']) ? $statusMap['Cancelled'] : 0 ?>,
+                        name: 'Cancelled',
+                        itemStyle: {
+                            color: '#dc3545'
+                        }
+                    }
+                ]
+            }]
+        });
     });
 </script>
 

@@ -34,7 +34,7 @@ $result = $stmt->get_result();
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Manage User Accounts</h5>
-                        <form method="POST" class="d-flex gap-2">
+                        <form method="POST" class="row g-3">
                             <div class="col-md-7">
                                 <input type="text" class="form-control" name="search" id="inputText"
                                     value="<?= htmlspecialchars($search) ?>"
@@ -50,134 +50,139 @@ $result = $stmt->get_result();
                                     </option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-primary w-100">Submit</button>
+                            </div>
                         </form>
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">First Name</th>
-                                    <th scope="col">Last Name</th>
-                                    <th scope="col">Username</th>
-                                    <th scope="col">Access Type</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Date Registered</th>
-                                    <th scope="col">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    $count = 1;
-                                    if ($result->num_rows > 0):
-                                        while ($row = $result->fetch_assoc()):
-                                ?>
-                                <tr>
-                                    <th scope="row"><?= $count++ ?></th>
-                                    <td><?= htmlspecialchars($row['first_name']) ?></td>
-                                    <td><?= htmlspecialchars($row['last_name']) ?></td>
-                                    <td><?= htmlspecialchars($row['username']) ?></td>
-                                    <td><?= htmlspecialchars($row['access_type']) ?></td>
-                                    <td>
-                                        <span class="badge <?php
-                                        switch ($row['user_status']) {
-                                            case 'Active':
-                                                echo 'bg-success';
-                                                break;
-                                            case 'Inactive':
-                                                echo 'bg-danger';
-                                                break;
-                                            default:
-                                                echo 'bg-secondary';
-                                        }
-                                        ?>">
-                                            <?= htmlspecialchars($row['user_status']) ?>
-                                        </span>
-                                    </td>
-                                    <td><?= date('Y-m-d', strtotime($row['date_registered'])) ?></td>
-                                    <td>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#userModal<?= urlencode($row['id']) ?>">
-                                            View
-                                        </button>
-                                    </td>
-                                </tr>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Full Name</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Access Type</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Date Registered</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                        $count = 1;
+                                        if ($result->num_rows > 0):
+                                            while ($row = $result->fetch_assoc()):
+                                    ?>
+                                    <tr>
+                                        <th scope="row"><?= $count++ ?></th>
+                                        <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
+                                        <td><?= htmlspecialchars($row['username']) ?></td>
+                                        <td><?= htmlspecialchars($row['access_type']) ?></td>
+                                        <td>
+                                            <span class="badge <?php
+                                            switch ($row['user_status']) {
+                                                case 'Active':
+                                                    echo 'bg-success';
+                                                    break;
+                                                case 'Inactive':
+                                                    echo 'bg-danger';
+                                                    break;
+                                                default:
+                                                    echo 'bg-secondary';
+                                            }
+                                            ?>">
+                                                <?= htmlspecialchars($row['user_status']) ?>
+                                            </span>
+                                        </td>
+                                        <td><?= date('Y-m-d', strtotime($row['date_registered'])) ?></td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#userModal<?= urlencode($row['id']) ?>">
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
 
-                                <!-- User Details Modal -->
-                                <div class="modal fade" id="userModal<?= urlencode($row['id']) ?>" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title fw-bold">User Details</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row mb-3">
-                                                    <div class="col-md-4 fw-bold">First Name:</div>
-                                                    <div class="col-md-8"><?= htmlspecialchars($row['first_name']) ?>
+                                    <!-- User Details Modal -->
+                                    <div class="modal fade" id="userModal<?= urlencode($row['id']) ?>" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title fw-bold">User Details</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-4 fw-bold">First Name:</div>
+                                                        <div class="col-md-8">
+                                                            <?= htmlspecialchars($row['first_name']) ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-4 fw-bold">Last Name:</div>
+                                                        <div class="col-md-8"><?= htmlspecialchars($row['last_name']) ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-4 fw-bold">Username:</div>
+                                                        <div class="col-md-8"><?= htmlspecialchars($row['username']) ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-4 fw-bold">Access Type:</div>
+                                                        <div class="col-md-8">
+                                                            <?= htmlspecialchars($row['access_type']) ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-4 fw-bold">Status:</div>
+                                                        <div class="col-md-8">
+                                                            <span class="badge <?php
+                                                            switch ($row['user_status']) {
+                                                                case 'Active':
+                                                                    echo 'bg-success';
+                                                                    break;
+                                                                case 'Inactive':
+                                                                    echo 'bg-danger';
+                                                                    break;
+                                                                default:
+                                                                    echo 'bg-secondary';
+                                                            }
+                                                            ?>">
+                                                                <?= htmlspecialchars($row['user_status']) ?>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-4 fw-bold">Date Registered:</div>
+                                                        <div class="col-md-8">
+                                                            <?= date('Y-m-d', strtotime($row['date_registered'])) ?>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-4 fw-bold">Last Name:</div>
-                                                    <div class="col-md-8"><?= htmlspecialchars($row['last_name']) ?>
-                                                    </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
                                                 </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-4 fw-bold">Username:</div>
-                                                    <div class="col-md-8"><?= htmlspecialchars($row['username']) ?>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-4 fw-bold">Access Type:</div>
-                                                    <div class="col-md-8"><?= htmlspecialchars($row['access_type']) ?>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-4 fw-bold">Status:</div>
-                                                    <div class="col-md-8">
-                                                        <span class="badge <?php
-                                                        switch ($row['user_status']) {
-                                                            case 'Active':
-                                                                echo 'bg-success';
-                                                                break;
-                                                            case 'Inactive':
-                                                                echo 'bg-danger';
-                                                                break;
-                                                            default:
-                                                                echo 'bg-secondary';
-                                                        }
-                                                        ?>">
-                                                            <?= htmlspecialchars($row['user_status']) ?>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-4 fw-bold">Date Registered:</div>
-                                                    <div class="col-md-8">
-                                                        <?= date('Y-m-d', strtotime($row['date_registered'])) ?></div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</button>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <?php
+                                    <?php
                                         endwhile;
                                     else:
-                                ?>
-                                <tr>
-                                    <td colspan="8" class="text-center">No users found.</td>
-                                </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                                    ?>
+                                    <tr>
+                                        <td colspan="7" class="text-center">No users found.</td>
+                                    </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -7,13 +7,12 @@ $search = isset($_POST['search']) ? $_POST['search'] : '';
 $status = isset($_POST['status']) ? $_POST['status'] : 'All Status';
 
 // Build the query with optional filters
-$query = "SELECT id, first_name, middle_name, last_name, CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', last_name) AS fullname, 
-    license_number, vehicle_type, vehicle_plate_number, rider_status, topup_balance 
-    FROM triders 
-    WHERE (first_name LIKE ? OR last_name LIKE ? OR vehicle_plate_number LIKE ?)";
+$query = "SELECT order_number, customer_name, merchant_name, pickup_address, dropoff_address, assigned_rider, order_status 
+        FROM tcustomer_order 
+        WHERE (order_number LIKE ? OR customer_name LIKE ? OR assigned_rider LIKE ?)";
 
 if ($status !== 'All Status') {
-    $query .= ' AND rider_status = ?';
+    $query .= ' AND order_status = ?';
 }
 
 // Prepare and execute the query
@@ -32,22 +31,42 @@ $result = $stmt->get_result();
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
+                <?php if (isset($_SESSION['success_message'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['error_message'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
+                <?php endif; ?>
+
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Manage Delivery Riders</h5>
+                        <h5 class="card-title">Manage Customer Orders</h5>
                         <form method="POST" class="row g-3">
                             <div class="col-md-7">
                                 <input type="text" class="form-control" name="search" id="inputText"
                                     value="<?= htmlspecialchars($search) ?>"
-                                    placeholder="Enter rider name or vehicle plate number">
+                                    placeholder="Enter order number, customer name, or assigned rider">
                             </div>
                             <div class="col-md-4">
                                 <select name="status" id="inputState" class="form-select">
                                     <option value="All Status" <?= $status === 'All Status' ? 'selected' : '' ?>>All
                                         Status</option>
-                                    <option value="Active" <?= $status === 'Active' ? 'selected' : '' ?>>Active
+                                    <option value="Pending" <?= $status === 'Pending' ? 'selected' : '' ?>>Pending
                                     </option>
-                                    <option value="Inactive" <?= $status === 'Inactive' ? 'selected' : '' ?>>Inactive
+                                    <option value="Assigned" <?= $status === 'Assigned' ? 'selected' : '' ?>>Assigned
+                                    </option>
+                                    <option value="Completed" <?= $status === 'Completed' ? 'selected' : '' ?>>Completed
+                                    </option>
+                                    <option value="Cancelled" <?= $status === 'Cancelled' ? 'selected' : '' ?>>Cancelled
                                     </option>
                                 </select>
                             </div>
@@ -64,11 +83,11 @@ $result = $stmt->get_result();
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Full Name</th>
-                                        <th scope="col">License Number</th>
-                                        <th scope="col">Vehicle Type</th>
-                                        <th scope="col">Vehicle Plate Number</th>
-                                        <th scope="col">Status</th>
+                                        <th scope="col">Order Number</th>
+                                        <th scope="col">Customer Name</th>
+                                        <th scope="col">Merchant</th>
+                                        <th scope="col">Assigned Rider</th>
+                                        <th scope="col">Order Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -80,100 +99,107 @@ $result = $stmt->get_result();
                                     ?>
                                     <tr>
                                         <th scope="row"><?= $count++ ?></th>
-                                        <td><?= htmlspecialchars($row['fullname']) ?></td>
-                                        <td><?= htmlspecialchars($row['license_number']) ?></td>
-                                        <td><?= htmlspecialchars($row['vehicle_type']) ?></td>
-                                        <td><?= htmlspecialchars($row['vehicle_plate_number']) ?></td>
+                                        <td><?= htmlspecialchars($row['order_number']) ?></td>
+                                        <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                                        <td><?= htmlspecialchars($row['merchant_name']) ?></td>
+                                        <td><?= htmlspecialchars($row['assigned_rider']) ?></td>
                                         <td>
                                             <span class="badge <?php
-                                            switch ($row['rider_status']) {
-                                                case 'Active':
+                                            switch ($row['order_status']) {
+                                                case 'Pending':
+                                                    echo 'bg-warning';
+                                                    break;
+                                                case 'Assigned':
+                                                    echo 'bg-info';
+                                                    break;
+                                                case 'Completed':
                                                     echo 'bg-success';
                                                     break;
-                                                case 'Inactive':
+                                                case 'Cancelled':
                                                     echo 'bg-danger';
                                                     break;
                                                 default:
                                                     echo 'bg-secondary';
                                             }
                                             ?>">
-                                                <?= htmlspecialchars($row['rider_status']) ?>
+                                                <?= htmlspecialchars($row['order_status']) ?>
                                             </span>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#riderModal<?= urlencode($row['id']) ?>">
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
                                                 View
                                             </button>
                                         </td>
                                     </tr>
 
-                                    <!-- Rider Details Modal -->
-                                    <div class="modal fade" id="riderModal<?= urlencode($row['id']) ?>" tabindex="-1">
+                                    <!-- Order Details Modal -->
+                                    <div class="modal fade" id="orderModal<?= urlencode($row['order_number']) ?>"
+                                        tabindex="-1">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title fw-bold">Rider Details</h5>
+                                                    <h5 class="modal-title fw-bold">Order Details</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">First Name:</div>
+                                                        <div class="col-md-4 fw-bold">Order Number:</div>
                                                         <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['first_name']) ?></div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Middle Name:</div>
-                                                        <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['middle_name'] ?? 'N/A') ?></div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Last Name:</div>
-                                                        <div class="col-md-8"><?= htmlspecialchars($row['last_name']) ?>
+                                                            <?= htmlspecialchars($row['order_number']) ?>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Full Name:</div>
-                                                        <div class="col-md-8"><?= htmlspecialchars($row['fullname']) ?>
+                                                        <div class="col-md-4 fw-bold">Customer Name:</div>
+                                                        <div class="col-md-8">
+                                                            <?= htmlspecialchars($row['customer_name']) ?>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">License Number:</div>
+                                                        <div class="col-md-4 fw-bold">Merchant:</div>
                                                         <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['license_number']) ?></div>
+                                                            <?= htmlspecialchars($row['merchant_name']) ?>
+                                                        </div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Vehicle Type:</div>
+                                                        <div class="col-md-4 fw-bold">Pickup Address:</div>
                                                         <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['vehicle_type']) ?></div>
+                                                            <?= htmlspecialchars($row['pickup_address']) ?></div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Vehicle Plate Number:</div>
+                                                        <div class="col-md-4 fw-bold">Dropoff Address:</div>
                                                         <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['vehicle_plate_number']) ?></div>
+                                                            <?= htmlspecialchars($row['dropoff_address']) ?></div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Top-up Balance:</div>
+                                                        <div class="col-md-4 fw-bold">Assigned Rider:</div>
                                                         <div class="col-md-8">
-                                                            ₱<?= number_format($row['topup_balance'], 2) ?></div>
+                                                            <?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
+                                                        </div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Status:</div>
+                                                        <div class="col-md-4 fw-bold">Order Status:</div>
                                                         <div class="col-md-8">
                                                             <span class="badge <?php
-                                                            switch ($row['rider_status']) {
-                                                                case 'Active':
+                                                            switch ($row['order_status']) {
+                                                                case 'Pending':
+                                                                    echo 'bg-warning';
+                                                                    break;
+                                                                case 'Assigned':
+                                                                    echo 'bg-info';
+                                                                    break;
+                                                                case 'Completed':
                                                                     echo 'bg-success';
                                                                     break;
-                                                                case 'Inactive':
+                                                                case 'Cancelled':
                                                                     echo 'bg-danger';
                                                                     break;
                                                                 default:
                                                                     echo 'bg-secondary';
                                                             }
                                                             ?>">
-                                                                <?= htmlspecialchars($row['rider_status']) ?>
+                                                                <?= htmlspecialchars($row['order_status']) ?>
                                                             </span>
                                                         </div>
                                                     </div>
@@ -183,7 +209,7 @@ $result = $stmt->get_result();
                                                         data-bs-dismiss="modal">Close</button>
                                                     <button type="button" class="btn btn-primary"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#editStatusModal<?= urlencode($row['id']) ?>">
+                                                        data-bs-target="#editStatusModal<?= urlencode($row['order_number']) ?>">
                                                         Edit Status
                                                     </button>
                                                 </div>
@@ -192,47 +218,47 @@ $result = $stmt->get_result();
                                     </div>
 
                                     <!-- Edit Status Modal -->
-                                    <div class="modal fade" id="editStatusModal<?= urlencode($row['id']) ?>"
+                                    <div class="modal fade" id="editStatusModal<?= urlencode($row['order_number']) ?>"
                                         tabindex="-1">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title fw-bold">Edit Rider Status</h5>
+                                                    <h5 class="modal-title fw-bold">Edit Order Status</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                                 </div>
-                                                <form action="update_rider_status.php" method="POST">
+                                                <form action="update_order_status.php" method="POST">
                                                     <div class="modal-body">
                                                         <div class="row mb-3">
-                                                            <div class="col-md-4 fw-bold">Rider ID:</div>
+                                                            <div class="col-md-4 fw-bold">Order Number:</div>
                                                             <div class="col-md-8">
-                                                                <?= htmlspecialchars($row['id']) ?>
-                                                                <input type="hidden" name="rider_id"
-                                                                    value="<?= htmlspecialchars($row['id']) ?>">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-4 fw-bold">Rider Name:</div>
-                                                            <div class="col-md-8">
-                                                                <?= htmlspecialchars($row['fullname']) ?>
+                                                                <?= htmlspecialchars($row['order_number']) ?>
+                                                                <input type="hidden" name="order_number"
+                                                                    value="<?= htmlspecialchars($row['order_number']) ?>">
                                                             </div>
                                                         </div>
                                                         <div class="row mb-3">
                                                             <div class="col-md-4 fw-bold">Current Status:</div>
                                                             <div class="col-md-8">
                                                                 <span class="badge <?php
-                                                                switch ($row['rider_status']) {
-                                                                    case 'Active':
+                                                                switch ($row['order_status']) {
+                                                                    case 'Pending':
+                                                                        echo 'bg-warning';
+                                                                        break;
+                                                                    case 'Assigned':
+                                                                        echo 'bg-info';
+                                                                        break;
+                                                                    case 'Completed':
                                                                         echo 'bg-success';
                                                                         break;
-                                                                    case 'Inactive':
+                                                                    case 'Cancelled':
                                                                         echo 'bg-danger';
                                                                         break;
                                                                     default:
                                                                         echo 'bg-secondary';
                                                                 }
                                                                 ?>">
-                                                                    <?= htmlspecialchars($row['rider_status']) ?>
+                                                                    <?= htmlspecialchars($row['order_status']) ?>
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -242,12 +268,18 @@ $result = $stmt->get_result();
                                                                 <select name="new_status" class="form-select"
                                                                     required>
                                                                     <option value="">Select Status</option>
-                                                                    <option value="Active"
-                                                                        <?= $row['rider_status'] === 'Active' ? 'selected' : '' ?>>
-                                                                        Active</option>
-                                                                    <option value="Inactive"
-                                                                        <?= $row['rider_status'] === 'Inactive' ? 'selected' : '' ?>>
-                                                                        Inactive</option>
+                                                                    <option value="Pending"
+                                                                        <?= $row['order_status'] === 'Pending' ? 'selected' : '' ?>>
+                                                                        Pending</option>
+                                                                    <option value="Assigned"
+                                                                        <?= $row['order_status'] === 'Assigned' ? 'selected' : '' ?>>
+                                                                        Assigned</option>
+                                                                    <option value="Completed"
+                                                                        <?= $row['order_status'] === 'Completed' ? 'selected' : '' ?>>
+                                                                        Completed</option>
+                                                                    <option value="Cancelled"
+                                                                        <?= $row['order_status'] === 'Cancelled' ? 'selected' : '' ?>>
+                                                                        Cancelled</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -267,7 +299,7 @@ $result = $stmt->get_result();
                                         else:
                                     ?>
                                     <tr>
-                                        <td colspan="7" class="text-center">No riders found.</td>
+                                        <td colspan="7" class="text-center">No orders found.</td>
                                     </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -280,7 +312,28 @@ $result = $stmt->get_result();
     </section>
 </main>
 
-<footer id="footer" class="footer fixed-bottom border-top py-3">
+<style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #main {
+        flex: 1 0 auto;
+    }
+
+    #footer {
+        flex-shrink: 0;
+    }
+</style>
+
+<footer id="footer" class="footer border-top py-3">
     <div class="container">
         <div class="copyright text-center">
             &copy; 2025 <strong><span>PricelBadz</span></strong>. All Rights Reserved

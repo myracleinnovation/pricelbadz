@@ -21,11 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['last_name'] = $user['last_name'];
 
         if ($user['access_type'] == 'Admin') {
-            header('Location: admin/analytics.php');
-        } elseif ($user['access_type'] == 'Customer') {
-            header('Location: home.php');
-        } elseif ($user['access_type'] == 'Rider') {
-            header('Location: rider.php');
+            header('Location: admin/dashboard.php');
+        } else {
+            echo "<script>alert('Access denied. Admin access only.');</script>";
         }
         exit();
     } else {
