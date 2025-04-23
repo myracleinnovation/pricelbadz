@@ -94,6 +94,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         background-repeat: no-repeat;
         background-position: center;
     }
+
+    .marquee-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .marquee-content {
+        display: flex;
+        animation: marquee 20s linear infinite;
+        width: fit-content;
+    }
+
+    .marquee-content:hover {
+        animation-play-state: paused;
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .marquee-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: background-color 0.3s;
+    }
+
+    .marquee-btn:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .marquee-btn-left {
+        left: 10px;
+    }
+
+    .marquee-btn-right {
+        right: 10px;
+    }
+
+    .marquee-item {
+        flex-shrink: 0;
+    }
+
+    .marquee-img {
+        transition: transform 0.3s;
+    }
+
+    .marquee-img:hover {
+        transform: scale(1.1);
+    }
 </style>
 
 <body>
@@ -138,6 +206,270 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
         </div>
+
+        <!-- Marquee Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="marquee-container bg-light py-3 position-relative">
+                            <button class="marquee-btn marquee-btn-left" id="speedDown">
+                                <i class="bx bx-chevron-left"></i>
+                            </button>
+                            <div class="marquee-content d-flex align-items-center" id="marqueeContent">
+                                <!-- First set of images -->
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/balinsayaw_seaside.jpg" alt="Delivery Service"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/banhpho.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/black_scoop.jpg" alt="Fast Delivery" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/bona_chaolong.jpg" alt="PricelBadz" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/bonchon.jpg" alt="Delivery Service" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/buko_rocks.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/chowking.jpg" alt="Fast Delivery" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/crazy_krunch.jpg" alt="PricelBadz" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/crispy_king.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/dunkin.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/elmers.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/greenwich.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/haim_chicken.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/inasal.webp" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/island_sizzle.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/jollibee.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/kainato.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/las_fresas.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/levs_pizza.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/max_bunny.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/mcdonalds.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/mister_donut.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/mr_shake.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/ms_tealiciousph.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/polo_vings.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/potato_corner.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/potdog.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/shakeys.png" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/shawarma.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/thalias_chaolong.webp" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+
+                                <!-- Duplicated set of images for seamless scrolling -->
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/balinsayaw_seaside.jpg" alt="Delivery Service"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/banhpho.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/black_scoop.jpg" alt="Fast Delivery" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/bona_chaolong.jpg" alt="PricelBadz" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/bonchon.jpg" alt="Delivery Service" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/buko_rocks.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/chowking.jpg" alt="Fast Delivery" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/crazy_krunch.jpg" alt="PricelBadz" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/crispy_king.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/dunkin.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/elmers.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/greenwich.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/haim_chicken.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/inasal.webp" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/island_sizzle.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/jollibee.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/kainato.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/las_fresas.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/levs_pizza.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/max_bunny.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/mcdonalds.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/mister_donut.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/mr_shake.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/ms_tealiciousph.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/polo_vings.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/potato_corner.jpg" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/potdog.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/shakeys.png" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/shawarma.jpg" alt="PricelBadz Logo" class="marquee-img"
+                                        style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                                <div class="marquee-item px-4">
+                                    <img src="./public/img/thalias_chaolong.webp" alt="PricelBadz Logo"
+                                        class="marquee-img" style="height: 60px; width: auto; border-radius: 8px;">
+                                </div>
+                            </div>
+                            <button class="marquee-btn marquee-btn-right" id="speedUp">
+                                <i class="bx bx-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="d-flex flex-wrap justify-content-center gap-4 mt-4 mb-4">
             <div class="row w-100 justify-content-center">
                 <!-- CUSTOMER ORDER FORM -->
@@ -227,9 +559,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <?php
                                             // Get riders with positive balance
                                             $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
-                                                                                                                                                  FROM triders 
-                                                                                                                                                  WHERE rider_status = 'Active' AND topup_balance > 0 
-                                                                                                                                                  ORDER BY rider_name";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          FROM triders 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          WHERE rider_status = 'Active' AND topup_balance > 0 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ORDER BY rider_name";
                                             $rider_result = $conn->query($rider_query);
                                             
                                             if ($rider_result && $rider_result->num_rows > 0) {
@@ -364,6 +696,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Marquee speed control
+        document.addEventListener('DOMContentLoaded', function() {
+            const marqueeContent = document.getElementById('marqueeContent');
+            const speedUpBtn = document.getElementById('speedUp');
+            const speedDownBtn = document.getElementById('speedDown');
+
+            // Get current animation duration
+            let currentDuration = 20; // Default duration in seconds (faster)
+
+            // Speed up button (decrease duration)
+            speedUpBtn.addEventListener('click', function() {
+                if (currentDuration > 5) {
+                    currentDuration -= 5;
+                    marqueeContent.style.animationDuration = currentDuration + 's';
+                }
+            });
+
+            // Slow down button (increase duration)
+            speedDownBtn.addEventListener('click', function() {
+                if (currentDuration < 60) {
+                    currentDuration += 5;
+                    marqueeContent.style.animationDuration = currentDuration + 's';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
