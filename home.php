@@ -194,8 +194,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img src="./public/img/logo.png" class="w-50 py-4 px-0" alt="PricelBadz Logo">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-body">
-                        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                    <div class="card-body p-0">
+                        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
                             <div class="carousel-indicators">
                                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
                                     class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -203,16 +203,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     aria-label="Slide 2"></button>
                                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
                                     aria-label="Slide 3"></button>
+                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3"
+                                    aria-label="Slide 4"></button>
+                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4"
+                                    aria-label="Slide 5"></button>
                             </div>
                             <div class="carousel-inner">
                                 <div class="carousel-item active">
-                                    <img src="./public/img/bg.jpg" class="d-block w-100" alt="...">
+                                    <img src="./public/img/PRICELBADZ_BANNER_1.png" class="d-block w-100"
+                                        alt="...">
                                 </div>
                                 <div class="carousel-item">
-                                    <img src="./public/img/bg.jpg" class="d-block w-100" alt="...">
+                                    <img src="./public/img/PRICELBADZ_BANNER_2.png" class="d-block w-100"
+                                        alt="...">
                                 </div>
                                 <div class="carousel-item">
-                                    <img src="./public/img/bg.jpg" class="d-block w-100" alt="...">
+                                    <img src="./public/img/PRICELBADZ_BANNER_3.png" class="d-block w-100"
+                                        alt="...">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./public/img/PRICELBADZ_BANNER_4.png" class="d-block w-100"
+                                        alt="...">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./public/img/PRICELBADZ_BANNER_5.png" class="d-block w-100"
+                                        alt="...">
                                 </div>
                             </div>
                             <button class="carousel-control-prev" type="button"
@@ -359,9 +374,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <?php
                                             // Get riders with positive balance
                                             $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  FROM triders 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  WHERE rider_status = 'Active' AND topup_balance > 0 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ORDER BY rider_name";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              FROM triders 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              WHERE rider_status = 'Active' AND topup_balance > 0 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ORDER BY rider_name";
                                             $rider_result = $conn->query($rider_query);
                                             
                                             if ($rider_result && $rider_result->num_rows > 0) {
