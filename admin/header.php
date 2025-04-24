@@ -129,6 +129,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span>User Accounts</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?= $current_page === 'merchant.php' ? '' : 'collapsed' ?>" href="merchant.php">
+                    <i class="bi bi-grid"></i>
+                    <span>Merchant</span>
+                </a>
+            </li>
         </ul>
     </aside>
 

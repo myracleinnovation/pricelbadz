@@ -77,3 +77,93 @@ VALUES
 ('Maria', 'Lopez', 'admin2', MD5('password'), 'Admin', 'Active',
 '{"analytics":{"create":1,"read":1,"update":1,"delete":1},"customers_order":{"create":1,"read":1,"update":1,"delete":1},"delivery_rider":{"create":1,"read":1,"update":1,"delete":1},"user_account":{"create":1,"read":1,"update":1,"delete":1}}'),
 ('Mark', 'Reyes', 'admin3', MD5('password'), 'Admin', 'Active', '{}');
+
+-- tmerchants table
+CREATE TABLE tmerchants (
+id INT AUTO_INCREMENT PRIMARY KEY,
+merchant_name VARCHAR(255) NOT NULL,
+merchant_description TEXT,
+merchant_logo VARCHAR(255) NOT NULL
+);
+
+-- Sample data for tmerchants
+INSERT INTO tmerchants (merchant_name, merchant_description, merchant_logo)
+VALUES
+('Balinsayaw Seaside', 'Fresh seafood restaurant with a beautiful seaside view', 'balinsayaw_seaside.jpg'),
+('Banh Pho', 'Authentic Vietnamese cuisine', 'banhpho.jpg'),
+('Black Scoop', 'Premium coffee and desserts', 'black_scoop.jpg'),
+('Bona Chaolong', 'Specializing in Vietnamese noodle soup', 'bona_chaolong.jpg'),
+('Bonchon', 'Korean-style fried chicken', 'bonchon.jpg'),
+('Buko Rocks', 'Fresh coconut-based drinks and snacks', 'buko_rocks.jpg'),
+('Chowking', 'Chinese fast food restaurant', 'chowking.jpg'),
+('Crazy Krunch', 'Crispy fried chicken and sides', 'crazy_krunch.jpg'),
+('Crispy King', 'Specializing in crispy fried chicken', 'crispy_king.jpg'),
+('Dunkin', 'Donuts, coffee, and baked goods', 'dunkin.jpg'),
+('Elmers', 'Family restaurant with Filipino dishes', 'elmers.jpg'),
+('Greenwich', 'Pizza and pasta fast food', 'greenwich.jpg'),
+('Haim Chicken', 'Specializing in various chicken dishes', 'haim_chicken.jpg'),
+('Inasal', 'Filipino grilled chicken restaurant', 'inasal.webp'),
+('Island Sizzle', 'Sizzling dishes with island flavors', 'island_sizzle.jpg'),
+('Jollibee', 'Filipino fast food restaurant', 'jollibee.jpg'),
+('Kainato', 'Authentic Filipino cuisine', 'kainato.jpg'),
+('Las Fresas', 'Fresh and healthy dining options', 'las_fresas.jpg'),
+('Levs Pizza', 'Artisanal pizza restaurant', 'levs_pizza.jpg'),
+('Max Bunny', 'Cafe with bunny theme', 'max_bunny.jpg'),
+('McDonalds', 'International fast food chain', 'mcdonalds.jpg'),
+('Mister Donut', 'Specializing in donuts and pastries', 'mister_donut.jpg'),
+('Mrs Tea', 'Milkshakes and desserts', 'mrs_tea.jpg'),
+('Ms TealiciousPH', 'Specialty tea cafe', 'ms_tealiciousph.jpg'),
+('Polo Vings', 'Sports-themed restaurant', 'polo_vings.jpg'),
+('Potato Corner', 'Specializing in flavored fries', 'potato_corner.jpg'),
+('Potdog', 'Hotdog and fast food items', 'potdog.jpg'),
+('Shakeys', 'Pizza and pasta restaurant', 'shakeys.png'),
+('Shawarma', 'Middle Eastern fast food', 'shawarma.jpg'),
+('Thalias Chaolong', 'Vietnamese noodle soup restaurant', 'thalias_chaolong.webp');
+
+-- tmerchant_images table for additional merchant images
+CREATE TABLE tmerchant_images (
+id INT AUTO_INCREMENT PRIMARY KEY,
+merchant_id INT NOT NULL,
+image_path VARCHAR(255) NOT NULL,
+image_description TEXT,
+display_order INT DEFAULT 0,
+date_added DATETIME DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (merchant_id) REFERENCES tmerchants(id) ON DELETE CASCADE
+);
+
+-- Sample data for tmerchant_images
+INSERT INTO tmerchant_images (merchant_id, image_path, image_description, display_order)
+VALUES
+(23, 'mrs_tea1.jpg', 'Mrs Tea store front', 1),
+(23, 'mrs_tea2.jpg', 'Mrs Tea store front', 2),
+(23, 'mrs_tea3.jpg', 'Mrs Tea store front', 3),
+(23, 'mrs_tea4.jpg', 'Mrs Tea store front', 4),
+(23, 'mrs_tea5.jpg', 'Mrs Tea store front', 5),
+(23, 'mrs_tea6.jpg', 'Mrs Tea store front', 6),
+(23, 'mrs_tea7.jpg', 'Mrs Tea store front', 7),
+(23, 'mrs_tea8.jpg', 'Mrs Tea store front', 8),
+(23, 'mrs_tea9.jpg', 'Mrs Tea store front', 9),
+(23, 'mrs_tea10.jpg', 'Mrs Tea store front', 10),
+(23, 'mrs_tea11.jpg', 'Mrs Tea store front', 11),
+(23, 'mrs_tea12.jpg', 'Mrs Tea store front', 12),
+(23, 'mrs_tea13.jpg', 'Mrs Tea store front', 13),
+
+-- Balinsayaw Seaside images
+(1, 'balinsayaw_seaside_interior.jpg', 'Interior view of the restaurant', 1),
+(1, 'balinsayaw_seaside_dishes.jpg', 'Popular seafood dishes', 2),
+(1, 'balinsayaw_seaside_view.jpg', 'Seaside view from the restaurant', 3),
+
+-- Jollibee images
+(16, 'jollibee_store.jpg', 'Jollibee store front', 1),
+(16, 'jollibee_chicken.jpg', 'Jollibee chicken joy', 2),
+(16, 'jollibee_burger.jpg', 'Jollibee burger', 3),
+
+-- McDonalds images
+(21, 'mcdonalds_store.jpg', 'McDonalds store front', 1),
+(21, 'mcdonalds_big_mac.jpg', 'Big Mac burger', 2),
+(21, 'mcdonalds_fries.jpg', 'McDonalds fries', 3),
+
+-- Shakeys images
+(27, 'shakeys_store.jpg', 'Shakeys store front', 1),
+(27, 'shakeys_pizza.jpg', 'Shakeys pizza', 2),
+(27, 'shakeys_pasta.jpg', 'Shakeys pasta', 3);

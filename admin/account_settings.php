@@ -231,5 +231,6 @@ $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
 </script>
 
 <?php
+include './footer.php';
 mysqli_close($conn);
 ?>
