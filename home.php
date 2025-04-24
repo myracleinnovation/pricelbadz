@@ -193,9 +193,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row mt-5 justify-content-center my-8">
             <img src="./public/img/logo.png" class="w-50 py-4 px-0" alt="PricelBadz Logo">
             <div class="col-12">
-                <div class="card">
+                <div class="card mb-5">
                     <div class="card-body p-0">
-                        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel"
+                            data-bs-interval="3000">
                             <div class="carousel-indicators">
                                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
                                     class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -247,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <!-- Marquee Section -->
-        <div class="row mb-4">
+        <div class="row mb-5 mt-5">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body p-0">
@@ -285,10 +286,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
-        <div class="d-flex flex-wrap justify-content-center gap-4 mt-4 mb-4">
+        <div class="d-flex flex-wrap justify-content-center gap-5 mt-5 mb-5">
             <div class="row w-100 justify-content-center">
                 <!-- CUSTOMER ORDER FORM -->
-                <div class="col-md-6">
+                <div class="col-md-6 mb-5">
                     <div class="card p-4" style="background-color: #0E76BC;">
                         <div class="card-body p-0">
                             <h5 class="card-title fw-bold text-white my-4 text-center fs-4">
@@ -374,9 +375,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <?php
                                             // Get riders with positive balance
                                             $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              FROM triders 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              WHERE rider_status = 'Active' AND topup_balance > 0 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ORDER BY rider_name";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          FROM triders 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          WHERE rider_status = 'Active' AND topup_balance > 0 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ORDER BY rider_name";
                                             $rider_result = $conn->query($rider_query);
                                             
                                             if ($rider_result && $rider_result->num_rows > 0) {
@@ -403,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- RIDER REGISTRATION FORM -->
-                <div class="col-md-6">
+                <div class="col-md-6 mb-5">
                     <div class="card p-4" style="background-color: #F26522;">
                         <div class="card-body p-0">
                             <h5 class="card-title fw-bold text-white my-4 text-center fs-4">
@@ -475,10 +476,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
         </div>
-        <div class="pb-3 text-center">
-            <img src="./public/img/logo.png" class="w-25 mt-3" alt="PricelBadz Image">
+        <div class="pb-5 text-center mt-5">
+            <img src="./public/img/logo.png" class="w-25 mt-5" alt="PricelBadz Image">
             <nav style="--bs-breadcrumb-divider: '|';">
-                <ol class="breadcrumb d-flex justify-content-center my-2">
+                <ol class="breadcrumb d-flex justify-content-center my-5">
                     <li class="breadcrumb-item"><a href="index.html" class="text-black">Terms and Condition</a></li>
                     <li class="breadcrumb-item"><a href="#" class="text-black">Privacy Statement</a></li>
                 </ol>
