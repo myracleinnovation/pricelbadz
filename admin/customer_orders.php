@@ -11,7 +11,7 @@ $query = "SELECT * FROM (
     SELECT 
         order_number, 
         customer_name, 
-        store_name, 
+        merchant_store_name, 
         store_address as pickup_location, 
         delivery_address as dropoff_address, 
         assigned_rider, 
@@ -23,7 +23,7 @@ $query = "SELECT * FROM (
     SELECT 
         order_number, 
         customer_name, 
-        NULL as store_name, 
+        NULL as merchant_store_name, 
         pickup_address as pickup_location, 
         dropoff_address, 
         assigned_rider, 
@@ -35,8 +35,8 @@ $query = "SELECT * FROM (
     SELECT 
         order_number, 
         customer_name, 
-        NULL as store_name, 
-        pickup_location, 
+        NULL as merchant_store_name, 
+        pickup_address as pickup_location, 
         dropoff_address, 
         assigned_rider, 
         order_status,
@@ -171,7 +171,7 @@ $result = $stmt->get_result();
                                                 <td><?= htmlspecialchars($row['order_number']) ?></td>
                                                 <td><?= htmlspecialchars($row['customer_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['order_type']) ?></td>
-                                                <td><?= htmlspecialchars($row['store_name'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($row['merchant_store_name'] ?? 'N/A') ?></td>
                                                 <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
                                                 </td>
                                                 <td>
@@ -229,9 +229,8 @@ $result = $stmt->get_result();
                                                 <th scope="col">#</th>
                                                 <th scope="col">Order Number</th>
                                                 <th scope="col">Customer Name</th>
-                                                <th scope="col">Store Name</th>
+                                                <th scope="col">Merchant Store</th>
                                                 <th scope="col">Order Description</th>
-                                                <th scope="col">Estimated Price</th>
                                                 <th scope="col">Assigned Rider</th>
                                                 <th scope="col">Order Status</th>
                                                 <th scope="col">Action</th>
@@ -248,11 +247,9 @@ $result = $stmt->get_result();
                                                 <th scope="row"><?= $count++ ?></th>
                                                 <td><?= htmlspecialchars($row['order_number']) ?></td>
                                                 <td><?= htmlspecialchars($row['customer_name']) ?></td>
-                                                <td><?= htmlspecialchars($row['store_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['merchant_store_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['order_description'] ?? 'N/A') ?></td>
-                                                <td><?= htmlspecialchars($row['estimated_price'] ?? 'N/A') ?></td>
-                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
-                                                </td>
+                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?></td>
                                                 <td>
                                                     <span class="badge <?php
                                                     switch ($row['order_status']) {
@@ -292,7 +289,7 @@ $result = $stmt->get_result();
                                             if ($count === 1):
                                             ?>
                                             <tr>
-                                                <td colspan="9" class="text-center">No PABILI orders found.</td>
+                                                <td colspan="8" class="text-center">No PABILI orders found.</td>
                                             </tr>
                                             <?php endif; ?>
                                         </tbody>
