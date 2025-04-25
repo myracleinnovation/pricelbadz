@@ -22,7 +22,7 @@ function createPabiliOrder($conn, $customer_name, $contact_number, $merchant_sto
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: 'Pabili order placed successfully. Order Number: " .
+                text: 'Pabili/Pasuyo order placed successfully. Order Number: " .
             $order_number .
             "',
                 confirmButtonColor: '#0E76BC'
@@ -71,7 +71,7 @@ function createPaangkasOrder($conn, $customer_name, $contact_number, $pickup_add
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: 'Paangkas order placed successfully. Order Number: " .
+                text: 'Pahatid/Pasundo order placed successfully. Order Number: " .
             $order_number .
             "',
                 confirmButtonColor: '#0E76BC'

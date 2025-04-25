@@ -66,9 +66,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             class="d-none d-md-block dropdown-toggle ps-2"><?= htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']) ?></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                        <li class="dropdown-header">
-                            <h6><?= htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']) ?></h6>
-                            <span><?= htmlspecialchars($_SESSION['access_type']) ?></span>
+                        <li class="dropdown-header text-center">
+                            <img src="../public/img/bg.jpg" alt="PricelBadz Logo" class="rounded-circle shadow-sm"
+                                style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #f8f9fa;">
+                            <h6 class="mb-0 mt-2 font-weight-bold">
+                                <?= htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']) ?></h6>
+                            <span class="text-muted small"><?= htmlspecialchars($_SESSION['role']) ?></span>
                         </li>
                         <li>
                             <hr class="dropdown-divider">

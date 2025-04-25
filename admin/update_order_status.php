@@ -19,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Determine which table to update based on order type
     $table = '';
     switch ($order_type) {
-        case 'PABILI':
+        case 'PABILI/PASUYO':
             $table = 'tpabili_orders';
             break;
-        case 'PAANGKAS':
+        case 'PAHATID/PASUNDO':
             $table = 'tpaangkas_orders';
             break;
         case 'PADALA':

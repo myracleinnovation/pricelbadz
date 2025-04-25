@@ -16,7 +16,7 @@ $query = "SELECT * FROM (
         delivery_address as dropoff_address, 
         assigned_rider, 
         order_status,
-        'PABILI' as order_type,
+        'PABILI/PASUYO' as order_type,
         created_at
     FROM tpabili_orders
     UNION ALL
@@ -28,7 +28,7 @@ $query = "SELECT * FROM (
         dropoff_address, 
         assigned_rider, 
         order_status,
-        'PAANGKAS' as order_type,
+        'PAHATID/PASUNDO' as order_type,
         created_at
     FROM tpaangkas_orders
     UNION ALL
@@ -127,18 +127,19 @@ $result = $stmt->get_result();
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="pabili-tab" data-bs-toggle="tab" data-bs-target="#pabili"
-                                    type="button" role="tab" aria-controls="pabili" aria-selected="false">PABILI
-                                    Orders</button>
+                                    type="button" role="tab" aria-controls="pabili"
+                                    aria-selected="false">PABILI/PASUYO
+                                </button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="paangkas-tab" data-bs-toggle="tab"
                                     data-bs-target="#paangkas" type="button" role="tab" aria-controls="paangkas"
-                                    aria-selected="false">PAANGKAS Orders</button>
+                                    aria-selected="false">PAHATID/PASUNDO</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="padala-tab" data-bs-toggle="tab" data-bs-target="#padala"
                                     type="button" role="tab" aria-controls="padala" aria-selected="false">PADALA
-                                    Orders</button>
+                                </button>
                             </li>
                         </ul>
 
@@ -241,7 +242,7 @@ $result = $stmt->get_result();
                                             $count = 1;
                                             mysqli_data_seek($result, 0);
                                             while ($row = $result->fetch_assoc()):
-                                                if ($row['order_type'] === 'PABILI'):
+                                                if ($row['order_type'] === 'PABILI/PASUYO'):
                                             ?>
                                             <tr>
                                                 <th scope="row"><?= $count++ ?></th>
@@ -290,7 +291,8 @@ $result = $stmt->get_result();
                                             if ($count === 1):
                                             ?>
                                             <tr>
-                                                <td colspan="8" class="text-center">No PABILI orders found.</td>
+                                                <td colspan="8" class="text-center">No PABILI/PASUYO orders found.
+                                                </td>
                                             </tr>
                                             <?php endif; ?>
                                         </tbody>
@@ -321,7 +323,7 @@ $result = $stmt->get_result();
                                             $count = 1;
                                             mysqli_data_seek($result, 0);
                                             while ($row = $result->fetch_assoc()):
-                                                if ($row['order_type'] === 'PAANGKAS'):
+                                                if ($row['order_type'] === 'PAHATID/PASUNDO'):
                                             ?>
                                             <tr>
                                                 <th scope="row"><?= $count++ ?></th>
@@ -371,7 +373,8 @@ $result = $stmt->get_result();
                                             if ($count === 1):
                                             ?>
                                             <tr>
-                                                <td colspan="9" class="text-center">No PAANGKAS orders found.</td>
+                                                <td colspan="9" class="text-center">No PAHATID/PASUNDO orders
+                                                    found.</td>
                                             </tr>
                                             <?php endif; ?>
                                         </tbody>
@@ -555,7 +558,7 @@ while ($row = $result->fetch_assoc()):
                     <div class="col-md-4 fw-bold">Delivery Location:</div>
                     <div class="col-md-8"><?= htmlspecialchars($row['dropoff_address']) ?></div>
                 </div>
-                <?php if ($row['order_type'] === 'PABILI'): ?>
+                <?php if ($row['order_type'] === 'PABILI/PASUYO'): ?>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Merchant Store:</div>
                     <div class="col-md-8"><?= htmlspecialchars($row['merchant_store_name'] ?? 'N/A') ?></div>

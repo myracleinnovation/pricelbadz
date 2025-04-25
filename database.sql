@@ -19,7 +19,7 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Table for Paangkas (Pahatid/Pasundo) orders
+-- Table for Pahatid/Pasundo orders
 CREATE TABLE tpaangkas_orders (
 id INT AUTO_INCREMENT PRIMARY KEY,
 order_number VARCHAR(20) NOT NULL,
@@ -97,12 +97,17 @@ INSERT INTO tusers (username, password, first_name, last_name, email, role, user
 ('admin', MD5('password'), 'Admin', 'User', 'admin@example.com', 'Admin', 'Active'),
 ('staff1', MD5('password'), 'Staff', 'One', 'staff1@example.com', 'Staff', 'Active');
 
--- Insert sample data for Pabili orders
-INSERT INTO tpabili_orders (order_number, customer_name, contact_number, merchant_store_name, order_description, store_address, pickup_note, delivery_address, delivery_note, assigned_rider, order_status) VALUES
-('PAB-2023-001', 'Juan Dela Cruz', '09123456789', 'Jollibee', '2 Chicken Joy (Quantity: 2, Estimated Price: ₱200), 1 Spaghetti (Quantity: 1, Estimated Price: ₱50)', '123 Main St, Manila', 'Please handle with care', '456 Home St, Quezon City', 'Leave at the gate', 'John Smith', 'Pending'),
-('PAB-2023-002', 'Maria Santos', '09234567890', 'McDonald\'s', '2 Big Mac (Quantity: 2, Estimated Price: ₱240), 1 Large Fries (Quantity: 1, Estimated Price: ₱60)', '789 Food St, Makati', 'Call upon arrival', '321 House St, Pasig', 'Drop at the front desk', 'Jane Johnson', 'Accepted');
+-- Insert sample data for Pabili/Pasuyo orders
+INSERT INTO tpabili_orders (order_number, customer_name, contact_number, merchant_store_name, order_description,
+store_address, pickup_note, delivery_address, delivery_note, assigned_rider, order_status) VALUES
+('PAB-2023-001', 'Juan Dela Cruz', '09123456789', 'Jollibee', '2 Chicken Joy (Quantity: 2, Estimated Price: ₱200), 1
+Spaghetti (Quantity: 1, Estimated Price: ₱50)', '123 Main St, Manila', 'Please handle with care', '456 Home St, Quezon
+City', 'Leave at the gate', 'John Smith', 'Pending'),
+('PAB-2023-002', 'Maria Santos', '09234567890', 'McDonald\'s', '2 Big Mac (Quantity: 2, Estimated Price: ₱240), 1 Large
+Fries (Quantity: 1, Estimated Price: ₱60)', '789 Food St, Makati', 'Call upon arrival', '321 House St, Pasig', 'Drop at
+the front desk', 'Jane Johnson', 'Accepted');
 
--- Insert sample data for Paangkas orders
+-- Insert sample data for Pahatid/Pasundo orders
 INSERT INTO tpaangkas_orders (order_number, customer_name, contact_number, pickup_address, vehicle_type, pickup_note,
 dropoff_address, dropoff_note, assigned_rider, order_status) VALUES
 ('PAA-2023-001', 'Pedro Reyes', '09345678901', '123 Pickup St, Manila', 'Motorcycle', 'Call when arriving', '456 Dropoff

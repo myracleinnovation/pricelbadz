@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $service_type = sanitizeInput($_POST['service_type']);
 
         switch ($service_type) {
-            case 'PABILI':
+            case 'PABILI/PASUYO':
                 $orderData = [
                     'customer_name' => sanitizeInput($_POST['name']),
                     'contact_number' => sanitizeInput($_POST['contact_number']),
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 createPabiliOrder($conn, ...array_values($orderData));
                 break;
 
-            case 'PAANGKAS':
+            case 'PAHATID/PASUNDO':
                 $orderData = [
                     'customer_name' => sanitizeInput($_POST['paangkas_name']),
                     'contact_number' => sanitizeInput($_POST['paangkas_contact_number']),
@@ -351,9 +351,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="form-floating">
                                         <select class="form-control" id="service_type" name="service_type" required>
                                             <option value="" disabled selected>Select Service Type</option>
-                                            <option value="PAANGKAS">Pahatid / Pasundo</option>
+                                            <option value="PAHATID/PASUNDO">Pahatid / Pasundo</option>
                                             <option value="PADALA">PADALA</option>
-                                            <option value="PABILI">Pabili / Pasuyo</option>
+                                            <option value="PABILI/PASUYO">Pabili / Pasuyo</option>
                                         </select>
                                         <label for="service_type">Service Type</label>
                                     </div>
@@ -739,12 +739,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $('.pabili-fields, .paangkas-fields, .padala-fields').removeClass('show');
 
                 // Show fields based on selected service
-                if (selectedService === 'PABILI') {
+                if (selectedService === 'PABILI/PASUYO') {
                     $('.pabili-fields').addClass('show');
                     $('#formTitle').html(
                         '<i class="bx bxs-notepad me-2"></i>Pabili / Pasuyo<br>Customer Order Form'
                     );
-                } else if (selectedService === 'PAANGKAS') {
+                } else if (selectedService === 'PAHATID/PASUNDO') {
                     $('.paangkas-fields').addClass('show');
                     $('#formTitle').html(
                         '<i class="bx bxs-notepad me-2"></i>Pahatid / Pasundo<br>Customer Order Form'
