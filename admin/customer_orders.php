@@ -69,7 +69,7 @@ $result = $stmt->get_result();
         <div class="row">
             <div class="col-lg-12">
                 <?php if (isset($_SESSION['success_message'])): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
                     <?= $_SESSION['success_message'] ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -77,7 +77,7 @@ $result = $stmt->get_result();
                 <?php endif; ?>
 
                 <?php if (isset($_SESSION['error_message'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorAlert">
                     <?= $_SESSION['error_message'] ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -249,7 +249,8 @@ $result = $stmt->get_result();
                                                 <td><?= htmlspecialchars($row['customer_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['merchant_store_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['order_description'] ?? 'N/A') ?></td>
-                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?></td>
+                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
+                                                </td>
                                                 <td>
                                                     <span class="badge <?php
                                                     switch ($row['order_status']) {
@@ -493,6 +494,110 @@ $result = $stmt->get_result();
         </div>
     </div>
 </footer>
+
+<?php
+// Reset the result pointer for modals
+mysqli_data_seek($result, 0);
+while ($row = $result->fetch_assoc()):
+?>
+<!-- Modal for each order -->
+<div class="modal fade" id="orderModal<?= urlencode($row['order_number']) ?>" tabindex="-1"
+    aria-labelledby="orderModalLabel<?= urlencode($row['order_number']) ?>" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Order Number:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['order_number']) ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Customer Name:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['customer_name']) ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Order Type:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['order_type']) ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Status:</div>
+                    <div class="col-md-8">
+                        <form method="POST" action="update_order_status.php" class="d-inline">
+                            <input type="hidden" name="order_number"
+                                value="<?= htmlspecialchars($row['order_number']) ?>">
+                            <input type="hidden" name="order_type"
+                                value="<?= htmlspecialchars($row['order_type']) ?>">
+                            <select name="order_status" class="form-select form-select-sm d-inline-block w-auto"
+                                onchange="this.form.submit()">
+                                <option value="Pending" <?= $row['order_status'] === 'Pending' ? 'selected' : '' ?>>
+                                    Pending</option>
+                                <option value="Accepted" <?= $row['order_status'] === 'Accepted' ? 'selected' : '' ?>>
+                                    Accepted</option>
+                                <option value="In Progress"
+                                    <?= $row['order_status'] === 'In Progress' ? 'selected' : '' ?>>In Progress
+                                </option>
+                                <option value="Completed"
+                                    <?= $row['order_status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
+                                <option value="Cancelled"
+                                    <?= $row['order_status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Pickup Location:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['pickup_location']) ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Delivery Location:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['dropoff_address']) ?></div>
+                </div>
+                <?php if ($row['order_type'] === 'PABILI'): ?>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Merchant Store:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['merchant_store_name'] ?? 'N/A') ?></div>
+                </div>
+                <?php endif; ?>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Assigned Rider:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endwhile; ?>
+
+<script>
+    // Function to hide alerts after 3 seconds
+    function hideAlerts() {
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+
+        if (successAlert) {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(successAlert);
+                bsAlert.close();
+            }, 3000);
+        }
+
+        if (errorAlert) {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(errorAlert);
+                bsAlert.close();
+            }, 3000);
+        }
+    }
+
+    // Call the function when the page loads
+    document.addEventListener('DOMContentLoaded', hideAlerts);
+</script>
 
 <?php
 mysqli_close($conn);

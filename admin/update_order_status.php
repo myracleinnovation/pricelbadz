@@ -11,30 +11,42 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Check if form was submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get form data
-    $order_number = isset($_POST['order_number']) ? $_POST['order_number'] : '';
-    $new_status = isset($_POST['new_status']) ? $_POST['new_status'] : '';
-    
-    // Validate data
-    if (empty($order_number) || empty($new_status)) {
-        $_SESSION['error_message'] = "Order number and new status are required.";
-        header("Location: customer_orders.php");
-        exit();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $order_number = $_POST['order_number'];
+    $order_type = $_POST['order_type'];
+    $new_status = $_POST['order_status'];
+
+    // Determine which table to update based on order type
+    $table = '';
+    switch ($order_type) {
+        case 'PABILI':
+            $table = 'tpabili_orders';
+            break;
+        case 'PAANGKAS':
+            $table = 'tpaangkas_orders';
+            break;
+        case 'PADALA':
+            $table = 'tpadala_orders';
+            break;
+        default:
+            $_SESSION['error_message'] = 'Invalid order type';
+            header('Location: customer_orders.php');
+            exit;
     }
-    
-    // Update the order status in the database
-    $update_query = "UPDATE tcustomer_order SET order_status = ? WHERE order_number = ?";
-    $stmt = $conn->prepare($update_query);
-    $stmt->bind_param("ss", $new_status, $order_number);
-    
+
+    // Update the order status
+    $sql = "UPDATE $table SET order_status = ? WHERE order_number = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss', $new_status, $order_number);
+
     if ($stmt->execute()) {
-        $_SESSION['success_message'] = "Order status updated successfully.";
+        $_SESSION['success_message'] = 'Order status updated successfully';
     } else {
-        $_SESSION['error_message'] = "Error updating order status: " . $conn->error;
+        $_SESSION['error_message'] = 'Failed to update order status';
     }
-    
+
     $stmt->close();
+    mysqli_close($conn);
 } else {
     $_SESSION['error_message'] = "Invalid request method.";
 }

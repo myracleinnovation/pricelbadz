@@ -42,4 +42,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Redirect back to delivery rider page
 header("Location: delivery_rider.php");
 exit();
-?> 
+?>

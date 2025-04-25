@@ -288,6 +288,47 @@ $result = $stmt->get_result();
     </div>
 </footer>
 
+<?php if (isset($_SESSION['success_message'])): ?>
+<div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
+    <?= $_SESSION['success_message'] ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error_message'])): ?>
+<div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorAlert">
+    <?= $_SESSION['error_message'] ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php unset($_SESSION['error_message']); ?>
+<?php endif; ?>
+
+<script>
+    // Function to hide alerts after 3 seconds
+    function hideAlerts() {
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+
+        if (successAlert) {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(successAlert);
+                bsAlert.close();
+            }, 3000);
+        }
+
+        if (errorAlert) {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(errorAlert);
+                bsAlert.close();
+            }, 3000);
+        }
+    }
+
+    // Call the function when the page loads
+    document.addEventListener('DOMContentLoaded', hideAlerts);
+</script>
+
 <?php
 mysqli_close($conn);
 ?>
