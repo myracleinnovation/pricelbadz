@@ -7,13 +7,50 @@ $search = isset($_POST['search']) ? $_POST['search'] : '';
 $status = isset($_POST['status']) ? $_POST['status'] : 'All Status';
 
 // Build the query with optional filters
-$query = "SELECT order_number, customer_name, merchant_name, pickup_address, dropoff_address, assigned_rider, order_status 
-        FROM tcustomer_order 
-        WHERE (order_number LIKE ? OR customer_name LIKE ? OR assigned_rider LIKE ?)";
+$query = "SELECT * FROM (
+    SELECT 
+        order_number, 
+        customer_name, 
+        store_name, 
+        store_address as pickup_location, 
+        delivery_address as dropoff_address, 
+        assigned_rider, 
+        order_status,
+        'PABILI' as order_type,
+        created_at
+    FROM tpabili_orders
+    UNION ALL
+    SELECT 
+        order_number, 
+        customer_name, 
+        NULL as store_name, 
+        pickup_address as pickup_location, 
+        dropoff_address, 
+        assigned_rider, 
+        order_status,
+        'PAANGKAS' as order_type,
+        created_at
+    FROM tpaangkas_orders
+    UNION ALL
+    SELECT 
+        order_number, 
+        customer_name, 
+        NULL as store_name, 
+        pickup_location, 
+        dropoff_address, 
+        assigned_rider, 
+        order_status,
+        'PADALA' as order_type,
+        created_at
+    FROM tpadala_orders
+) AS all_orders
+WHERE (order_number LIKE ? OR customer_name LIKE ? OR assigned_rider LIKE ?)";
 
 if ($status !== 'All Status') {
     $query .= ' AND order_status = ?';
 }
+
+$query .= ' ORDER BY created_at DESC';
 
 // Prepare and execute the query
 $stmt = $conn->prepare($query);
@@ -62,7 +99,10 @@ $result = $stmt->get_result();
                                         Status</option>
                                     <option value="Pending" <?= $status === 'Pending' ? 'selected' : '' ?>>Pending
                                     </option>
-                                    <option value="Assigned" <?= $status === 'Assigned' ? 'selected' : '' ?>>Assigned
+                                    <option value="Accepted" <?= $status === 'Accepted' ? 'selected' : '' ?>>Accepted
+                                    </option>
+                                    <option value="In Progress" <?= $status === 'In Progress' ? 'selected' : '' ?>>In
+                                        Progress
                                     </option>
                                     <option value="Completed" <?= $status === 'Completed' ? 'selected' : '' ?>>Completed
                                     </option>
@@ -78,232 +118,348 @@ $result = $stmt->get_result();
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Order Number</th>
-                                        <th scope="col">Customer Name</th>
-                                        <th scope="col">Merchant</th>
-                                        <th scope="col">Assigned Rider</th>
-                                        <th scope="col">Order Status</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                        $count = 1;
-                                        if ($result->num_rows > 0):
-                                            while ($row = $result->fetch_assoc()):
-                                    ?>
-                                    <tr>
-                                        <th scope="row"><?= $count++ ?></th>
-                                        <td><?= htmlspecialchars($row['order_number']) ?></td>
-                                        <td><?= htmlspecialchars($row['customer_name']) ?></td>
-                                        <td><?= htmlspecialchars($row['merchant_name']) ?></td>
-                                        <td><?= htmlspecialchars($row['assigned_rider']) ?></td>
-                                        <td>
-                                            <span class="badge <?php
-                                            switch ($row['order_status']) {
-                                                case 'Pending':
-                                                    echo 'bg-warning';
-                                                    break;
-                                                case 'Assigned':
-                                                    echo 'bg-info';
-                                                    break;
-                                                case 'Completed':
-                                                    echo 'bg-success';
-                                                    break;
-                                                case 'Cancelled':
-                                                    echo 'bg-danger';
-                                                    break;
-                                                default:
-                                                    echo 'bg-secondary';
-                                            }
-                                            ?>">
-                                                <?= htmlspecialchars($row['order_status']) ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
-                                                View
-                                            </button>
-                                        </td>
-                                    </tr>
+                        <!-- Order Type Tabs -->
+                        <ul class="nav nav-tabs" id="orderTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="all-tab" data-bs-toggle="tab"
+                                    data-bs-target="#all" type="button" role="tab" aria-controls="all"
+                                    aria-selected="true">All Orders</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pabili-tab" data-bs-toggle="tab" data-bs-target="#pabili"
+                                    type="button" role="tab" aria-controls="pabili" aria-selected="false">PABILI
+                                    Orders</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="paangkas-tab" data-bs-toggle="tab"
+                                    data-bs-target="#paangkas" type="button" role="tab" aria-controls="paangkas"
+                                    aria-selected="false">PAANGKAS Orders</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="padala-tab" data-bs-toggle="tab" data-bs-target="#padala"
+                                    type="button" role="tab" aria-controls="padala" aria-selected="false">PADALA
+                                    Orders</button>
+                            </li>
+                        </ul>
 
-                                    <!-- Order Details Modal -->
-                                    <div class="modal fade" id="orderModal<?= urlencode($row['order_number']) ?>"
-                                        tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title fw-bold">Order Details</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Order Number:</div>
-                                                        <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['order_number']) ?>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Customer Name:</div>
-                                                        <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['customer_name']) ?>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Merchant:</div>
-                                                        <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['merchant_name']) ?>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Pickup Address:</div>
-                                                        <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['pickup_address']) ?></div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Dropoff Address:</div>
-                                                        <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['dropoff_address']) ?></div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Assigned Rider:</div>
-                                                        <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Order Status:</div>
-                                                        <div class="col-md-8">
-                                                            <span class="badge <?php
-                                                            switch ($row['order_status']) {
-                                                                case 'Pending':
-                                                                    echo 'bg-warning';
-                                                                    break;
-                                                                case 'Assigned':
-                                                                    echo 'bg-info';
-                                                                    break;
-                                                                case 'Completed':
-                                                                    echo 'bg-success';
-                                                                    break;
-                                                                case 'Cancelled':
-                                                                    echo 'bg-danger';
-                                                                    break;
-                                                                default:
-                                                                    echo 'bg-secondary';
-                                                            }
-                                                            ?>">
-                                                                <?= htmlspecialchars($row['order_status']) ?>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
+                        <div class="tab-content pt-2" id="orderTabContent">
+                            <!-- All Orders Tab -->
+                            <div class="tab-pane fade show active" id="all" role="tabpanel"
+                                aria-labelledby="all-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Order Number</th>
+                                                <th scope="col">Customer Name</th>
+                                                <th scope="col">Service Type</th>
+                                                <th scope="col">Merchant/Store</th>
+                                                <th scope="col">Assigned Rider</th>
+                                                <th scope="col">Order Status</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $count = 1;
+                                            if ($result->num_rows > 0):
+                                                while ($row = $result->fetch_assoc()):
+                                            ?>
+                                            <tr>
+                                                <th scope="row"><?= $count++ ?></th>
+                                                <td><?= htmlspecialchars($row['order_number']) ?></td>
+                                                <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['order_type']) ?></td>
+                                                <td><?= htmlspecialchars($row['store_name'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
+                                                </td>
+                                                <td>
+                                                    <span class="badge <?php
+                                                    switch ($row['order_status']) {
+                                                        case 'Pending':
+                                                            echo 'bg-warning';
+                                                            break;
+                                                        case 'Accepted':
+                                                            echo 'bg-info';
+                                                            break;
+                                                        case 'In Progress':
+                                                            echo 'bg-primary';
+                                                            break;
+                                                        case 'Completed':
+                                                            echo 'bg-success';
+                                                            break;
+                                                        case 'Cancelled':
+                                                            echo 'bg-danger';
+                                                            break;
+                                                        default:
+                                                            echo 'bg-secondary';
+                                                    }
+                                                    ?>">
+                                                        <?= htmlspecialchars($row['order_status']) ?>
+                                                    </span>
+                                                </td>
+                                                <td>
                                                     <button type="button" class="btn btn-primary"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#editStatusModal<?= urlencode($row['order_number']) ?>">
-                                                        Edit Status
+                                                        data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
+                                                        View
                                                     </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                endwhile;
+                                            else:
+                                            ?>
+                                            <tr>
+                                                <td colspan="8" class="text-center">No orders found.</td>
+                                            </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
-                                    <!-- Edit Status Modal -->
-                                    <div class="modal fade" id="editStatusModal<?= urlencode($row['order_number']) ?>"
-                                        tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title fw-bold">Edit Order Status</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <form action="update_order_status.php" method="POST">
-                                                    <div class="modal-body">
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-4 fw-bold">Order Number:</div>
-                                                            <div class="col-md-8">
-                                                                <?= htmlspecialchars($row['order_number']) ?>
-                                                                <input type="hidden" name="order_number"
-                                                                    value="<?= htmlspecialchars($row['order_number']) ?>">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-4 fw-bold">Current Status:</div>
-                                                            <div class="col-md-8">
-                                                                <span class="badge <?php
-                                                                switch ($row['order_status']) {
-                                                                    case 'Pending':
-                                                                        echo 'bg-warning';
-                                                                        break;
-                                                                    case 'Assigned':
-                                                                        echo 'bg-info';
-                                                                        break;
-                                                                    case 'Completed':
-                                                                        echo 'bg-success';
-                                                                        break;
-                                                                    case 'Cancelled':
-                                                                        echo 'bg-danger';
-                                                                        break;
-                                                                    default:
-                                                                        echo 'bg-secondary';
-                                                                }
-                                                                ?>">
-                                                                    <?= htmlspecialchars($row['order_status']) ?>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-4 fw-bold">New Status:</div>
-                                                            <div class="col-md-8">
-                                                                <select name="new_status" class="form-select"
-                                                                    required>
-                                                                    <option value="">Select Status</option>
-                                                                    <option value="Pending"
-                                                                        <?= $row['order_status'] === 'Pending' ? 'selected' : '' ?>>
-                                                                        Pending</option>
-                                                                    <option value="Assigned"
-                                                                        <?= $row['order_status'] === 'Assigned' ? 'selected' : '' ?>>
-                                                                        Assigned</option>
-                                                                    <option value="Completed"
-                                                                        <?= $row['order_status'] === 'Completed' ? 'selected' : '' ?>>
-                                                                        Completed</option>
-                                                                    <option value="Cancelled"
-                                                                        <?= $row['order_status'] === 'Cancelled' ? 'selected' : '' ?>>
-                                                                        Cancelled</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-primary">Update
-                                                            Status</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <?php
+                            <!-- PABILI Orders Tab -->
+                            <div class="tab-pane fade" id="pabili" role="tabpanel" aria-labelledby="pabili-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Order Number</th>
+                                                <th scope="col">Customer Name</th>
+                                                <th scope="col">Store Name</th>
+                                                <th scope="col">Order Description</th>
+                                                <th scope="col">Estimated Price</th>
+                                                <th scope="col">Assigned Rider</th>
+                                                <th scope="col">Order Status</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $count = 1;
+                                            mysqli_data_seek($result, 0);
+                                            while ($row = $result->fetch_assoc()):
+                                                if ($row['order_type'] === 'PABILI'):
+                                            ?>
+                                            <tr>
+                                                <th scope="row"><?= $count++ ?></th>
+                                                <td><?= htmlspecialchars($row['order_number']) ?></td>
+                                                <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['store_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['order_description'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($row['estimated_price'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
+                                                </td>
+                                                <td>
+                                                    <span class="badge <?php
+                                                    switch ($row['order_status']) {
+                                                        case 'Pending':
+                                                            echo 'bg-warning';
+                                                            break;
+                                                        case 'Accepted':
+                                                            echo 'bg-info';
+                                                            break;
+                                                        case 'In Progress':
+                                                            echo 'bg-primary';
+                                                            break;
+                                                        case 'Completed':
+                                                            echo 'bg-success';
+                                                            break;
+                                                        case 'Cancelled':
+                                                            echo 'bg-danger';
+                                                            break;
+                                                        default:
+                                                            echo 'bg-secondary';
+                                                    }
+                                                    ?>">
+                                                        <?= htmlspecialchars($row['order_status']) ?>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
+                                                        View
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                endif;
                                             endwhile;
-                                        else:
-                                    ?>
-                                    <tr>
-                                        <td colspan="7" class="text-center">No orders found.</td>
-                                    </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                                            if ($count === 1):
+                                            ?>
+                                            <tr>
+                                                <td colspan="9" class="text-center">No PABILI orders found.</td>
+                                            </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- PAANGKAS Orders Tab -->
+                            <div class="tab-pane fade" id="paangkas" role="tabpanel"
+                                aria-labelledby="paangkas-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Order Number</th>
+                                                <th scope="col">Customer Name</th>
+                                                <th scope="col">Vehicle Type</th>
+                                                <th scope="col">Pickup Address</th>
+                                                <th scope="col">Dropoff Address</th>
+                                                <th scope="col">Assigned Rider</th>
+                                                <th scope="col">Order Status</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $count = 1;
+                                            mysqli_data_seek($result, 0);
+                                            while ($row = $result->fetch_assoc()):
+                                                if ($row['order_type'] === 'PAANGKAS'):
+                                            ?>
+                                            <tr>
+                                                <th scope="row"><?= $count++ ?></th>
+                                                <td><?= htmlspecialchars($row['order_number']) ?></td>
+                                                <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['vehicle_type'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($row['pickup_location']) ?></td>
+                                                <td><?= htmlspecialchars($row['dropoff_address']) ?></td>
+                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
+                                                </td>
+                                                <td>
+                                                    <span class="badge <?php
+                                                    switch ($row['order_status']) {
+                                                        case 'Pending':
+                                                            echo 'bg-warning';
+                                                            break;
+                                                        case 'Accepted':
+                                                            echo 'bg-info';
+                                                            break;
+                                                        case 'In Progress':
+                                                            echo 'bg-primary';
+                                                            break;
+                                                        case 'Completed':
+                                                            echo 'bg-success';
+                                                            break;
+                                                        case 'Cancelled':
+                                                            echo 'bg-danger';
+                                                            break;
+                                                        default:
+                                                            echo 'bg-secondary';
+                                                    }
+                                                    ?>">
+                                                        <?= htmlspecialchars($row['order_status']) ?>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
+                                                        View
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                endif;
+                                            endwhile;
+                                            if ($count === 1):
+                                            ?>
+                                            <tr>
+                                                <td colspan="9" class="text-center">No PAANGKAS orders found.</td>
+                                            </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- PADALA Orders Tab -->
+                            <div class="tab-pane fade" id="padala" role="tabpanel" aria-labelledby="padala-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Order Number</th>
+                                                <th scope="col">Customer Name</th>
+                                                <th scope="col">Order Description</th>
+                                                <th scope="col">Pickup Location</th>
+                                                <th scope="col">Dropoff Address</th>
+                                                <th scope="col">Assigned Rider</th>
+                                                <th scope="col">Order Status</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $count = 1;
+                                            mysqli_data_seek($result, 0);
+                                            while ($row = $result->fetch_assoc()):
+                                                if ($row['order_type'] === 'PADALA'):
+                                            ?>
+                                            <tr>
+                                                <th scope="row"><?= $count++ ?></th>
+                                                <td><?= htmlspecialchars($row['order_number']) ?></td>
+                                                <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['order_description'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($row['pickup_location']) ?></td>
+                                                <td><?= htmlspecialchars($row['dropoff_address']) ?></td>
+                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
+                                                </td>
+                                                <td>
+                                                    <span class="badge <?php
+                                                    switch ($row['order_status']) {
+                                                        case 'Pending':
+                                                            echo 'bg-warning';
+                                                            break;
+                                                        case 'Accepted':
+                                                            echo 'bg-info';
+                                                            break;
+                                                        case 'In Progress':
+                                                            echo 'bg-primary';
+                                                            break;
+                                                        case 'Completed':
+                                                            echo 'bg-success';
+                                                            break;
+                                                        case 'Cancelled':
+                                                            echo 'bg-danger';
+                                                            break;
+                                                        default:
+                                                            echo 'bg-secondary';
+                                                    }
+                                                    ?>">
+                                                        <?= htmlspecialchars($row['order_status']) ?>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
+                                                        View
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                endif;
+                                            endwhile;
+                                            if ($count === 1):
+                                            ?>
+                                            <tr>
+                                                <td colspan="9" class="text-center">No PADALA orders found.</td>
+                                            </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

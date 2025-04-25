@@ -1,82 +1,129 @@
 CREATE DATABASE IF NOT EXISTS pricelbadz;
 USE pricelbadz;
 
--- Updated tcustomer_order table
-CREATE TABLE tcustomer_order (
+-- Table for Pabili/Pasuyo orders
+CREATE TABLE tpabili_orders (
 id INT AUTO_INCREMENT PRIMARY KEY,
-order_number VARCHAR(16) NOT NULL,
-customer_name VARCHAR(255) NOT NULL,
+order_number VARCHAR(20) NOT NULL,
+customer_name VARCHAR(100) NOT NULL,
 contact_number VARCHAR(20) NOT NULL,
-merchant_name VARCHAR(255) NOT NULL,
-pickup_address VARCHAR(255) NOT NULL,
+store_name VARCHAR(100) NOT NULL,
+order_description TEXT NOT NULL,
+quantity INT NOT NULL,
+estimated_price DECIMAL(10, 2) NOT NULL,
+store_address TEXT NOT NULL,
 pickup_note TEXT,
-order_description TEXT,
-quantity INT DEFAULT 1,
-estimated_price DECIMAL(10, 2) DEFAULT 0.00,
-dropoff_address VARCHAR(255) NOT NULL,
-dropoff_note TEXT,
-assigned_rider VARCHAR(255) DEFAULT NULL,
-order_status VARCHAR(100) NOT NULL DEFAULT 'Pending',
-date_ordered DATETIME DEFAULT CURRENT_TIMESTAMP
+delivery_address TEXT NOT NULL,
+delivery_note TEXT,
+assigned_rider VARCHAR(100),
+order_status ENUM('Pending', 'Accepted', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Pending',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Sample data for tcustomer_order
-INSERT INTO tcustomer_order (
-order_number, customer_name, contact_number, merchant_name, pickup_address,
-pickup_note, order_description, quantity, estimated_price, dropoff_address,
-dropoff_note, assigned_rider, order_status
-) VALUES
-('ORD123456789012', 'Juan Dela Cruz', '09171234567', 'Mang Juan Eatery', '123 Rizal St., QC',
-'Please handle with care', '2x Chicken Inasal', 2, 200.00, '456 Mabini St., Manila',
-'Leave at the gate', 'Mark Reyes', 'Pending'),
-('ORD987654321098', 'Ana Santos', '09179876543', 'Sarap Corner', '789 Luna St., Makati',
-'Call upon arrival', '1x Pancit, 1x Lumpia', 2, 150.00, '321 Bonifacio St., Taguig',
-'Drop at the front desk', NULL, 'Pending');
+-- Table for Paangkas (Pahatid/Pasundo) orders
+CREATE TABLE tpaangkas_orders (
+id INT AUTO_INCREMENT PRIMARY KEY,
+order_number VARCHAR(20) NOT NULL,
+customer_name VARCHAR(100) NOT NULL,
+contact_number VARCHAR(20) NOT NULL,
+pickup_address TEXT NOT NULL,
+vehicle_type ENUM('Motorcycle', 'Tricycle', 'Car') NOT NULL,
+pickup_note TEXT,
+dropoff_address TEXT NOT NULL,
+dropoff_note TEXT,
+assigned_rider VARCHAR(100),
+order_status ENUM('Pending', 'Accepted', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Pending',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
--- Updated triders table with more registration fields
+-- Table for Padala orders
+CREATE TABLE tpadala_orders (
+id INT AUTO_INCREMENT PRIMARY KEY,
+order_number VARCHAR(20) NOT NULL,
+customer_name VARCHAR(100) NOT NULL,
+contact_number VARCHAR(20) NOT NULL,
+pickup_location TEXT NOT NULL,
+order_description TEXT NOT NULL,
+pickup_note TEXT,
+dropoff_address TEXT NOT NULL,
+dropoff_note TEXT,
+assigned_rider VARCHAR(100),
+order_status ENUM('Pending', 'Accepted', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Pending',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Table for riders
 CREATE TABLE triders (
 id INT AUTO_INCREMENT PRIMARY KEY,
-first_name VARCHAR(255) NOT NULL,
-middle_name VARCHAR(255),
-last_name VARCHAR(255) NOT NULL,
-license_number VARCHAR(100) NOT NULL,
-vehicle_type VARCHAR(100) NOT NULL,
-vehicle_cor VARCHAR(255) NOT NULL,
-vehicle_plate_number VARCHAR(100) NOT NULL,
+first_name VARCHAR(50) NOT NULL,
+middle_name VARCHAR(50),
+last_name VARCHAR(50) NOT NULL,
+license_number VARCHAR(20) NOT NULL,
+vehicle_type ENUM('Motorcycle', 'Tricycle', 'Car') NOT NULL,
+vehicle_cor VARCHAR(50) NOT NULL,
+vehicle_plate_number VARCHAR(20) NOT NULL,
 topup_balance DECIMAL(10, 2) DEFAULT 0.00,
-rider_status VARCHAR(100) NOT NULL DEFAULT 'Active',
-date_registered DATETIME DEFAULT CURRENT_TIMESTAMP
+rider_status ENUM('Active', 'Inactive') DEFAULT 'Active',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Sample data for triders
-INSERT INTO triders (
-first_name, middle_name, last_name, license_number, vehicle_type,
-vehicle_cor, vehicle_plate_number, topup_balance, rider_status
-) VALUES
-('Mark', 'Lopez', 'Reyes', 'D1234567', 'Motorcycle', 'COR123456', 'ABC-1234', 150.00, 'Active'),
-('Miguel', 'Santos', 'Cruz', 'E7654321', 'Motorcycle', 'COR654321', 'XYZ-5678', 200.00, 'Active'),
-('Joey', 'T.', 'Ramirez', 'F2345678', 'Bicycle', 'COR789012', 'LMN-9101', 0.00, 'Inactive');
-
--- tusers table
+-- Table for users (admin/staff)
 CREATE TABLE tusers (
 id INT AUTO_INCREMENT PRIMARY KEY,
-first_name VARCHAR(255) NOT NULL,
-last_name VARCHAR(255) NOT NULL,
-username VARCHAR(100) NOT NULL UNIQUE,
+username VARCHAR(50) NOT NULL UNIQUE,
 password VARCHAR(255) NOT NULL,
-access_type ENUM('Admin') NOT NULL DEFAULT 'Admin',
-user_status ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
-permissions JSON DEFAULT NULL,
-date_registered DATETIME DEFAULT CURRENT_TIMESTAMP
+first_name VARCHAR(50) NOT NULL,
+last_name VARCHAR(50) NOT NULL,
+email VARCHAR(100) NOT NULL UNIQUE,
+role ENUM('Admin', 'Staff') DEFAULT 'Staff',
+user_status ENUM('Active', 'Inactive') DEFAULT 'Active',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Sample data for tusers
-INSERT INTO tusers (first_name, last_name, username, password, access_type, user_status, permissions)
-VALUES
-('Juan', 'Dela Cruz', 'admin1', MD5('password'), 'Admin', 'Active', '{}'),
-('Maria', 'Lopez', 'admin2', MD5('password'), 'Admin', 'Active',
-'{"analytics":{"create":1,"read":1,"update":1,"delete":1},"customers_order":{"create":1,"read":1,"update":1,"delete":1},"delivery_rider":{"create":1,"read":1,"update":1,"delete":1},"user_account":{"create":1,"read":1,"update":1,"delete":1}}'),
-('Mark', 'Reyes', 'admin3', MD5('password'), 'Admin', 'Active', '{}');
+-- Insert sample data for riders
+INSERT INTO triders (first_name, middle_name, last_name, license_number, vehicle_type, vehicle_cor,
+vehicle_plate_number, topup_balance, rider_status) VALUES
+('John', 'Doe', 'Smith', 'LIC123456', 'Motorcycle', 'COR123456', 'ABC1234', 1000.00, 'Active'),
+('Jane', 'Marie', 'Johnson', 'LIC789012', 'Tricycle', 'COR789012', 'XYZ5678', 1500.00, 'Active'),
+('Michael', 'James', 'Brown', 'LIC345678', 'Car', 'COR345678', 'DEF9012', 2000.00, 'Active'),
+('Mark', 'Lopez', 'Reyes', 'D1234567', 'Motorcycle', 'COR123456', 'ABC-1234', 150.00, 'Active'),
+('Miguel', 'Santos', 'Cruz', 'E7654321', 'Motorcycle', 'COR654321', 'XYZ-5678', 200.00, 'Active');
+
+-- Insert sample data for users
+INSERT INTO tusers (username, password, first_name, last_name, email, role, user_status) VALUES
+('admin', 'md5(password)', 'Admin', 'User', 'admin@example.com', 'Admin',
+'Active'),
+('staff1', 'md5(password)', 'Staff', 'One', 'staff1@example.com',
+'Staff', 'Active');
+
+-- Insert sample data for Pabili orders
+INSERT INTO tpabili_orders (order_number, customer_name, contact_number, store_name, order_description, quantity,
+estimated_price, store_address, pickup_note, delivery_address, delivery_note, assigned_rider, order_status) VALUES
+('PAB-2023-001', 'Juan Dela Cruz', '09123456789', 'Jollibee', '2 Chicken Joy, 1 Spaghetti', 3, 250.00, '123 Main St,
+Manila', 'Please handle with care', '456 Home St, Quezon City', 'Leave at the gate', 'John Smith', 'Pending'),
+('PAB-2023-002', 'Maria Santos', '09234567890', 'McDonald\'s', '2 Big Mac, 1 Large Fries', 3, 300.00, '789 Food St,
+Makati', 'Call upon arrival', '321 House St, Pasig', 'Drop at the front desk', 'Jane Johnson', 'Accepted');
+
+-- Insert sample data for Paangkas orders
+INSERT INTO tpaangkas_orders (order_number, customer_name, contact_number, pickup_address, vehicle_type, pickup_note,
+dropoff_address, dropoff_note, assigned_rider, order_status) VALUES
+('PAA-2023-001', 'Pedro Reyes', '09345678901', '123 Pickup St, Manila', 'Motorcycle', 'Call when arriving', '456 Dropoff
+St, Quezon City', 'Leave at the gate', 'John Smith', 'Pending'),
+('PAA-2023-002', 'Ana Garcia', '09456789012', '789 Pickup St, Makati', 'Car', 'Wait at the lobby', '321 Dropoff St,
+Pasig', 'Drop at the front desk', 'Michael Brown', 'Accepted');
+
+-- Insert sample data for Padala orders
+INSERT INTO tpadala_orders (order_number, customer_name, contact_number, pickup_location, order_description,
+pickup_note, dropoff_address, dropoff_note, assigned_rider, order_status) VALUES
+('PAD-2023-001', 'Jose Santos', '09567890123', '123 Pickup St, Manila', 'Package containing documents', 'Handle with
+care', '456 Dropoff St, Quezon City', 'Leave at the gate', 'John Smith', 'Pending'),
+('PAD-2023-002', 'Sofia Lopez', '09678901234', '789 Pickup St, Makati', 'Small box containing electronics', 'Fragile
+items', '321 Dropoff St, Pasig', 'Drop at the front desk', 'Jane Johnson', 'Accepted');
 
 -- tmerchants table
 CREATE TABLE tmerchants (

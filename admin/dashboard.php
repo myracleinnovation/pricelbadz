@@ -2,8 +2,11 @@
 include './header.php';
 include '../config/connect.php';
 
-// Get total number of orders
-$orderQuery = 'SELECT COUNT(*) as total_orders FROM tcustomer_order';
+// Get total number of orders (sum of all order types)
+$orderQuery = 'SELECT 
+    (SELECT COUNT(*) FROM tpabili_orders) + 
+    (SELECT COUNT(*) FROM tpaangkas_orders) + 
+    (SELECT COUNT(*) FROM tpadala_orders) as total_orders';
 $orderResult = $conn->query($orderQuery);
 $totalOrders = $orderResult->fetch_assoc()['total_orders'];
 
@@ -19,11 +22,17 @@ $totalUsers = $userResult->fetch_assoc()['total_users'];
 
 // Get monthly orders data for the last 6 months
 $monthlyQuery = "SELECT 
-    DATE_FORMAT(date_ordered, '%Y-%m') as month,
+    DATE_FORMAT(created_at, '%Y-%m') as month,
     COUNT(*) as order_count
-FROM tcustomer_order 
-WHERE date_ordered >= DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH)
-GROUP BY DATE_FORMAT(date_ordered, '%Y-%m')
+FROM (
+    SELECT created_at FROM tpabili_orders
+    UNION ALL
+    SELECT created_at FROM tpaangkas_orders
+    UNION ALL
+    SELECT created_at FROM tpadala_orders
+) AS all_orders
+WHERE created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH)
+GROUP BY DATE_FORMAT(created_at, '%Y-%m')
 ORDER BY month ASC";
 $monthlyResult = $conn->query($monthlyQuery);
 
@@ -38,17 +47,25 @@ while ($row = $monthlyResult->fetch_assoc()) {
 $statusQuery = "SELECT 
     CASE 
         WHEN order_status = 'Pending' THEN 'Pending'
-        WHEN order_status = 'Assigned' THEN 'Assigned'
+        WHEN order_status = 'Accepted' THEN 'Assigned'
+        WHEN order_status = 'In Progress' THEN 'In Progress'
         WHEN order_status = 'Completed' THEN 'Completed'
         WHEN order_status = 'Cancelled' THEN 'Cancelled'
         ELSE 'Other'
     END as order_status,
     COUNT(*) as status_count
-FROM tcustomer_order 
+FROM (
+    SELECT order_status FROM tpabili_orders
+    UNION ALL
+    SELECT order_status FROM tpaangkas_orders
+    UNION ALL
+    SELECT order_status FROM tpadala_orders
+) AS all_orders
 GROUP BY 
     CASE 
         WHEN order_status = 'Pending' THEN 'Pending'
-        WHEN order_status = 'Assigned' THEN 'Assigned'
+        WHEN order_status = 'Accepted' THEN 'Assigned'
+        WHEN order_status = 'In Progress' THEN 'In Progress'
         WHEN order_status = 'Completed' THEN 'Completed'
         WHEN order_status = 'Cancelled' THEN 'Cancelled'
         ELSE 'Other'
@@ -67,7 +84,7 @@ while ($row = $statusResult->fetch_assoc()) {
 }
 
 // Ensure all statuses are included even if they have zero count
-$allStatuses = ['Pending', 'Assigned', 'Completed', 'Cancelled'];
+$allStatuses = ['Pending', 'Assigned', 'In Progress', 'Completed', 'Cancelled'];
 $statusMap = array_combine($statusLabels, $statusCounts);
 
 $statusLabels = [];
@@ -194,7 +211,7 @@ foreach ($allStatuses as $status) {
     </section>
 </main>
 
-<footer id="footer" class="footer fixed-bottom border-top py-3">
+<footer id="footer" class="footer border-top py-3">
     <div class="container">
         <div class="copyright text-center">
             &copy; 2025 <strong><span>PricelBadz</span></strong>. All Rights Reserved

@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['username']) || $_SESSION['access_type'] !== 'Admin') {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Admin') {
     header('Location: ../login.php');
     exit();
 }
@@ -16,7 +16,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Dashboard - NiceAdmin Bootstrap Template</title>
+    <title>PricelBadz</title>
     <meta name="robots" content="noindex, nofollow">
     <meta content="" name="description">
     <meta content="" name="keywords">
@@ -30,6 +30,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
         rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Vendor CSS Files -->
     <link href="../public/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -67,15 +69,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <li class="dropdown-header">
                             <h6><?= htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']) ?></h6>
                             <span><?= htmlspecialchars($_SESSION['access_type']) ?></span>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="account_settings.php">
-                                <i class="bi bi-gear"></i>
-                                <span>Account Settings</span>
-                            </a>
                         </li>
                         <li>
                             <hr class="dropdown-divider">

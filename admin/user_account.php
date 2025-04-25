@@ -7,7 +7,7 @@ $search = isset($_POST['search']) ? $_POST['search'] : '';
 $status = isset($_POST['status']) ? $_POST['status'] : 'All Status';
 
 // Build the query with optional filters
-$query = "SELECT id, first_name, last_name, username, access_type, user_status, date_registered 
+$query = "SELECT id, first_name, last_name, username, role, user_status, created_at 
     FROM tusers 
     WHERE (first_name LIKE ? OR last_name LIKE ? OR username LIKE ?)";
 
@@ -65,9 +65,9 @@ $result = $stmt->get_result();
                                         <th scope="col">#</th>
                                         <th scope="col">Full Name</th>
                                         <th scope="col">Username</th>
-                                        <th scope="col">Access Type</th>
+                                        <th scope="col">Role</th>
                                         <th scope="col">Status</th>
-                                        <th scope="col">Date Registered</th>
+                                        <th scope="col">Created At</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -81,7 +81,7 @@ $result = $stmt->get_result();
                                         <th scope="row"><?= $count++ ?></th>
                                         <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
                                         <td><?= htmlspecialchars($row['username']) ?></td>
-                                        <td><?= htmlspecialchars($row['access_type']) ?></td>
+                                        <td><?= htmlspecialchars($row['role']) ?></td>
                                         <td>
                                             <span class="badge <?php
                                             switch ($row['user_status']) {
@@ -98,7 +98,7 @@ $result = $stmt->get_result();
                                                 <?= htmlspecialchars($row['user_status']) ?>
                                             </span>
                                         </td>
-                                        <td><?= date('Y-m-d', strtotime($row['date_registered'])) ?></td>
+                                        <td><?= date('Y-m-d', strtotime($row['created_at'])) ?></td>
                                         <td>
                                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                                 data-bs-target="#userModal<?= urlencode($row['id']) ?>">
@@ -134,9 +134,9 @@ $result = $stmt->get_result();
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Access Type:</div>
+                                                        <div class="col-md-4 fw-bold">Role:</div>
                                                         <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['access_type']) ?>
+                                                            <?= htmlspecialchars($row['role']) ?>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
@@ -159,9 +159,9 @@ $result = $stmt->get_result();
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-4 fw-bold">Date Registered:</div>
+                                                        <div class="col-md-4 fw-bold">Created At:</div>
                                                         <div class="col-md-8">
-                                                            <?= date('Y-m-d', strtotime($row['date_registered'])) ?>
+                                                            <?= date('Y-m-d', strtotime($row['created_at'])) ?>
                                                         </div>
                                                     </div>
                                                 </div>

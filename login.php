@@ -16,11 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         $_SESSION['username'] = $user['username'];
-        $_SESSION['access_type'] = $user['access_type'];
+        $_SESSION['role'] = $user['role'];
         $_SESSION['first_name'] = $user['first_name'];
         $_SESSION['last_name'] = $user['last_name'];
 
-        if ($user['access_type'] == 'Admin') {
+        if ($user['role'] == 'Admin') {
             header('Location: admin/dashboard.php');
         } else {
             echo "<script>alert('Access denied. Admin access only.');</script>";

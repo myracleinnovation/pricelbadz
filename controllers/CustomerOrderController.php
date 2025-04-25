@@ -19,10 +19,32 @@ function createCustomerOrder($conn, $customer_name, $contact_number, $merchant_n
         }
 
         $stmt->close();
-        $_SESSION['swal'] = ['icon' => 'success', 'title' => 'Success!', 'text' => 'Order placed successfully.'];
+        echo "<script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Order placed successfully. Order Number: " .
+            $order_number .
+            "',
+                confirmButtonColor: '#0E76BC'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'home.php';
+                }
+            });
+        </script>";
         return $order_number;
     } catch (Exception $e) {
-        $_SESSION['swal'] = ['icon' => 'error', 'title' => 'Error!', 'text' => $e->getMessage()];
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Failed to place order: " .
+            $e->getMessage() .
+            "',
+                confirmButtonColor: '#0E76BC'
+            });
+        </script>";
         return false;
     }
 }

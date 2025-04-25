@@ -16,10 +16,30 @@ function createRider($conn, $first_name, $middle_name, $last_name, $license_numb
         }
 
         $stmt->close();
-        $_SESSION['swal'] = ['icon' => 'success', 'title' => 'Success!', 'text' => 'Rider registered successfully.'];
+        echo "<script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Rider registered successfully.',
+                confirmButtonColor: '#F26522'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'home.php';
+                }
+            });
+        </script>";
         return true;
     } catch (Exception $e) {
-        $_SESSION['swal'] = ['icon' => 'error', 'title' => 'Error!', 'text' => $e->getMessage()];
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Failed to register rider: " .
+            $e->getMessage() .
+            "',
+                confirmButtonColor: '#F26522'
+            });
+        </script>";
         return false;
     }
 }

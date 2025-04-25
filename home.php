@@ -2,6 +2,7 @@
 include './config/connect.php';
 include './controllers/CustomerOrderController.php';
 include './controllers/RiderRegistrationController.php';
+include './controllers/OrderController.php';
 
 function sanitizeInput($data)
 {
@@ -34,22 +35,57 @@ if ($merchants_result && $merchants_result->num_rows > 0) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['place_order'])) {
-        $orderData = [
-            'customer_name' => sanitizeInput($_POST['name']),
-            'contact_number' => sanitizeInput($_POST['contact_number']),
-            'merchant_name' => sanitizeInput($_POST['merchant_name']),
-            'pickup_address' => sanitizeInput($_POST['pickup_address']),
-            'pickup_note' => sanitizeInput($_POST['pickup_note']),
-            'order_description' => sanitizeInput($_POST['order_description']),
-            'quantity' => (int) $_POST['quantity'],
-            'estimated_price' => (float) $_POST['estimated_price'],
-            'dropoff_address' => sanitizeInput($_POST['dropoff_address']),
-            'dropoff_note' => sanitizeInput($_POST['dropoff_note']),
-            'assigned_rider' => !empty($_POST['assigned_rider']) ? $_POST['assigned_rider'] : null,
-            'order_status' => $_POST['order_status'] ?? 'Pending',
-        ];
+        $service_type = sanitizeInput($_POST['service_type']);
 
-        createCustomerOrder($conn, ...array_values($orderData));
+        switch ($service_type) {
+            case 'PABILI':
+                $orderData = [
+                    'customer_name' => sanitizeInput($_POST['name']),
+                    'contact_number' => sanitizeInput($_POST['contact_number']),
+                    'store_name' => sanitizeInput($_POST['store_name']),
+                    'order_description' => sanitizeInput($_POST['order_description']),
+                    'quantity' => (int) $_POST['quantity'],
+                    'estimated_price' => (float) $_POST['estimated_price'],
+                    'store_address' => sanitizeInput($_POST['pickup_address']),
+                    'pickup_note' => sanitizeInput($_POST['pickup_note']),
+                    'delivery_address' => sanitizeInput($_POST['dropoff_address']),
+                    'delivery_note' => sanitizeInput($_POST['dropoff_note']),
+                    'assigned_rider' => !empty($_POST['assigned_rider']) ? $_POST['assigned_rider'] : null,
+                    'order_status' => 'Pending',
+                ];
+                createPabiliOrder($conn, ...array_values($orderData));
+                break;
+
+            case 'PAANGKAS':
+                $orderData = [
+                    'customer_name' => sanitizeInput($_POST['paangkas_name']),
+                    'contact_number' => sanitizeInput($_POST['paangkas_contact_number']),
+                    'pickup_address' => sanitizeInput($_POST['paangkas_pickup_address']),
+                    'vehicle_type' => sanitizeInput($_POST['paangkas_vehicle_type']),
+                    'pickup_note' => sanitizeInput($_POST['paangkas_pickup_note']),
+                    'dropoff_address' => sanitizeInput($_POST['paangkas_dropoff_address']),
+                    'dropoff_note' => sanitizeInput($_POST['paangkas_dropoff_note']),
+                    'assigned_rider' => !empty($_POST['paangkas_assigned_rider']) ? $_POST['paangkas_assigned_rider'] : null,
+                    'order_status' => 'Pending',
+                ];
+                createPaangkasOrder($conn, ...array_values($orderData));
+                break;
+
+            case 'PADALA':
+                $orderData = [
+                    'customer_name' => sanitizeInput($_POST['padala_name']),
+                    'contact_number' => sanitizeInput($_POST['padala_contact_number']),
+                    'pickup_location' => sanitizeInput($_POST['padala_pickup_location']),
+                    'order_description' => sanitizeInput($_POST['padala_order_description']),
+                    'pickup_note' => sanitizeInput($_POST['padala_pickup_note']),
+                    'dropoff_address' => sanitizeInput($_POST['padala_dropoff_address']),
+                    'dropoff_note' => sanitizeInput($_POST['padala_dropoff_note']),
+                    'assigned_rider' => !empty($_POST['padala_assigned_rider']) ? $_POST['padala_assigned_rider'] : null,
+                    'order_status' => 'Pending',
+                ];
+                createPadalaOrder($conn, ...array_values($orderData));
+                break;
+        }
     }
 
     if (isset($_POST['submit'])) {
@@ -77,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Dashboard - NiceAdmin Bootstrap Template</title>
+    <title>PricelBadz</title>
     <meta name="robots" content="noindex, nofollow">
     <meta content="" name="description">
     <meta content="" name="keywords">
@@ -91,6 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
         rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Vendor CSS Files -->
     <link href="./public/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -185,6 +223,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .marquee-img:hover {
         transform: scale(1.1);
+    }
+
+    .pabili-fields,
+    .paangkas-fields,
+    .padala-fields {
+        display: none !important;
+        width: 100%;
+    }
+
+    .pabili-fields.show,
+    .paangkas-fields.show,
+    .padala-fields.show {
+        display: flex !important;
     }
 </style>
 
@@ -288,110 +339,283 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="d-flex flex-wrap justify-content-center gap-5 mt-5 mb-5">
             <div class="row w-100 justify-content-center">
-                <!-- CUSTOMER ORDER FORM -->
+                <!-- PABILI FORM -->
                 <div class="col-md-6 mb-5">
                     <div class="card p-4" style="background-color: #0E76BC;">
                         <div class="card-body p-0">
-                            <h5 class="card-title fw-bold text-white my-4 text-center fs-4">
+                            <h5 class="card-title fw-bold text-white my-4 text-center fs-4" id="formTitle">
                                 <i class='bx bxs-notepad me-2'></i>Customer Order Form
                             </h5>
                             <form method="POST" class="row g-4 px-3">
-                                <div class="col-12 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Customer Name">
-                                        <label for="name">Customer Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="contact_number"
-                                            name="contact_number" placeholder="Contact Number">
-                                        <label for="contact_number">Contact Number</label>
-                                    </div>
-                                </div>
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <select class="form-control" id="merchant_name" name="merchant_name">
+                                        <select class="form-control" id="service_type" name="service_type" required>
+                                            <option value="" disabled selected>Select Service Type</option>
                                             <option value="PABILI">PABILI (Food Delivery / Item Delivery)</option>
                                             <option value="PAANGKAS">PAANGKAS (Pahatid / Pasundo)</option>
                                             <option value="PADALA">PADALA</option>
                                         </select>
-                                        <label for="merchant_name">Merchant Name / Pick-up Location</label>
+                                        <label for="service_type">Service Type</label>
                                     </div>
                                 </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="order_description" name="order_description" placeholder="Order Description"
-                                            style="height: 100px;"></textarea>
-                                        <label for="order_description">Order Description</label>
+
+                                <!-- PABILI Fields -->
+                                <div class="pabili-fields d-flex flex-wrap justify-content-center p-0 gap-2">
+                                    <div class="col-12 d-flex flex-wrap justify-content-center gap-2">
+                                        <div class="d-flex gap-2 col-12">
+                                            <div class="form-floating flex-fill">
+                                                <input type="text" class="form-control" id="name"
+                                                    name="name" placeholder="Customer Name">
+                                                <label for="name">Customer Name</label>
+                                            </div>
+                                            <div class="form-floating flex-fill">
+                                                <input type="text" class="form-control" id="contact_number"
+                                                    name="contact_number" placeholder="Contact Number">
+                                                <label for="contact_number">Contact Number</label>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-floating">
-                                        <input type="number" class="form-control" id="quantity" name="quantity"
-                                            placeholder="Quantity">
-                                        <label for="quantity">Quantity</label>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="store_name"
+                                                name="store_name" placeholder="Store Name">
+                                            <label for="store_name">Store Name</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-floating">
-                                        <input type="number" class="form-control" id="estimated_price"
-                                            name="estimated_price" step="0.01" placeholder="Estimated Price">
-                                        <label for="estimated_price">Estimated Price (₱)</label>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="order_description" name="order_description" placeholder="Order Description"
+                                                style="height: 100px;"></textarea>
+                                            <label for="order_description">Order Description</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="pickup_address"
-                                            name="pickup_address" placeholder="Pickup Address">
-                                        <label for="pickup_address">Pick-up Address</label>
+                                    <div class="d-flex gap-2 col-12">
+                                        <div class="form-floating flex-fill">
+                                            <input type="number" class="form-control" id="quantity"
+                                                name="quantity" placeholder="Quantity">
+                                            <label for="quantity">Quantity</label>
+                                        </div>
+                                        <div class="form-floating flex-fill">
+                                            <input type="number" class="form-control" id="estimated_price"
+                                                name="estimated_price" step="0.01" placeholder="Estimated Price">
+                                            <label for="estimated_price">Estimated Price (₱)</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="pickup_note" name="pickup_note" placeholder="Pickup Note" style="height: 80px;"></textarea>
-                                        <label for="pickup_note">Note to Rider (Pickup)</label>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="pickup_address"
+                                                name="pickup_address" placeholder="Store Address">
+                                            <label for="pickup_address">Store Address</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="dropoff_address"
-                                            name="dropoff_address" placeholder="Dropoff Address">
-                                        <label for="dropoff_address">Drop-off Address</label>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="pickup_note" name="pickup_note" placeholder="Pickup Note" style="height: 80px;"></textarea>
+                                            <label for="pickup_note">Note to Rider (Pickup)</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="dropoff_note" name="dropoff_note" placeholder="Dropoff Note"
-                                            style="height: 80px;"></textarea>
-                                        <label for="dropoff_note">Note to Rider (Drop-off)</label>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="dropoff_address"
+                                                name="dropoff_address" placeholder="Delivery Address">
+                                            <label for="dropoff_address">Delivery Address</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <select class="form-control" id="assigned_rider" name="assigned_rider">
-                                            <option value="">Select Rider</option>
-                                            <?php
-                                            // Get riders with positive balance
-                                            $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          FROM triders 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          WHERE rider_status = 'Active' AND topup_balance > 0 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ORDER BY rider_name";
-                                            $rider_result = $conn->query($rider_query);
-                                            
-                                            if ($rider_result && $rider_result->num_rows > 0) {
-                                                while ($rider = $rider_result->fetch_assoc()) {
-                                                    echo "<option value='" . $rider['rider_name'] . "'>" . $rider['rider_name'] . '</option>';
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="dropoff_note" name="dropoff_note" placeholder="Dropoff Note"
+                                                style="height: 80px;"></textarea>
+                                            <label for="dropoff_note">Note to Rider (Delivery)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <select class="form-control" id="assigned_rider" name="assigned_rider">
+                                                <option value="">Select Rider</option>
+                                                <?php
+                                                // Get riders with positive balance
+                                                $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                FROM triders 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                WHERE rider_status = 'Active' AND topup_balance > 0 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ORDER BY rider_name";
+                                                $rider_result = $conn->query($rider_query);
+                                                
+                                                if ($rider_result && $rider_result->num_rows > 0) {
+                                                    while ($rider = $rider_result->fetch_assoc()) {
+                                                        echo "<option value='" . $rider['rider_name'] . "'>" . $rider['rider_name'] . '</option>';
+                                                    }
+                                                } else {
+                                                    echo "<option value='' disabled>No available riders</option>";
                                                 }
-                                            } else {
-                                                echo "<option value='' disabled>No available riders</option>";
-                                            }
-                                            ?>
-                                        </select>
-                                        <label for="assigned_rider">Assigned Rider</label>
+                                                ?>
+                                            </select>
+                                            <label for="assigned_rider">Assigned Rider</label>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <!-- PAANGKAS Fields -->
+                                <div class="paangkas-fields d-flex flex-wrap justify-content-center p-0 gap-2">
+                                    <div class="col-12 d-flex flex-wrap justify-content-center gap-2">
+                                        <div class="d-flex gap-2 col-12">
+                                            <div class="form-floating flex-fill">
+                                                <input type="text" class="form-control" id="paangkas_name"
+                                                    name="paangkas_name" placeholder="Customer Name">
+                                                <label for="paangkas_name">Customer Name</label>
+                                            </div>
+                                            <div class="form-floating flex-fill">
+                                                <input type="text" class="form-control"
+                                                    id="paangkas_contact_number" name="paangkas_contact_number"
+                                                    placeholder="Contact Number">
+                                                <label for="paangkas_contact_number">Contact Number</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="paangkas_pickup_address"
+                                                name="paangkas_pickup_address" placeholder="Pickup Address">
+                                            <label for="paangkas_pickup_address">Pickup Address</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <select class="form-control" id="paangkas_vehicle_type"
+                                                name="paangkas_vehicle_type">
+                                                <option value="" disabled selected>Select Vehicle Type</option>
+                                                <option value="Motorcycle">Motorcycle</option>
+                                                <option value="Tricycle">Tricycle</option>
+                                                <option value="Car">Car</option>
+                                            </select>
+                                            <label for="paangkas_vehicle_type">Vehicle Type</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="paangkas_pickup_note" name="paangkas_pickup_note" placeholder="Pickup Note"
+                                                style="height: 80px;"></textarea>
+                                            <label for="paangkas_pickup_note">Note to Rider (Pickup)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="paangkas_dropoff_address"
+                                                name="paangkas_dropoff_address" placeholder="Drop-off Address">
+                                            <label for="paangkas_dropoff_address">Drop-off Address</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="paangkas_dropoff_note" name="paangkas_dropoff_note" placeholder="Drop-off Note"
+                                                style="height: 80px;"></textarea>
+                                            <label for="paangkas_dropoff_note">Note to Rider (Drop-off)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <select class="form-control" id="paangkas_assigned_rider"
+                                                name="paangkas_assigned_rider">
+                                                <option value="">Select Rider</option>
+                                                <?php
+                                                // Get riders with positive balance
+                                                $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                FROM triders 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                WHERE rider_status = 'Active' AND topup_balance > 0 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ORDER BY rider_name";
+                                                $rider_result = $conn->query($rider_query);
+                                                
+                                                if ($rider_result && $rider_result->num_rows > 0) {
+                                                    while ($rider = $rider_result->fetch_assoc()) {
+                                                        echo "<option value='" . $rider['rider_name'] . "'>" . $rider['rider_name'] . '</option>';
+                                                    }
+                                                } else {
+                                                    echo "<option value='' disabled>No available riders</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                            <label for="paangkas_assigned_rider">Assigned Rider</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PADALA Fields -->
+                                <div class="padala-fields d-flex flex-wrap justify-content-center p-0 gap-2">
+                                    <div class="col-12 d-flex flex-wrap justify-content-center gap-2">
+                                        <div class="d-flex gap-2 col-12">
+                                            <div class="form-floating flex-fill">
+                                                <input type="text" class="form-control" id="padala_name"
+                                                    name="padala_name" placeholder="Customer Name">
+                                                <label for="padala_name">Customer Name</label>
+                                            </div>
+                                            <div class="form-floating flex-fill">
+                                                <input type="text" class="form-control" id="padala_contact_number"
+                                                    name="padala_contact_number" placeholder="Contact Number">
+                                                <label for="padala_contact_number">Contact Number</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="padala_pickup_location"
+                                                name="padala_pickup_location" placeholder="Pick-up Location">
+                                            <label for="padala_pickup_location">Pick-up Location</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="padala_order_description" name="padala_order_description"
+                                                placeholder="Order Description" style="height: 100px;"></textarea>
+                                            <label for="padala_order_description">Order Description</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="padala_pickup_note" name="padala_pickup_note" placeholder="Pickup Note"
+                                                style="height: 80px;"></textarea>
+                                            <label for="padala_pickup_note">Note to Rider (Pickup)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="padala_dropoff_address"
+                                                name="padala_dropoff_address" placeholder="Drop-off Address">
+                                            <label for="padala_dropoff_address">Drop-off Address</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="padala_dropoff_note" name="padala_dropoff_note" placeholder="Drop-off Note"
+                                                style="height: 80px;"></textarea>
+                                            <label for="padala_dropoff_note">Note to Rider (Drop-off)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <select class="form-control" id="padala_assigned_rider"
+                                                name="padala_assigned_rider">
+                                                <option value="">Select Rider</option>
+                                                <?php
+                                                // Get riders with positive balance
+                                                $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                FROM triders 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                WHERE rider_status = 'Active' AND topup_balance > 0 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ORDER BY rider_name";
+                                                $rider_result = $conn->query($rider_query);
+                                                
+                                                if ($rider_result && $rider_result->num_rows > 0) {
+                                                    while ($rider = $rider_result->fetch_assoc()) {
+                                                        echo "<option value='" . $rider['rider_name'] . "'>" . $rider['rider_name'] . '</option>';
+                                                    }
+                                                } else {
+                                                    echo "<option value='' disabled>No available riders</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                            <label for="padala_assigned_rider">Assigned Rider</label>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="text-center mt-4">
                                     <button type="submit" name="place_order"
                                         class="btn btn-light text-black py-3 px-5 rounded-pill border-none fs-5">
@@ -509,12 +733,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
         data-cf-beacon='{"rayId":"93419b31590b08d9","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.4.0-1-g37f21b1","token":"68c5ca450bae485a842ff76066d69420"}'
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Marquee speed control
+        $(document).ready(function() {
+            // Initially hide all service-specific fields
+            $('.pabili-fields, .paangkas-fields, .padala-fields').removeClass('show');
+
+            // Handle service type change
+            $('#service_type').change(function() {
+                const selectedService = $(this).val();
+
+                // Hide all service-specific fields first
+                $('.pabili-fields, .paangkas-fields, .padala-fields').removeClass('show');
+
+                // Show fields based on selected service
+                if (selectedService === 'PABILI') {
+                    $('.pabili-fields').addClass('show');
+                    $('#formTitle').html('<i class="bx bxs-notepad me-2"></i>Pabili/Pasuyo Form');
+                } else if (selectedService === 'PAANGKAS') {
+                    $('.paangkas-fields').addClass('show');
+                    $('#formTitle').html('<i class="bx bxs-notepad me-2"></i>Pahatid/Pasundo Form');
+                } else if (selectedService === 'PADALA') {
+                    $('.padala-fields').addClass('show');
+                    $('#formTitle').html('<i class="bx bxs-notepad me-2"></i>Padala Form');
+                } else {
+                    $('#formTitle').html('<i class="bx bxs-notepad me-2"></i>Customer Order Form');
+                }
+            });
+
+            // Trigger change event on page load to handle any pre-selected value
+            $('#service_type').trigger('change');
+        });
+
+        // Existing marquee speed control code
         document.addEventListener('DOMContentLoaded', function() {
             const marqueeContent = document.getElementById('marqueeContent');
             const speedUpBtn = document.getElementById('speedUp');
@@ -575,7 +829,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <!-- Additional images from tmerchant_images table -->
                         <?php 
-                        // Fetch additional images for this merchant
+                          // Fetch additional images for this merchant
                         $images_query = "SELECT * FROM tmerchant_images WHERE merchant_id = ? ORDER BY display_order";
                         $images_stmt = $conn->prepare($images_query);
                         $images_stmt->bind_param('i', $merchant['id']);
