@@ -697,6 +697,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="copyright">
                     &copy; 2025 <strong><span>PricelBadz</span></strong>
                 </div>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/profile.php?id=61562797785885" target="_blank"><i
+                            class='bx bxl-facebook-circle fs-3'></i></a>
+                </div>
             </footer>
         </div>
     </div>
