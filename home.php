@@ -456,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="form-floating">
                                             <textarea class="form-control" id="order_description" name="order_description" placeholder="Item Description"
                                                 style="height: 100px;"></textarea>
-                                            <label for="order_description">Items (Description, Quantity, Estimated
+                                            <label for="order_description">Order (Description, Quantity, Estimated
                                                 Price)</label>
                                         </div>
                                     </div>
@@ -518,9 +518,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <select class="form-control" id="paangkas_vehicle_type"
                                                 name="paangkas_vehicle_type">
                                                 <option value="" disabled selected>Select Vehicle Type</option>
-                                                <option value="Motorcycle">Motorcycle (1-2 seater)</option>
-                                                <option value="Tricycle">Tricycle (3-4 seater)</option>
-                                                <option value="Car">Car (4-5 seater)</option>
+                                                <option value="Car (3-4 seats)">Car (3-4 seats)</option>
+                                                <option value="Car (5-7 seats)">Car (5-7 seats)</option>
+                                                <option value="Van (10-14 seats)">Van (10-14 seats)</option>
                                             </select>
                                             <label for="paangkas_vehicle_type">Vehicle Type</label>
                                         </div>
@@ -652,9 +652,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="form-floating">
                                         <select class="form-control" id="vehicle_type" name="vehicle_type">
                                             <option value="" disabled selected>Select Vehicle Type</option>
-                                            <option value="Motorcycle">Motorcycle (1-2 seater)</option>
-                                            <option value="Tricycle">Tricycle (3-4 seater)</option>
-                                            <option value="Car">Car (4-5 seater)</option>
+                                            <option value="Car (3-4 seats)">Car (3-4 seats)</option>
+                                            <option value="Car (5-7 seats)">Car (5-7 seats)</option>
+                                            <option value="Van (10-14 seats)">Van (10-14 seats)</option>
                                         </select>
                                         <label for="vehicle_type">Vehicle Type</label>
                                     </div>
