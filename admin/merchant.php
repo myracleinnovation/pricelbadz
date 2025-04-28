@@ -24,7 +24,13 @@ $result = $stmt->get_result();
             <div class="col-lg-12">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Manage Merchants</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title">Manage Merchants</h5>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#addMerchantModal">
+                                <i class="bi bi-plus-circle me-1"></i> Add Merchant
+                            </button>
+                        </div>
                         <form method="POST" class="row g-3">
                             <div class="col-md-11">
                                 <input type="text" class="form-control" name="search" id="inputText"
@@ -131,12 +137,14 @@ $result = $stmt->get_result();
                                                                 ?>
                                                                 <div class="col-md-4">
                                                                     <div class="card h-100">
-                                                                        <img src="../public/img/<?= htmlspecialchars($img['image_path']) ?>" 
-                                                                             class="card-img-top" 
-                                                                             alt="<?= htmlspecialchars($img['image_description']) ?>"
-                                                                             style="height: 200px; object-fit: cover;">
+                                                                        <img src="../public/img/<?= htmlspecialchars($img['image_path']) ?>"
+                                                                            class="card-img-top"
+                                                                            alt="<?= htmlspecialchars($img['image_description']) ?>"
+                                                                            style="height: 200px; object-fit: cover;">
                                                                         <div class="card-body p-2">
-                                                                            <p class="card-text small mb-0"><?= htmlspecialchars($img['image_description']) ?></p>
+                                                                            <p class="card-text small mb-0">
+                                                                                <?= htmlspecialchars($img['image_description']) ?>
+                                                                            </p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -300,3 +308,51 @@ $result = $stmt->get_result();
 include './footer.php';
 mysqli_close($conn);
 ?>
+
+<!-- Add Merchant Modal -->
+<div class="modal fade" id="addMerchantModal" tabindex="-1" aria-labelledby="addMerchantModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="addMerchantModalLabel">Add New Merchant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="add_merchant.php" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Merchant Name:</div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="merchant_name" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Description:</div>
+                        <div class="col-md-8">
+                            <textarea class="form-control" name="merchant_description" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Logo:</div>
+                        <div class="col-md-8">
+                            <input type="file" class="form-control" name="merchant_logo" accept="image/*"
+                                required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6 class="fw-bold">Additional Images</h6>
+                            <input type="file" class="form-control" name="additional_images[]" accept="image/*"
+                                multiple>
+                            <small class="text-muted">You can select multiple images</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Merchant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

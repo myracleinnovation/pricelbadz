@@ -11,11 +11,16 @@ $query = "SELECT * FROM (
     SELECT 
         order_number, 
         customer_name, 
+        contact_number,
         merchant_store_name, 
         store_address as pickup_location, 
+        pickup_note,
         delivery_address as dropoff_address, 
+        delivery_note,
         assigned_rider, 
         order_status,
+        order_description,
+        NULL as vehicle_type,
         'PABILI/PASUYO' as order_type,
         created_at
     FROM tpabili_orders
@@ -23,11 +28,16 @@ $query = "SELECT * FROM (
     SELECT 
         order_number, 
         customer_name, 
+        contact_number,
         NULL as merchant_store_name, 
         pickup_address as pickup_location, 
+        pickup_note,
         dropoff_address, 
+        dropoff_note as delivery_note,
         assigned_rider, 
         order_status,
+        NULL as order_description,
+        vehicle_type,
         'PAHATID/PASUNDO' as order_type,
         created_at
     FROM tpaangkas_orders
@@ -35,11 +45,16 @@ $query = "SELECT * FROM (
     SELECT 
         order_number, 
         customer_name, 
+        contact_number,
         NULL as merchant_store_name, 
         pickup_address as pickup_location, 
+        pickup_note,
         dropoff_address, 
+        dropoff_note as delivery_note,
         assigned_rider, 
         order_status,
+        order_description,
+        NULL as vehicle_type,
         'PADALA' as order_type,
         created_at
     FROM tpadala_orders
@@ -522,6 +537,10 @@ while ($row = $result->fetch_assoc()):
                     <div class="col-md-8"><?= htmlspecialchars($row['customer_name']) ?></div>
                 </div>
                 <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Contact Number:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['contact_number'] ?? 'N/A') ?></div>
+                </div>
+                <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Order Type:</div>
                     <div class="col-md-8"><?= htmlspecialchars($row['order_type']) ?></div>
                 </div>
@@ -550,20 +569,47 @@ while ($row = $result->fetch_assoc()):
                         </form>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 fw-bold">Pickup Location:</div>
-                    <div class="col-md-8"><?= htmlspecialchars($row['pickup_location']) ?></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 fw-bold">Delivery Location:</div>
-                    <div class="col-md-8"><?= htmlspecialchars($row['dropoff_address']) ?></div>
-                </div>
                 <?php if ($row['order_type'] === 'PABILI/PASUYO'): ?>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Merchant Store:</div>
                     <div class="col-md-8"><?= htmlspecialchars($row['merchant_store_name'] ?? 'N/A') ?></div>
                 </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Order Description:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['order_description'] ?? 'N/A') ?></div>
+                </div>
                 <?php endif; ?>
+
+                <?php if ($row['order_type'] === 'PADALA'): ?>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Item Description:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['order_description'] ?? 'N/A') ?></div>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($row['order_type'] === 'PAHATID/PASUNDO'): ?>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Vehicle Type:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['vehicle_type'] ?? 'N/A') ?></div>
+                </div>
+                <?php endif; ?>
+
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Pickup Location:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['pickup_location']) ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Pickup Note:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['pickup_note'] ?? 'N/A') ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Delivery Location:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['dropoff_address']) ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Delivery Note:</div>
+                    <div class="col-md-8"><?= htmlspecialchars($row['delivery_note'] ?? 'N/A') ?></div>
+                </div>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Assigned Rider:</div>
                     <div class="col-md-8">

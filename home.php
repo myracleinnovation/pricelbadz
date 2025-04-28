@@ -50,10 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'pickup_note' => sanitizeInput($_POST['pickup_note']),
                     'delivery_address' => sanitizeInput($_POST['dropoff_address']),
                     'delivery_note' => sanitizeInput($_POST['dropoff_note']),
-                    'assigned_rider' => !empty($_POST['assigned_rider']) ? $_POST['assigned_rider'] : null,
                     'order_status' => 'Pending',
                 ];
-                createPabiliOrder($conn, ...array_values($orderData));
+                createPabiliOrder($conn, $orderData['customer_name'], $orderData['contact_number'], $orderData['store_name'], $orderData['order_description'], $orderData['store_address'], $orderData['pickup_note'], $orderData['delivery_address'], $orderData['delivery_note'], null, $orderData['order_status']);
+                $_SESSION['form_submitted'] = true;
+                $_SESSION['form_type'] = 'PABILI/PASUYO Order';
                 break;
 
             case 'PAHATID/PASUNDO':
@@ -69,6 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'order_status' => 'Pending',
                 ];
                 createPaangkasOrder($conn, ...array_values($orderData));
+                $_SESSION['form_submitted'] = true;
+                $_SESSION['form_type'] = 'PAHATID/PASUNDO Order';
                 break;
 
             case 'PADALA':
@@ -84,6 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'order_status' => 'Pending',
                 ];
                 createPadalaOrder($conn, ...array_values($orderData));
+                $_SESSION['form_submitted'] = true;
+                $_SESSION['form_type'] = 'PADALA Order';
                 break;
         }
     }
@@ -102,6 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         createRider($conn, ...array_values($riderData));
+        $_SESSION['form_submitted'] = true;
+        $_SESSION['form_type'] = 'Rider Registration';
     }
 
     header('Location: home.php');
@@ -605,6 +612,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 <div class="text-center mt-4">
                                     <button type="submit" name="place_order"
+                                        onclick="alert('Form submitted successfully!');"
                                         class="btn btn-light text-black py-3 px-5 rounded-pill border-none fs-5">
                                         Place Order
                                     </button>
@@ -654,6 +662,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="form-floating">
                                         <select class="form-control" id="vehicle_type" name="vehicle_type">
                                             <option value="" disabled selected>Select Vehicle Type</option>
+                                            <option value="Motorcycle (1 seat)">Motorcycle (1 seat)</option>
+                                            <option value="Tricycle (2-4 seats)">Tricycle (2-4 seats)</option>
                                             <option value="Car (3-4 seats)">Car (3-4 seats)</option>
                                             <option value="Car (5-7 seats)">Car (5-7 seats)</option>
                                             <option value="Van (10-14 seats)">Van (10-14 seats)</option>
@@ -677,6 +687,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 <div class="text-center mt-4">
                                     <button type="submit" name="submit"
+                                        onclick="alert('Form submitted successfully!');"
                                         class="btn btn-light text-black py-3 px-5 rounded-pill border-none fs-5">
                                         Submit
                                     </button>
@@ -894,6 +905,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #0a5a94;
         }
     </style>
+
+    <?php if (isset($_SESSION['form_submitted']) && $_SESSION['form_submitted']): ?>
+    <script>
+        alert('Form submitted successfully!');
+    </script>
+    <?php
+    // Clear the session variables after displaying the alert
+    unset($_SESSION['form_submitted']);
+    unset($_SESSION['form_type']);
+    ?>
+    <?php endif; ?>
 </body>
 
 </html>

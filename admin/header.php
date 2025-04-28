@@ -57,11 +57,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
-                <li class="nav-item pe-3">
-                    <a class="nav-link d-flex align-items-center pe-0" href="#" title="Chat Support">
-                        <i class='bx bxl-messenger' style="font-size: 24px;"></i>
-                    </a>
-                </li>
                 <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                         data-bs-toggle="dropdown">
@@ -156,6 +151,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
         integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
         data-cf-beacon='{"rayId":"93419b31590b08d9","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.4.0-1-g37f21b1","token":"68c5ca450bae485a842ff76066d69420"}'
         crossorigin="anonymous"></script>
+
+    <!-- Facebook Messenger Link -->
+    <a href="https://www.facebook.com/messages/t/651650764687119" target="_blank" class="fb-messenger-link"
+        style="position: fixed; bottom: 20px; right: 20px; background-color: #0084ff; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1000;">
+        <i class='bx bxl-messenger' style="font-size: 28px;"></i>
+    </a>
 </body>
 
 </html>

@@ -94,8 +94,7 @@ vehicle_plate_number, topup_balance, rider_status) VALUES
 
 -- Insert sample data for users
 INSERT INTO tusers (username, password, first_name, last_name, email, role, user_status) VALUES
-('admin', MD5('password'), 'Admin', 'User', 'admin@example.com', 'Admin', 'Active'),
-('staff1', MD5('password'), 'Staff', 'One', 'staff1@example.com', 'Staff', 'Active');
+('admin', MD5('password'), 'Admin', 'User', 'admin@example.com', 'Admin', 'Active');
 
 -- Insert sample data for Pabili/Pasuyo orders
 INSERT INTO tpabili_orders (order_number, customer_name, contact_number, merchant_store_name, order_description,

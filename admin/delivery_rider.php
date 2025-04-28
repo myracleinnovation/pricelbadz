@@ -8,7 +8,7 @@ $status = isset($_POST['status']) ? $_POST['status'] : 'All Status';
 
 // Build the query with optional filters
 $query = "SELECT id, first_name, middle_name, last_name, CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', last_name) AS fullname, 
-    license_number, vehicle_type, vehicle_plate_number, rider_status, topup_balance 
+    license_number, vehicle_type, vehicle_plate_number, rider_status, topup_balance, vehicle_cor 
     FROM triders 
     WHERE (first_name LIKE ? OR last_name LIKE ? OR vehicle_plate_number LIKE ?)";
 
@@ -101,7 +101,7 @@ $result = $stmt->get_result();
                                             </span>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                                 data-bs-target="#riderModal<?= urlencode($row['id']) ?>">
                                                 View
                                             </button>
@@ -146,12 +146,20 @@ $result = $stmt->get_result();
                                                     <div class="row mb-3">
                                                         <div class="col-md-4 fw-bold">Vehicle Type:</div>
                                                         <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['vehicle_type']) ?></div>
+                                                            <?= htmlspecialchars($row['vehicle_type']) ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-4 fw-bold">Vehicle COR:</div>
+                                                        <div class="col-md-8">
+                                                            <?= htmlspecialchars($row['vehicle_cor'] ?? 'N/A') ?>
+                                                        </div>
                                                     </div>
                                                     <div class="row mb-3">
                                                         <div class="col-md-4 fw-bold">Vehicle Plate Number:</div>
                                                         <div class="col-md-8">
-                                                            <?= htmlspecialchars($row['vehicle_plate_number']) ?></div>
+                                                            <?= htmlspecialchars($row['vehicle_plate_number']) ?>
+                                                        </div>
                                                     </div>
                                                     <div class="row mb-3">
                                                         <div class="col-md-4 fw-bold">Top-up Balance:</div>
@@ -181,10 +189,20 @@ $result = $stmt->get_result();
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary"
+                                                    <button type="button" class="btn btn-primary btn-sm"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#editStatusModal<?= urlencode($row['id']) ?>">
                                                         Edit Status
+                                                    </button>
+                                                    <button type="button" class="btn btn-success btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editTopupModal<?= urlencode($row['id']) ?>">
+                                                        Edit Top-up Balance
+                                                    </button>
+                                                    <button type="button" class="btn btn-info btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editDetailsModal<?= urlencode($row['id']) ?>">
+                                                        Edit Details
                                                     </button>
                                                 </div>
                                             </div>
@@ -257,6 +275,166 @@ $result = $stmt->get_result();
                                                             data-bs-dismiss="modal">Cancel</button>
                                                         <button type="submit" class="btn btn-primary">Update
                                                             Status</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Edit Top-up Balance Modal -->
+                                    <div class="modal fade" id="editTopupModal<?= urlencode($row['id']) ?>"
+                                        tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title fw-bold">Edit Top-up Balance</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form action="update_rider_topup.php" method="POST">
+                                                    <div class="modal-body">
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">Rider ID:</div>
+                                                            <div class="col-md-8">
+                                                                <?= htmlspecialchars($row['id']) ?>
+                                                                <input type="hidden" name="rider_id"
+                                                                    value="<?= htmlspecialchars($row['id']) ?>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">Rider Name:</div>
+                                                            <div class="col-md-8">
+                                                                <?= htmlspecialchars($row['fullname']) ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">Current Balance:</div>
+                                                            <div class="col-md-8">
+                                                                ₱<?= number_format($row['topup_balance'], 2) ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">New Balance:</div>
+                                                            <div class="col-md-8">
+                                                                <input type="number" name="new_balance"
+                                                                    class="form-control"
+                                                                    value="<?= $row['topup_balance'] ?>"
+                                                                    step="0.01" min="0" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-success">Update
+                                                            Balance</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Edit Details Modal -->
+                                    <div class="modal fade" id="editDetailsModal<?= urlencode($row['id']) ?>"
+                                        tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title fw-bold">Edit Rider Details</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form action="update_rider_details.php" method="POST">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="rider_id"
+                                                            value="<?= htmlspecialchars($row['id']) ?>">
+
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">First Name:</div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="first_name"
+                                                                    class="form-control"
+                                                                    value="<?= htmlspecialchars($row['first_name']) ?>"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">Middle Name:</div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="middle_name"
+                                                                    class="form-control"
+                                                                    value="<?= htmlspecialchars($row['middle_name']) ?>">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">Last Name:</div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="last_name"
+                                                                    class="form-control"
+                                                                    value="<?= htmlspecialchars($row['last_name']) ?>"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">License Number:</div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="license_number"
+                                                                    class="form-control"
+                                                                    value="<?= htmlspecialchars($row['license_number']) ?>"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">Vehicle Type:</div>
+                                                            <div class="col-md-8">
+                                                                <select name="vehicle_type" class="form-select"
+                                                                    required>
+                                                                    <option value="">Select Vehicle Type</option>
+                                                                    <option value="Motorcycle"
+                                                                        <?= $row['vehicle_type'] === 'Motorcycle' ? 'selected' : '' ?>>
+                                                                        Motorcycle</option>
+                                                                    <option value="Tricycle"
+                                                                        <?= $row['vehicle_type'] === 'Tricycle' ? 'selected' : '' ?>>
+                                                                        Tricycle</option>
+                                                                    <option value="Car"
+                                                                        <?= $row['vehicle_type'] === 'Car' ? 'selected' : '' ?>>
+                                                                        Car</option>
+                                                                    <option value="Van"
+                                                                        <?= $row['vehicle_type'] === 'Van' ? 'selected' : '' ?>>
+                                                                        Van</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">Vehicle COR:</div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="vehicle_cor"
+                                                                    class="form-control"
+                                                                    value="<?= htmlspecialchars($row['vehicle_cor']) ?>"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4 fw-bold">Vehicle Plate Number:</div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="vehicle_plate_number"
+                                                                    class="form-control"
+                                                                    value="<?= htmlspecialchars($row['vehicle_plate_number']) ?>"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Update
+                                                            Details</button>
                                                     </div>
                                                 </form>
                                             </div>
