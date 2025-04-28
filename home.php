@@ -518,6 +518,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <select class="form-control" id="paangkas_vehicle_type"
                                                 name="paangkas_vehicle_type">
                                                 <option value="" disabled selected>Select Vehicle Type</option>
+                                                <option value="Motorcycle (1 seat)">Motorcycle (1 seat)</option>
+                                                <option value="Tricycle (2-4 seats)">Tricycle (2-4 seats)</option>
                                                 <option value="Car (3-4 seats)">Car (3-4 seats)</option>
                                                 <option value="Car (5-7 seats)">Car (5-7 seats)</option>
                                                 <option value="Van (10-14 seats)">Van (10-14 seats)</option>
@@ -858,6 +860,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
     <?php endforeach; ?>
+
+    <!-- Chat Support Icon -->
+    <a href="https://www.facebook.com/messages/t/651650764687119" class="chat-support-icon" title="Chat Support"
+        target="_blank">
+        <i class='bx bxl-messenger'></i>
+    </a>
+
+    <style>
+        .chat-support-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #0E76BC;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .chat-support-icon i {
+            font-size: 30px;
+        }
+
+        .chat-support-icon:hover {
+            transform: scale(1.1);
+            background-color: #0a5a94;
+        }
+    </style>
 </body>
 
 </html>

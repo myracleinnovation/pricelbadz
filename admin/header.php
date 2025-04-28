@@ -57,6 +57,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
+                <li class="nav-item pe-3">
+                    <a class="nav-link d-flex align-items-center pe-0" href="#" title="Chat Support">
+                        <i class='bx bxl-messenger' style="font-size: 24px;"></i>
+                    </a>
+                </li>
                 <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                         data-bs-toggle="dropdown">
