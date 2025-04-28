@@ -237,6 +237,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .padala-fields.show {
         display: flex !important;
     }
+
+    /* Adjusted spacing styles */
+    .container-fluid {
+        padding: 0.5rem;
+    }
+
+    .row.mt-5 {
+        margin-top: 1rem !important;
+    }
+
+    .my-8 {
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .py-4 {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+
+    .mb-5 {
+        margin-bottom: 1rem !important;
+    }
+
+    .mt-5 {
+        margin-top: 1rem !important;
+    }
+
+    .mt-4 {
+        margin-top: 0.5rem !important;
+    }
+
+    .my-4 {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .my-5 {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .gap-5 {
+        gap: 1rem !important;
+    }
+
+    .gap-2 {
+        gap: 0.5rem !important;
+    }
+
+    .p-4 {
+        padding: 0.75rem !important;
+    }
+
+    .px-3 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    .pb-5 {
+        padding-bottom: 1rem !important;
+    }
+
+    .w-50 {
+        width: 40% !important;
+    }
+
+    .w-25 {
+        width: 20% !important;
+    }
 </style>
 
 <body>
@@ -347,7 +417,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <i class='bx bxs-notepad me-2'></i>Customer Order Form
                             </h5>
                             <form method="POST" class="row g-4 px-3">
-                                <div class="col-12">
+                                <div class="col-12 px-0">
                                     <div class="form-floating">
                                         <select class="form-control" id="service_type" name="service_type" required>
                                             <option value="" disabled selected>Select Service Type</option>
@@ -384,9 +454,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                     <div class="col-12">
                                         <div class="form-floating">
-                                            <textarea class="form-control" id="order_description" name="order_description" placeholder="Order Description"
+                                            <textarea class="form-control" id="order_description" name="order_description" placeholder="Item Description"
                                                 style="height: 100px;"></textarea>
-                                            <label for="order_description">Orders (Description, Quantity, Estimated
+                                            <label for="order_description">Items (Description, Quantity, Estimated
                                                 Price)</label>
                                         </div>
                                     </div>
@@ -415,30 +485,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <textarea class="form-control" id="dropoff_note" name="dropoff_note" placeholder="Dropoff Note"
                                                 style="height: 80px;"></textarea>
                                             <label for="dropoff_note">Note to Rider (Delivery)</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-floating">
-                                            <select class="form-control" id="assigned_rider" name="assigned_rider">
-                                                <option value="">Select Rider</option>
-                                                <?php
-                                                // Get riders with positive balance
-                                                $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                FROM triders 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                WHERE rider_status = 'Active' AND topup_balance > 0 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ORDER BY rider_name";
-                                                $rider_result = $conn->query($rider_query);
-                                                
-                                                if ($rider_result && $rider_result->num_rows > 0) {
-                                                    while ($rider = $rider_result->fetch_assoc()) {
-                                                        echo "<option value='" . $rider['rider_name'] . "'>" . $rider['rider_name'] . '</option>';
-                                                    }
-                                                } else {
-                                                    echo "<option value='' disabled>No available riders</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                            <label for="assigned_rider">Assigned Rider</label>
                                         </div>
                                     </div>
                                 </div>
@@ -472,9 +518,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <select class="form-control" id="paangkas_vehicle_type"
                                                 name="paangkas_vehicle_type">
                                                 <option value="" disabled selected>Select Vehicle Type</option>
-                                                <option value="Motorcycle">Motorcycle</option>
-                                                <option value="Tricycle">Tricycle</option>
-                                                <option value="Car">Car</option>
+                                                <option value="Motorcycle">Motorcycle (1-2 seater)</option>
+                                                <option value="Tricycle">Tricycle (3-4 seater)</option>
+                                                <option value="Car">Car (4-5 seater)</option>
                                             </select>
                                             <label for="paangkas_vehicle_type">Vehicle Type</label>
                                         </div>
@@ -498,31 +544,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <textarea class="form-control" id="paangkas_dropoff_note" name="paangkas_dropoff_note" placeholder="Drop-off Note"
                                                 style="height: 80px;"></textarea>
                                             <label for="paangkas_dropoff_note">Note to Rider (Drop-off)</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-floating">
-                                            <select class="form-control" id="paangkas_assigned_rider"
-                                                name="paangkas_assigned_rider">
-                                                <option value="">Select Rider</option>
-                                                <?php
-                                                // Get riders with positive balance
-                                                $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                FROM triders 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                WHERE rider_status = 'Active' AND topup_balance > 0 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ORDER BY rider_name";
-                                                $rider_result = $conn->query($rider_query);
-                                                
-                                                if ($rider_result && $rider_result->num_rows > 0) {
-                                                    while ($rider = $rider_result->fetch_assoc()) {
-                                                        echo "<option value='" . $rider['rider_name'] . "'>" . $rider['rider_name'] . '</option>';
-                                                    }
-                                                } else {
-                                                    echo "<option value='' disabled>No available riders</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                            <label for="paangkas_assigned_rider">Assigned Rider</label>
                                         </div>
                                     </div>
                                 </div>
@@ -553,8 +574,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="col-12">
                                         <div class="form-floating">
                                             <textarea class="form-control" id="padala_order_description" name="padala_order_description"
-                                                placeholder="Order Description" style="height: 100px;"></textarea>
-                                            <label for="padala_order_description">Order Description</label>
+                                                placeholder="Item Description" style="height: 100px;"></textarea>
+                                            <label for="padala_order_description">Item Description</label>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -576,31 +597,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <textarea class="form-control" id="padala_dropoff_note" name="padala_dropoff_note" placeholder="Drop-off Note"
                                                 style="height: 80px;"></textarea>
                                             <label for="padala_dropoff_note">Note to Rider (Drop-off)</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-floating">
-                                            <select class="form-control" id="padala_assigned_rider"
-                                                name="padala_assigned_rider">
-                                                <option value="">Select Rider</option>
-                                                <?php
-                                                // Get riders with positive balance
-                                                $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name, topup_balance 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                FROM triders 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                WHERE rider_status = 'Active' AND topup_balance > 0 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ORDER BY rider_name";
-                                                $rider_result = $conn->query($rider_query);
-                                                
-                                                if ($rider_result && $rider_result->num_rows > 0) {
-                                                    while ($rider = $rider_result->fetch_assoc()) {
-                                                        echo "<option value='" . $rider['rider_name'] . "'>" . $rider['rider_name'] . '</option>';
-                                                    }
-                                                } else {
-                                                    echo "<option value='' disabled>No available riders</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                            <label for="padala_assigned_rider">Assigned Rider</label>
                                         </div>
                                     </div>
                                 </div>
@@ -656,9 +652,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="form-floating">
                                         <select class="form-control" id="vehicle_type" name="vehicle_type">
                                             <option value="" disabled selected>Select Vehicle Type</option>
-                                            <option value="Motorcycle">Motorcycle</option>
-                                            <option value="Tricycle">Tricycle</option>
-                                            <option value="Car">Car</option>
+                                            <option value="Motorcycle">Motorcycle (1-2 seater)</option>
+                                            <option value="Tricycle">Tricycle (3-4 seater)</option>
+                                            <option value="Car">Car (4-5 seater)</option>
                                         </select>
                                         <label for="vehicle_type">Vehicle Type</label>
                                     </div>

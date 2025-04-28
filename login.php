@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Dashboard - NiceAdmin Bootstrap Template</title>
+    <title>PricelBadz</title>
     <meta name="robots" content="noindex, nofollow">
     <meta content="" name="description">
     <meta content="" name="keywords">

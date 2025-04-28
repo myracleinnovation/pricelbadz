@@ -566,7 +566,30 @@ while ($row = $result->fetch_assoc()):
                 <?php endif; ?>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Assigned Rider:</div>
-                    <div class="col-md-8"><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?></div>
+                    <div class="col-md-8">
+                        <form method="POST" action="update_assigned_rider.php" class="d-inline">
+                            <input type="hidden" name="order_number"
+                                value="<?= htmlspecialchars($row['order_number']) ?>">
+                            <input type="hidden" name="order_type"
+                                value="<?= htmlspecialchars($row['order_type']) ?>">
+                            <select name="assigned_rider" class="form-select form-select-sm d-inline-block w-auto"
+                                onchange="this.form.submit()">
+                                <option value="">Not assigned</option>
+                                <?php
+                                // Get all active riders
+                                $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name FROM triders WHERE rider_status = 'Active' ORDER BY rider_name";
+                                $rider_result = $conn->query($rider_query);
+                                
+                                if ($rider_result && $rider_result->num_rows > 0) {
+                                    while ($rider = $rider_result->fetch_assoc()) {
+                                        $selected = $row['assigned_rider'] === $rider['rider_name'] ? 'selected' : '';
+                                        echo "<option value='" . htmlspecialchars($rider['rider_name']) . "' " . $selected . '>' . htmlspecialchars($rider['rider_name']) . '</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </form>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
