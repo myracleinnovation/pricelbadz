@@ -1,71 +1,7 @@
 CREATE DATABASE IF NOT EXISTS pricelbadz;
 USE pricelbadz;
 
--- Table for Pabili/Pasuyo orders
-CREATE TABLE tpabili_orders (
-id INT AUTO_INCREMENT PRIMARY KEY,
-order_number VARCHAR(20) NOT NULL,
-customer_name VARCHAR(100) NOT NULL,
-contact_number VARCHAR(20) NOT NULL,
-merchant_store_name VARCHAR(100) NOT NULL,
-order_description TEXT NOT NULL,
-store_address TEXT NOT NULL,
-pickup_note TEXT,
-delivery_address TEXT NOT NULL,
-delivery_note TEXT,
-assigned_rider VARCHAR(100),
-order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
-service_fee DECIMAL(10, 2) DEFAULT 0.00,
-commission DECIMAL(10, 2) DEFAULT 0.00,
-status_changed_at TIMESTAMP NULL,
-status_changed_by VARCHAR(100) NULL,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Table for Pahatid/Pasundo orders
-CREATE TABLE tpaangkas_orders (
-id INT AUTO_INCREMENT PRIMARY KEY,
-order_number VARCHAR(20) NOT NULL,
-customer_name VARCHAR(100) NOT NULL,
-contact_number VARCHAR(20) NOT NULL,
-pickup_address TEXT NOT NULL,
-vehicle_type ENUM('Motorcycle', 'Tricycle', 'Car') NOT NULL,
-pickup_note TEXT,
-dropoff_address TEXT NOT NULL,
-dropoff_note TEXT,
-assigned_rider VARCHAR(100),
-order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
-service_fee DECIMAL(10, 2) DEFAULT 0.00,
-commission DECIMAL(10, 2) DEFAULT 0.00,
-status_changed_at TIMESTAMP NULL,
-status_changed_by VARCHAR(100) NULL,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Table for Padala orders
-CREATE TABLE tpadala_orders (
-id INT AUTO_INCREMENT PRIMARY KEY,
-order_number VARCHAR(20) NOT NULL,
-customer_name VARCHAR(100) NOT NULL,
-contact_number VARCHAR(20) NOT NULL,
-pickup_address TEXT NOT NULL,
-order_description TEXT NOT NULL,
-pickup_note TEXT,
-dropoff_address TEXT NOT NULL,
-dropoff_note TEXT,
-assigned_rider VARCHAR(100),
-order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
-service_fee DECIMAL(10, 2) DEFAULT 0.00,
-commission DECIMAL(10, 2) DEFAULT 0.00,
-status_changed_at TIMESTAMP NULL,
-status_changed_by VARCHAR(100) NULL,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Table for riders
+-- Table for riders (moved to the top since it's referenced by other tables)
 CREATE TABLE triders (
 id INT AUTO_INCREMENT PRIMARY KEY,
 first_name VARCHAR(50) NOT NULL,
@@ -95,19 +31,91 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Table for Pabili/Pasuyo orders
+CREATE TABLE tpabili_orders (
+id INT AUTO_INCREMENT PRIMARY KEY,
+order_number VARCHAR(20) NOT NULL,
+customer_name VARCHAR(100) NOT NULL,
+contact_number VARCHAR(20) NOT NULL,
+merchant_store_name VARCHAR(100) NOT NULL,
+order_description TEXT NOT NULL,
+store_address TEXT NOT NULL,
+pickup_note TEXT,
+delivery_address TEXT NOT NULL,
+delivery_note TEXT,
+assigned_rider INT,
+order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
+service_fee DECIMAL(10, 2) DEFAULT 0.00,
+commission DECIMAL(10, 2) DEFAULT 0.00,
+status_changed_at TIMESTAMP NULL,
+status_changed_by VARCHAR(100) NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+FOREIGN KEY (assigned_rider) REFERENCES triders(id) ON DELETE SET NULL
+);
+
+-- Table for Pahatid/Pasundo orders
+CREATE TABLE tpaangkas_orders (
+id INT AUTO_INCREMENT PRIMARY KEY,
+order_number VARCHAR(20) NOT NULL,
+customer_name VARCHAR(100) NOT NULL,
+contact_number VARCHAR(20) NOT NULL,
+pickup_address TEXT NOT NULL,
+vehicle_type ENUM('Motorcycle', 'Tricycle', 'Car') NOT NULL,
+pickup_note TEXT,
+dropoff_address TEXT NOT NULL,
+dropoff_note TEXT,
+assigned_rider INT,
+order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
+service_fee DECIMAL(10, 2) DEFAULT 0.00,
+commission DECIMAL(10, 2) DEFAULT 0.00,
+status_changed_at TIMESTAMP NULL,
+status_changed_by VARCHAR(100) NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+FOREIGN KEY (assigned_rider) REFERENCES triders(id) ON DELETE SET NULL
+);
+
+-- Table for Padala orders
+CREATE TABLE tpadala_orders (
+id INT AUTO_INCREMENT PRIMARY KEY,
+order_number VARCHAR(20) NOT NULL,
+customer_name VARCHAR(100) NOT NULL,
+contact_number VARCHAR(20) NOT NULL,
+pickup_address TEXT NOT NULL,
+order_description TEXT NOT NULL,
+pickup_note TEXT,
+dropoff_address TEXT NOT NULL,
+dropoff_note TEXT,
+assigned_rider INT,
+order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
+service_fee DECIMAL(10, 2) DEFAULT 0.00,
+commission DECIMAL(10, 2) DEFAULT 0.00,
+status_changed_at TIMESTAMP NULL,
+status_changed_by VARCHAR(100) NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+FOREIGN KEY (assigned_rider) REFERENCES triders(id) ON DELETE SET NULL
+);
+
+-- Drop existing table if it exists
+DROP TABLE IF EXISTS `trider_topup_ledger`;
+
 -- Table for rider top-up transaction history
 CREATE TABLE IF NOT EXISTS `trider_topup_ledger` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `rider_id` int(11) NOT NULL,
-  `transaction_type` enum('Additional Top-up', 'Commission Deduction', 'Refund Top-up', 'Top-up Withdrawal') NOT NULL,
-  `amount` decimal(10, 2) NOT NULL,
-  `order_number` varchar(50) DEFAULT NULL,
-  `author` varchar(100) NOT NULL,
-  `notes` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `rider_id` (`rider_id`),
-  CONSTRAINT `trider_topup_ledger_ibfk_1` FOREIGN KEY (`rider_id`) REFERENCES `triders` (`id`) ON DELETE CASCADE
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`rider_id` int(11) NOT NULL,
+`transaction_type` enum('Add Top-up', 'Withdraw Top-up', 'Commission Deduction', 'Refund') NOT NULL,
+`previous_balance` decimal(10, 2) NOT NULL,
+`amount` decimal(10, 2) NOT NULL,
+`current_balance` decimal(10, 2) NOT NULL,
+`order_number` varchar(50) DEFAULT NULL,
+`processed_by` varchar(100) NOT NULL,
+`notes` text DEFAULT NULL,
+`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+PRIMARY KEY (`id`),
+KEY `rider_id` (`rider_id`),
+CONSTRAINT `trider_topup_ledger_ibfk_1` FOREIGN KEY (`rider_id`) REFERENCES `triders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Insert sample data for riders
@@ -123,31 +131,14 @@ vehicle_plate_number, topup_balance, rider_status) VALUES
 INSERT INTO tusers (username, password, first_name, last_name, email, role, user_status) VALUES
 ('admin', MD5('password'), 'Admin', 'User', 'admin@example.com', 'Admin', 'Active');
 
--- Insert sample data for Pabili/Pasuyo orders
-INSERT INTO tpabili_orders (order_number, customer_name, contact_number, merchant_store_name, order_description,
-store_address, pickup_note, delivery_address, delivery_note, assigned_rider, order_status) VALUES
-('PAB-2023-001', 'Juan Dela Cruz', '09123456789', 'Jollibee', '2 Chicken Joy (Quantity: 2, Estimated Price: ₱200), 1
-Spaghetti (Quantity: 1, Estimated Price: ₱50)', '123 Main St, Manila', 'Please handle with care', '456 Home St, Quezon
-City', 'Leave at the gate', 'John Smith', 'Pending'),
-('PAB-2023-002', 'Maria Santos', '09234567890', 'McDonald\'s', '2 Big Mac (Quantity: 2, Estimated Price: ₱240), 1 Large
-Fries (Quantity: 1, Estimated Price: ₱60)', '789 Food St, Makati', 'Call upon arrival', '321 House St, Pasig', 'Drop at
-the front desk', 'Jane Johnson', 'Accepted');
-
--- Insert sample data for Pahatid/Pasundo orders
-INSERT INTO tpaangkas_orders (order_number, customer_name, contact_number, pickup_address, vehicle_type, pickup_note,
-dropoff_address, dropoff_note, assigned_rider, order_status) VALUES
-('PAA-2023-001', 'Pedro Reyes', '09345678901', '123 Pickup St, Manila', 'Motorcycle', 'Call when arriving', '456 Dropoff
-St, Quezon City', 'Leave at the gate', 'John Smith', 'Pending'),
-('PAA-2023-002', 'Ana Garcia', '09456789012', '789 Pickup St, Makati', 'Car', 'Wait at the lobby', '321 Dropoff St,
-Pasig', 'Drop at the front desk', 'Michael Brown', 'Accepted');
-
--- Insert sample data for Padala orders
-INSERT INTO tpadala_orders (order_number, customer_name, contact_number, pickup_address, order_description,
-pickup_note, dropoff_address, dropoff_note, assigned_rider, order_status) VALUES
-('PAD-2023-001', 'Jose Santos', '09567890123', '123 Pickup St, Manila', 'Package containing documents', 'Handle with
-care', '456 Dropoff St, Quezon City', 'Leave at the gate', 'John Smith', 'Pending'),
-('PAD-2023-002', 'Sofia Lopez', '09678901234', '789 Pickup St, Makati', 'Small box containing electronics', 'Fragile
-items', '321 Dropoff St, Pasig', 'Drop at the front desk', 'Jane Johnson', 'Accepted');
+-- Insert sample data for top-up transactions
+INSERT INTO trider_topup_ledger (rider_id, transaction_type, previous_balance, amount, current_balance, processed_by,
+notes) VALUES
+(1, 'Add Top-up', 0.00, 1000.00, 1000.00, 'admin', 'Initial top-up'),
+(2, 'Add Top-up', 0.00, 1500.00, 1500.00, 'admin', 'Initial top-up'),
+(3, 'Add Top-up', 0.00, 2000.00, 2000.00, 'admin', 'Initial top-up'),
+(4, 'Add Top-up', 0.00, 150.00, 150.00, 'admin', 'Initial top-up'),
+(5, 'Add Top-up', 0.00, 200.00, 200.00, 'admin', 'Initial top-up');
 
 -- tmerchants table
 CREATE TABLE tmerchants (
@@ -238,3 +229,24 @@ VALUES
 (27, 'shakeys_store.jpg', 'Shakeys store front', 1),
 (27, 'shakeys_pizza.jpg', 'Shakeys pizza', 2),
 (27, 'shakeys_pasta.jpg', 'Shakeys pasta', 3);
+
+-- Table for merchant products/services
+CREATE TABLE tmerchant_products (
+id INT AUTO_INCREMENT PRIMARY KEY,
+merchant_id INT NOT NULL,
+name VARCHAR(255) NOT NULL,
+description TEXT,
+price DECIMAL(10, 2),
+image_path VARCHAR(255) NOT NULL,
+is_active BOOLEAN DEFAULT TRUE,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+FOREIGN KEY (merchant_id) REFERENCES tmerchants(id) ON DELETE CASCADE
+);
+
+-- Sample data for merchant products
+INSERT INTO tmerchant_products (merchant_id, name, description, price, image_path) VALUES
+(16, 'Chicken Joy', 'Crispy juicy fried chicken', 99.00, 'chickenjoy.jpg'),
+(16, 'Jolly Spaghetti', 'Sweet style spaghetti', 50.00, 'jollyspaghetti.jpg'),
+(21, 'Big Mac', 'Signature burger with special sauce', 169.00, 'bigmac.jpg'),
+(21, 'French Fries', 'World famous fries', 49.00, 'mcfries.jpg');

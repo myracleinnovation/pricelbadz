@@ -22,8 +22,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="../public/assets/img/logo.png" rel="icon">
-    <link href="../public/assets/img/logo.png" rel="apple-touch-icon">
+    <link href="../public/img/logo.png" rel="icon">
+    <link href="../public/img/logo.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">

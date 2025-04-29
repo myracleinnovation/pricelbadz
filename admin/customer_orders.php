@@ -9,55 +9,58 @@ $status = isset($_POST['status']) ? $_POST['status'] : 'All Status';
 // Build the query with optional filters
 $query = "SELECT * FROM (
     SELECT 
-        order_number, 
-        customer_name, 
-        contact_number,
-        merchant_store_name, 
-        store_address as pickup_location, 
-        pickup_note,
-        delivery_address as dropoff_address, 
-        delivery_note,
-        assigned_rider, 
-        order_status,
-        order_description,
+        o.order_number, 
+        o.customer_name, 
+        o.contact_number,
+        o.merchant_store_name, 
+        o.store_address as pickup_location, 
+        o.pickup_note,
+        o.delivery_address as dropoff_address, 
+        o.delivery_note,
+        CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name) as assigned_rider, 
+        o.order_status,
+        o.order_description,
         NULL as vehicle_type,
         'PABILI/PASUYO' as order_type,
-        created_at
-    FROM tpabili_orders
+        o.created_at
+    FROM tpabili_orders o
+    LEFT JOIN triders r ON o.assigned_rider = r.id
     UNION ALL
     SELECT 
-        order_number, 
-        customer_name, 
-        contact_number,
+        o.order_number, 
+        o.customer_name, 
+        o.contact_number,
         NULL as merchant_store_name, 
-        pickup_address as pickup_location, 
-        pickup_note,
-        dropoff_address, 
-        dropoff_note as delivery_note,
-        assigned_rider, 
-        order_status,
+        o.pickup_address as pickup_location, 
+        o.pickup_note,
+        o.dropoff_address, 
+        o.dropoff_note as delivery_note,
+        CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name) as assigned_rider, 
+        o.order_status,
         NULL as order_description,
-        vehicle_type,
+        o.vehicle_type,
         'PAHATID/PASUNDO' as order_type,
-        created_at
-    FROM tpaangkas_orders
+        o.created_at
+    FROM tpaangkas_orders o
+    LEFT JOIN triders r ON o.assigned_rider = r.id
     UNION ALL
     SELECT 
-        order_number, 
-        customer_name, 
-        contact_number,
+        o.order_number, 
+        o.customer_name, 
+        o.contact_number,
         NULL as merchant_store_name, 
-        pickup_address as pickup_location, 
-        pickup_note,
-        dropoff_address, 
-        dropoff_note as delivery_note,
-        assigned_rider, 
-        order_status,
-        order_description,
+        o.pickup_address as pickup_location, 
+        o.pickup_note,
+        o.dropoff_address, 
+        o.dropoff_note as delivery_note,
+        CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name) as assigned_rider, 
+        o.order_status,
+        o.order_description,
         NULL as vehicle_type,
         'PADALA' as order_type,
-        created_at
-    FROM tpadala_orders
+        o.created_at
+    FROM tpadala_orders o
+    LEFT JOIN triders r ON o.assigned_rider = r.id
 ) AS all_orders
 WHERE (order_number LIKE ? OR customer_name LIKE ? OR assigned_rider LIKE ?)";
 
@@ -99,7 +102,7 @@ $result = $stmt->get_result();
                 <?php unset($_SESSION['error_message']); ?>
                 <?php endif; ?>
 
-                <div class="card">
+                <div class="card mb-12">
                     <div class="card-body">
                         <h5 class="card-title">Manage Customer Orders</h5>
                         <form method="POST" class="row g-3">
@@ -126,12 +129,12 @@ $result = $stmt->get_result();
                                 </select>
                             </div>
                             <div class="col-md-1">
-                                <button type="submit" class="btn btn-primary w-100">Submit</button>
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card" style="margin-top: 3rem;">
                     <div class="card-body">
                         <!-- Order Type Tabs -->
                         <ul class="nav nav-tabs" id="orderTabs" role="tablist">
@@ -162,7 +165,7 @@ $result = $stmt->get_result();
                             <!-- All Orders Tab -->
                             <div class="tab-pane fade show active" id="all" role="tabpanel"
                                 aria-labelledby="all-tab">
-                                <div class="table-responsive">
+                                <div class="table-responsive pt-3">
                                     <table class="table table-striped table-hover">
                                         <thead>
                                             <tr>
@@ -238,7 +241,7 @@ $result = $stmt->get_result();
 
                             <!-- PABILI Orders Tab -->
                             <div class="tab-pane fade" id="pabili" role="tabpanel" aria-labelledby="pabili-tab">
-                                <div class="table-responsive">
+                                <div class="table-responsive pt-3">
                                     <table class="table table-striped table-hover">
                                         <thead>
                                             <tr>
@@ -318,7 +321,7 @@ $result = $stmt->get_result();
                             <!-- PAANGKAS Orders Tab -->
                             <div class="tab-pane fade" id="paangkas" role="tabpanel"
                                 aria-labelledby="paangkas-tab">
-                                <div class="table-responsive">
+                                <div class="table-responsive pt-3">
                                     <table class="table table-striped table-hover">
                                         <thead>
                                             <tr>
@@ -399,7 +402,7 @@ $result = $stmt->get_result();
 
                             <!-- PADALA Orders Tab -->
                             <div class="tab-pane fade" id="padala" role="tabpanel" aria-labelledby="padala-tab">
-                                <div class="table-responsive">
+                                <div class="table-responsive pt-3">
                                     <table class="table table-striped table-hover">
                                         <thead>
                                             <tr>
@@ -544,34 +547,6 @@ while ($row = $result->fetch_assoc()):
                     <div class="col-md-4 fw-bold">Order Type:</div>
                     <div class="col-md-8"><?= htmlspecialchars($row['order_type']) ?></div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 fw-bold">Status:</div>
-                    <div class="col-md-8">
-                        <form method="POST" action="update_order_status.php" class="d-inline">
-                            <input type="hidden" name="order_number"
-                                value="<?= htmlspecialchars($row['order_number']) ?>">
-                            <input type="hidden" name="order_type"
-                                value="<?= htmlspecialchars($row['order_type']) ?>">
-                            <select name="order_status" class="form-select form-select-sm d-inline-block w-auto"
-                                onchange="this.form.submit()">
-                                <option value="Pending" <?= $row['order_status'] === 'Pending' ? 'selected' : '' ?>>
-                                    Pending</option>
-                                <option value="On-Going" <?= $row['order_status'] === 'On-Going' ? 'selected' : '' ?>>
-                                    On-Going</option>
-                                <option value="Completed"
-                                    <?= $row['order_status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
-                                <option value="Cancelled"
-                                    <?= $row['order_status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                            </select>
-                        </form>
-                        <?php if (!empty($row['status_changed_at']) && !empty($row['status_changed_by'])): ?>
-                        <small class="text-muted d-block mt-1">
-                            Last changed by <?= htmlspecialchars($row['status_changed_by']) ?> 
-                            on <?= date('M d, Y h:i A', strtotime($row['status_changed_at'])) ?>
-                        </small>
-                        <?php endif; ?>
-                    </div>
-                </div>
                 <?php if ($row['order_type'] === 'PABILI/PASUYO'): ?>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Merchant Store:</div>
@@ -616,42 +591,43 @@ while ($row = $result->fetch_assoc()):
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Service Fee:</div>
                     <div class="col-md-8">
-                        <form method="POST" action="update_order_fees.php" class="d-inline">
-                            <input type="hidden" name="order_number"
-                                value="<?= htmlspecialchars($row['order_number']) ?>">
-                            <input type="hidden" name="order_type"
-                                value="<?= htmlspecialchars($row['order_type']) ?>">
-                            <div class="input-group input-group-sm d-inline-block w-auto">
-                                <span class="input-group-text">₱</span>
-                                <input type="number" name="service_fee" class="form-control form-control-sm"
-                                    value="<?= number_format($row['service_fee'] ?? 0.0, 2, '.', '') ?>"
-                                    step="0.01" min="0" required>
-                            </div>
-                        </form>
+                        <div class="input-group input-group-sm d-inline-block w-auto">
+                            <span class="input-group-text">₱</span>
+                            <input type="number" id="service_fee_<?= urlencode($row['order_number']) ?>"
+                                class="form-control form-control-sm service-fee-input"
+                                value="<?= number_format($row['service_fee'] ?? 0.0, 2, '.', '') ?>" step="0.01"
+                                min="0" style="width: 120px;">
+                        </div>
+                        <small class="text-muted ms-2">Enter service fee to auto-calculate commission</small>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">PricelBadz Commission:</div>
                     <div class="col-md-8">
-                        <form method="POST" action="update_order_fees.php" class="d-inline">
-                            <input type="hidden" name="order_number"
-                                value="<?= htmlspecialchars($row['order_number']) ?>">
-                            <input type="hidden" name="order_type"
-                                value="<?= htmlspecialchars($row['order_type']) ?>">
-                            <div class="input-group input-group-sm d-inline-block w-auto">
-                                <span class="input-group-text">₱</span>
-                                <input type="number" name="commission" class="form-control form-control-sm"
-                                    value="<?= number_format($row['commission'] ?? 0.0, 2, '.', '') ?>" step="0.01"
-                                    min="0" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary ms-2">Update Fees</button>
-                        </form>
+                        <div class="input-group input-group-sm d-inline-block w-auto">
+                            <span class="input-group-text">₱</span>
+                            <input type="number" id="commission_<?= urlencode($row['order_number']) ?>"
+                                class="form-control form-control-sm commission-input"
+                                value="<?= number_format($row['commission'] ?? 0.0, 2, '.', '') ?>" step="0.01"
+                                min="0" style="width: 120px;">
+                        </div>
+                        <small class="text-muted ms-2">Auto-calculated (10% of service fee) but can be edited</small>
+                        <button type="button" class="btn btn-primary btn-sm ms-2 update-fees-btn"
+                            data-order-number="<?= htmlspecialchars($row['order_number']) ?>"
+                            data-order-type="<?= htmlspecialchars($row['order_type']) ?>">
+                            Update Fees
+                        </button>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Assigned Rider:</div>
                     <div class="col-md-8">
-                        <form method="POST" action="update_assigned_rider.php" class="d-inline">
+                        <?php if (!empty($row['assigned_rider'])): ?>
+                        <span class="badge bg-primary"><?= htmlspecialchars($row['assigned_rider']) ?></span>
+                        <?php else: ?>
+                        <span class="badge bg-secondary">Not assigned</span>
+                        <?php endif; ?>
+                        <form method="POST" action="update_assigned_rider.php" class="d-inline ms-2">
                             <input type="hidden" name="order_number"
                                 value="<?= htmlspecialchars($row['order_number']) ?>">
                             <input type="hidden" name="order_type"
@@ -665,37 +641,34 @@ while ($row = $result->fetch_assoc()):
                                 
                                 // Get eligible riders (active, with sufficient balance, and without ongoing orders)
                                 $rider_query = "
-                                    SELECT r.id, CONCAT(r.first_name, ' ', r.last_name) as rider_name, r.topup_balance 
-                                    FROM triders r 
-                                    WHERE r.rider_status = 'Active' 
-                                    AND r.topup_balance >= ?
-                                    AND NOT EXISTS (
-                                        SELECT 1 FROM (
-                                            SELECT assigned_rider, order_status FROM tpabili_orders 
-                                            WHERE order_status = 'On-Going'
-                                            UNION ALL
-                                            SELECT assigned_rider, order_status FROM tpaangkas_orders 
-                                            WHERE order_status = 'On-Going'
-                                            UNION ALL
-                                            SELECT assigned_rider, order_status FROM tpadala_orders 
-                                            WHERE order_status = 'On-Going'
-                                        ) AS all_orders 
-                                        WHERE all_orders.assigned_rider = CONCAT(r.first_name, ' ', r.last_name)
-                                    )
-                                    ORDER BY r.topup_balance DESC, r.last_name, r.first_name";
+                                                                                                                                                                    SELECT r.id, CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name) as rider_name, r.topup_balance 
+                                                                                                                                                                    FROM triders r 
+                                                                                                                                                                    WHERE r.rider_status = 'Active' 
+                                                                                                                                                                    AND r.topup_balance >= ?
+                                                                                                                                                                    AND NOT EXISTS (
+                                                                                                                                                                        SELECT 1 FROM (
+                                                                                                                                                                            SELECT assigned_rider, order_status FROM tpabili_orders 
+                                                                                                                                                                            WHERE order_status = 'On-Going'
+                                                                                                                                                                            UNION ALL
+                                                                                                                                                                            SELECT assigned_rider, order_status FROM tpaangkas_orders 
+                                                                                                                                                                            WHERE order_status = 'On-Going'
+                                                                                                                                                                            UNION ALL
+                                                                                                                                                                            SELECT assigned_rider, order_status FROM tpadala_orders 
+                                                                                                                                                                            WHERE order_status = 'On-Going'
+                                                                                                                                                                        ) AS all_orders 
+                                                                                                                                                                        WHERE all_orders.assigned_rider = r.id
+                                                                                                                                                                    )
+                                                                                                                                                                    ORDER BY r.topup_balance DESC, r.last_name, r.first_name";
                                 
                                 $stmt = $conn->prepare($rider_query);
-                                $stmt->bind_param("d", $commission);
+                                $stmt->bind_param('d', $commission);
                                 $stmt->execute();
                                 $rider_result = $stmt->get_result();
                                 
                                 if ($rider_result && $rider_result->num_rows > 0) {
                                     while ($rider = $rider_result->fetch_assoc()) {
-                                        $selected = $row['assigned_rider'] === $rider['rider_name'] ? 'selected' : '';
-                                        echo "<option value='" . htmlspecialchars($rider['rider_name']) . "' " . $selected . '>' 
-                                            . htmlspecialchars($rider['rider_name']) 
-                                            . ' (Balance: ₱' . number_format($rider['topup_balance'], 2) . ')' 
-                                            . '</option>';
+                                        $selected = $row['assigned_rider'] == $rider['id'] ? 'selected' : '';
+                                        echo "<option value='" . htmlspecialchars($rider['id']) . "' " . $selected . '>' . htmlspecialchars($rider['rider_name']) . ' (Balance: ₱' . number_format($rider['topup_balance'], 2) . ')' . '</option>';
                                     }
                                 } else {
                                     echo '<option value="" disabled>No eligible riders available</option>';
@@ -703,6 +676,34 @@ while ($row = $result->fetch_assoc()):
                                 ?>
                             </select>
                         </form>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Status:</div>
+                    <div class="col-md-8">
+                        <form method="POST" action="update_order_status.php" class="d-inline">
+                            <input type="hidden" name="order_number"
+                                value="<?= htmlspecialchars($row['order_number']) ?>">
+                            <input type="hidden" name="order_type"
+                                value="<?= htmlspecialchars($row['order_type']) ?>">
+                            <select name="order_status" class="form-select form-select-sm d-inline-block w-auto"
+                                onchange="this.form.submit()">
+                                <option value="Pending" <?= $row['order_status'] === 'Pending' ? 'selected' : '' ?>>
+                                    Pending</option>
+                                <option value="On-Going" <?= $row['order_status'] === 'On-Going' ? 'selected' : '' ?>>
+                                    On-Going</option>
+                                <option value="Completed"
+                                    <?= $row['order_status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
+                                <option value="Cancelled"
+                                    <?= $row['order_status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                            </select>
+                        </form>
+                        <?php if (!empty($row['status_changed_at']) && !empty($row['status_changed_by'])): ?>
+                        <small class="text-muted d-block mt-1">
+                            Last changed by <?= htmlspecialchars($row['status_changed_by']) ?>
+                            on <?= date('M d, Y h:i A', strtotime($row['status_changed_at'])) ?>
+                        </small>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -737,6 +738,66 @@ while ($row = $result->fetch_assoc()):
 
     // Call the function when the page loads
     document.addEventListener('DOMContentLoaded', hideAlerts);
+
+    // Auto-calculate commission based on service fee
+    document.addEventListener('DOMContentLoaded', function() {
+        // Commission percentage (10% as confirmed)
+        const commissionPercentage = 0.10;
+
+        // Add event listeners to all service fee inputs
+        document.querySelectorAll('.service-fee-input').forEach(function(input) {
+            input.addEventListener('input', function() {
+                const orderNumber = this.id.split('_')[1];
+                const serviceFee = parseFloat(this.value) || 0;
+                const commission = serviceFee * commissionPercentage;
+
+                // Update the corresponding commission input
+                const commissionInput = document.getElementById('commission_' + orderNumber);
+                if (commissionInput) {
+                    commissionInput.value = commission.toFixed(2);
+                }
+            });
+        });
+
+        // Add event listeners to update fees buttons
+        document.querySelectorAll('.update-fees-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const orderNumber = this.getAttribute('data-order-number');
+                const orderType = this.getAttribute('data-order-type');
+                const serviceFee = document.getElementById('service_fee_' + orderNumber).value;
+                const commission = document.getElementById('commission_' + orderNumber).value;
+
+                // Create form data
+                const formData = new FormData();
+                formData.append('order_number', orderNumber);
+                formData.append('order_type', orderType);
+                formData.append('service_fee', serviceFee);
+                formData.append('commission', commission);
+
+                // Send AJAX request
+                fetch('update_order_fees.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        // Show success message
+                        alert('Fees updated successfully!');
+                        // Reload the page to show updated values
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error updating fees. Please try again.');
+                    });
+            });
+        });
+    });
 </script>
 
 <?php

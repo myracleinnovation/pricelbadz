@@ -1,74 +1,102 @@
 <?php
-include './header.php';
+// Start output buffering to prevent "headers already sent" error
+ob_start();
+
+// Include database connection
 include '../config/connect.php';
 
-// Check if form was submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get rider details from form
+// Start session if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if the request is POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the rider details
     $rider_id = $_POST['rider_id'];
-    $new_balance = $_POST['new_balance'];
-    
-    // Validate input
-    if (!is_numeric($new_balance) || $new_balance < 0) {
-        $_SESSION['error_message'] = "Invalid balance amount. Please enter a valid number.";
+    $transaction_type = $_POST['transaction_type'];
+    $amount = (float)$_POST['amount'];
+    $notes = $_POST['notes'] ?? '';
+
+    // Validate inputs
+    if (empty($rider_id) || empty($transaction_type) || $amount <= 0) {
+        $_SESSION['error_message'] = "Invalid input data.";
         header("Location: delivery_rider.php");
         exit();
     }
-    
+
     // Start transaction
     $conn->begin_transaction();
-    
+
     try {
-        // Get current balance
-        $current_balance_query = "SELECT topup_balance FROM triders WHERE id = ?";
-        $current_balance_stmt = $conn->prepare($current_balance_query);
-        $current_balance_stmt->bind_param("i", $rider_id);
-        $current_balance_stmt->execute();
-        $current_balance_result = $current_balance_stmt->get_result();
-        $current_balance_data = $current_balance_result->fetch_assoc();
-        $current_balance_stmt->close();
-        
-        $current_balance = $current_balance_data['topup_balance'];
-        $difference = $new_balance - $current_balance;
-        
-        // Update rider's top-up balance in database
-        $update_stmt = $conn->prepare("UPDATE triders SET topup_balance = ? WHERE id = ?");
-        $update_stmt->bind_param("di", $new_balance, $rider_id);
-        $update_stmt->execute();
-        $update_stmt->close();
-        
-        // Add entry to top-up ledger
-        if ($difference != 0) {
-            $transaction_type = $difference > 0 ? 'Additional Top-up' : 'Top-up Withdrawal';
-            $amount = abs($difference);
-            
-            // Get the current admin username from session
-            $author = isset($_SESSION['username']) ? $_SESSION['username'] : 'System';
-            
-            $ledger_query = "INSERT INTO trider_topup_ledger (rider_id, transaction_type, amount, author, notes) 
-                            VALUES (?, ?, ?, ?, ?)";
-            $ledger_stmt = $conn->prepare($ledger_query);
-            $notes = "Manual balance adjustment from ₱" . number_format($current_balance, 2) . " to ₱" . number_format($new_balance, 2);
-            $ledger_stmt->bind_param("isdss", $rider_id, $transaction_type, $amount, $author, $notes);
-            $ledger_stmt->execute();
-            $ledger_stmt->close();
+        // Get current rider balance
+        $rider_query = "SELECT topup_balance FROM triders WHERE id = ?";
+        $stmt = $conn->prepare($rider_query);
+        $stmt->bind_param('i', $rider_id);
+        $stmt->execute();
+        $rider_result = $stmt->get_result();
+        $rider = $rider_result->fetch_assoc();
+
+        if (!$rider) {
+            throw new Exception("Rider not found.");
         }
+
+        $previous_balance = $rider['topup_balance'];
+        $new_balance = $transaction_type === 'add' ? $previous_balance + $amount : $previous_balance - $amount;
+
+        // Check if withdrawal is possible
+        if ($transaction_type === 'withdraw' && $new_balance < 0) {
+            throw new Exception("Insufficient balance for withdrawal.");
+        }
+
+        // Update rider balance
+        $update_query = "UPDATE triders SET topup_balance = ? WHERE id = ?";
+        $stmt = $conn->prepare($update_query);
+        $stmt->bind_param('di', $new_balance, $rider_id);
+        $stmt->execute();
+
+        // Get the current admin username from session
+        $processed_by = isset($_SESSION['username']) ? $_SESSION['username'] : 'System';
         
+        // Map transaction type to ledger transaction type
+        $ledger_transaction_type = $transaction_type === 'add' ? 'Add Top-up' : 'Withdraw Top-up';
+        
+        // Record transaction in the ledger
+        $transaction_query = "INSERT INTO trider_topup_ledger (
+            rider_id, 
+            transaction_type, 
+            previous_balance,
+            amount,
+            current_balance,
+            processed_by, 
+            notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $conn->prepare($transaction_query);
+        $stmt->bind_param('isddiss', 
+            $rider_id, 
+            $ledger_transaction_type, 
+            $previous_balance,
+            $amount,
+            $new_balance,
+            $processed_by, 
+            $notes
+        );
+        $stmt->execute();
+
         // Commit transaction
         $conn->commit();
-        
-        $_SESSION['success_message'] = "Rider's top-up balance updated successfully.";
+        $_SESSION['success_message'] = "Top-up transaction processed successfully.";
     } catch (Exception $e) {
         // Rollback transaction on error
         $conn->rollback();
-        $_SESSION['error_message'] = "Error updating rider's top-up balance: " . $e->getMessage();
+        $_SESSION['error_message'] = "Error processing transaction: " . $e->getMessage();
     }
-    
-    header("Location: delivery_rider.php");
-    exit();
 } else {
-    // If not POST request, redirect to delivery rider page
-    header("Location: delivery_rider.php");
-    exit();
+    $_SESSION['error_message'] = "Invalid request method.";
 }
+
+// Redirect back to delivery rider page
+header("Location: delivery_rider.php");
+exit();
 ?> 

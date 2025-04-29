@@ -10,12 +10,13 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if form was submitted
+// Check if the request is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the order details
     $order_number = $_POST['order_number'];
     $order_type = $_POST['order_type'];
-    $service_fee = (float) $_POST['service_fee'];
-    $commission = (float) $_POST['commission'];
+    $service_fee = (float)$_POST['service_fee'];
+    $commission = (float)$_POST['commission'];
 
     // Determine which table to update based on order type
     $table = '';
@@ -30,24 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $table = 'tpadala_orders';
             break;
         default:
-            $_SESSION['error_message'] = 'Invalid order type';
-            header('Location: customer_orders.php');
-            exit;
+            $_SESSION['error_message'] = "Invalid order type.";
+            header("Location: customer_orders.php");
+            exit();
     }
 
-    // Update the order fees
-    $sql = "UPDATE $table SET service_fee = ?, commission = ? WHERE order_number = ?";
-    $stmt = $conn->prepare($sql);
+    // Update the service fee and commission
+    $update_query = "UPDATE $table SET service_fee = ?, commission = ? WHERE order_number = ?";
+    $stmt = $conn->prepare($update_query);
     $stmt->bind_param('dds', $service_fee, $commission, $order_number);
 
     if ($stmt->execute()) {
-        $_SESSION['success_message'] = 'Order fees updated successfully';
+        $_SESSION['success_message'] = "Service fee and commission updated successfully.";
     } else {
-        $_SESSION['error_message'] = 'Failed to update order fees';
+        $_SESSION['error_message'] = "Error updating service fee and commission: " . $conn->error;
     }
 
     $stmt->close();
-    mysqli_close($conn);
 } else {
     $_SESSION['error_message'] = "Invalid request method.";
 }
