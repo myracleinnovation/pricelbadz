@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $balance_stmt->close();
                 
                 // Add entry to top-up ledger for refund
-                $ledger_query = "INSERT INTO trider_topup_ledger (rider_id, transaction_type, amount, order_number, author, notes) 
+                $ledger_query = "INSERT INTO trider_topup_ledger (rider_id, transaction_type, amount, order_number, processed_by, notes) 
                                 VALUES (?, 'Refund Top-up', ?, ?, 'System', ?)";
                 $ledger_stmt = $conn->prepare($ledger_query);
                 $transaction_note = "Commission refunded for order #$order_number (Status changed from On-Going to $new_status)";
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $balance_stmt->close();
                     
                     // Add entry to top-up ledger for commission deduction
-                    $ledger_query = "INSERT INTO trider_topup_ledger (rider_id, transaction_type, amount, order_number, author, notes) 
+                    $ledger_query = "INSERT INTO trider_topup_ledger (rider_id, transaction_type, amount, order_number, processed_by, notes) 
                                     VALUES (?, 'Commission Deduction', ?, ?, 'System', ?)";
                     $ledger_stmt = $conn->prepare($ledger_query);
                     $transaction_note = "Commission deducted for order #$order_number (Status changed to On-Going)";

@@ -17,14 +17,22 @@ $query = "SELECT * FROM (
         o.pickup_note,
         o.delivery_address as dropoff_address, 
         o.delivery_note,
-        CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name) as assigned_rider, 
+        o.assigned_rider,
+        CASE 
+            WHEN r.id IS NOT NULL THEN CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name)
+            ELSE 'Not assigned'
+        END as assigned_rider_name,
+        r.vehicle_type as rider_vehicle_type,
+        r.topup_balance as rider_balance,
         o.order_status,
         o.order_description,
         o.vehicle_type,
         'PABILI/PASUYO' as order_type,
         o.created_at,
         o.service_fee,
-        o.commission
+        o.commission,
+        o.rider_assigned_by,
+        o.rider_assigned_at
     FROM tpabili_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
     UNION ALL
@@ -37,14 +45,22 @@ $query = "SELECT * FROM (
         o.pickup_note,
         o.dropoff_address, 
         o.dropoff_note as delivery_note,
-        CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name) as assigned_rider, 
+        o.assigned_rider,
+        CASE 
+            WHEN r.id IS NOT NULL THEN CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name)
+            ELSE 'Not assigned'
+        END as assigned_rider_name,
+        r.vehicle_type as rider_vehicle_type,
+        r.topup_balance as rider_balance,
         o.order_status,
         NULL as order_description,
         o.vehicle_type,
         'PAHATID/PASUNDO' as order_type,
         o.created_at,
         o.service_fee,
-        o.commission
+        o.commission,
+        o.rider_assigned_by,
+        o.rider_assigned_at
     FROM tpaangkas_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
     UNION ALL
@@ -57,18 +73,26 @@ $query = "SELECT * FROM (
         o.pickup_note,
         o.dropoff_address, 
         o.dropoff_note as delivery_note,
-        CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name) as assigned_rider, 
+        o.assigned_rider,
+        CASE 
+            WHEN r.id IS NOT NULL THEN CONCAT(r.first_name, ' ', COALESCE(r.middle_name, ''), ' ', r.last_name)
+            ELSE 'Not assigned'
+        END as assigned_rider_name,
+        r.vehicle_type as rider_vehicle_type,
+        r.topup_balance as rider_balance,
         o.order_status,
         o.order_description,
         o.vehicle_type,
         'PADALA' as order_type,
         o.created_at,
         o.service_fee,
-        o.commission
+        o.commission,
+        o.rider_assigned_by,
+        o.rider_assigned_at
     FROM tpadala_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
 ) AS all_orders
-WHERE (order_number LIKE ? OR customer_name LIKE ? OR assigned_rider LIKE ?)";
+WHERE (order_number LIKE ? OR customer_name LIKE ? OR assigned_rider_name LIKE ?)";
 
 if ($status !== 'All Status') {
     $query .= ' AND order_status = ?';
@@ -197,8 +221,7 @@ $result = $stmt->get_result();
                                                 <td><?= htmlspecialchars($row['customer_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['order_type']) ?></td>
                                                 <td><?= htmlspecialchars($row['merchant_store_name'] ?? 'N/A') ?></td>
-                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
-                                                </td>
+                                                <td><?= htmlspecialchars($row['assigned_rider_name']) ?></td>
                                                 <td>
                                                     <span class="badge <?php
                                                     switch ($row['order_status']) {
@@ -274,8 +297,7 @@ $result = $stmt->get_result();
                                                 <td><?= htmlspecialchars($row['customer_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['merchant_store_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['order_description'] ?? 'N/A') ?></td>
-                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
-                                                </td>
+                                                <td><?= htmlspecialchars($row['assigned_rider_name']) ?></td>
                                                 <td>
                                                     <span class="badge <?php
                                                     switch ($row['order_status']) {
@@ -356,8 +378,7 @@ $result = $stmt->get_result();
                                                 <td><?= htmlspecialchars($row['vehicle_type'] ?? 'N/A') ?></td>
                                                 <td><?= htmlspecialchars($row['pickup_location']) ?></td>
                                                 <td><?= htmlspecialchars($row['dropoff_address']) ?></td>
-                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
-                                                </td>
+                                                <td><?= htmlspecialchars($row['assigned_rider_name']) ?></td>
                                                 <td>
                                                     <span class="badge <?php
                                                     switch ($row['order_status']) {
@@ -437,8 +458,7 @@ $result = $stmt->get_result();
                                                 <td><?= htmlspecialchars($row['order_description'] ?? 'N/A') ?></td>
                                                 <td><?= htmlspecialchars($row['pickup_location']) ?></td>
                                                 <td><?= htmlspecialchars($row['dropoff_address']) ?></td>
-                                                <td><?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
-                                                </td>
+                                                <td><?= htmlspecialchars($row['assigned_rider_name']) ?></td>
                                                 <td>
                                                     <span class="badge <?php
                                                     switch ($row['order_status']) {
@@ -618,69 +638,57 @@ while ($row = $result->fetch_assoc()):
                                 value="<?= htmlspecialchars($row['order_number']) ?>">
                             <input type="hidden" name="order_type"
                                 value="<?= htmlspecialchars($row['order_type']) ?>">
-                            <select name="assigned_rider" class="form-select form-select"
-                                style="max-width: 250px;" onchange="this.form.submit()">
-                                <option value="" disabled>Current ID:
-                                    <?= htmlspecialchars($row['assigned_rider'] ?? 'Not assigned') ?>
+                            <select name="assigned_rider" class="form-select form-select" style="max-width: 250px;"
+                                onchange="this.form.submit()">
+                                <option value="">Select a rider</option>
+                                <?php if ($row['assigned_rider']): ?>
+                                <option value="<?= htmlspecialchars($row['assigned_rider']) ?>" selected>
+                                    <?= htmlspecialchars($row['assigned_rider_name']) ?>
+                                    (<?= htmlspecialchars($row['rider_vehicle_type']) ?>) -
+                                    Balance: ₱<?= number_format($row['rider_balance'], 2) ?>
                                 </option>
-                                <?php if (empty($row['assigned_rider'])): ?>
-                                <option value="" selected>Not assigned</option>
-                                <?php else: ?>
-                                <option value="">Not assigned</option>
                                 <?php endif; ?>
                                 <?php
-                                // Get the commission amount for this order
-                                $commission = $row['commission'] ?? 0.0;
-                                
-                                // Get the vehicle type required for this order
-                                $required_vehicle_type = $row['vehicle_type'] ?? null;
-                                
-                                // Get eligible riders (active, with sufficient balance, matching vehicle type, and without ongoing orders)
-                                $rider_query = 'SELECT id, topup_balance FROM triders WHERE id = ?';
-                                
-                                // Add vehicle type filter if required
-                                if ($required_vehicle_type) {
-                                    $rider_query .= ' AND vehicle_type = ?';
-                                }
-                                
-                                // Add condition to exclude riders with ongoing orders
-                                $rider_query .= " AND NOT EXISTS (
-                                                                                                                                                                                                                                                                                                    SELECT 1 FROM (
-                                                                                                                                                                                                                                                                                                        SELECT assigned_rider, order_status FROM tpabili_orders 
-                                                                                                                                                                                                                                                                                                        WHERE order_status = 'On-Going'
-                                                                                                                                                                                                                                                                                                        UNION ALL
-                                                                                                                                                                                                                                                                                                        SELECT assigned_rider, order_status FROM tpaangkas_orders 
-                                                                                                                                                                                                                                                                                                        WHERE order_status = 'On-Going'
-                                                                                                                                                                                                                                                                                                        UNION ALL
-                                                                                                                                                                                                                                                                                                        SELECT assigned_rider, order_status FROM tpadala_orders 
-                                                                                                                                                                                                                                                                                                        WHERE order_status = 'On-Going'
-                                                                                                                                                                                                                                                                                                    ) AS all_orders 
-                                                                                                                                                                                                                                                                                                    WHERE all_orders.assigned_rider = triders.id
-                                                                                                                                                                                                                                                                                                )
-                                                                                                                                                                                                                                                                                                ORDER BY topup_balance DESC, last_name, first_name";
+                                // Get all available riders
+                                $rider_query = 'SELECT id, first_name, middle_name, last_name, vehicle_type, topup_balance 
+                                                                                                              FROM triders 
+                                                                                                              WHERE NOT EXISTS (
+                                                                                                                  SELECT 1 FROM (
+                                                                                                                      SELECT assigned_rider FROM tpabili_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
+                                                                                                                      UNION ALL
+                                                                                                                      SELECT assigned_rider FROM tpaangkas_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
+                                                                                                                      UNION ALL
+                                                                                                                      SELECT assigned_rider FROM tpadala_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
+                                                                                                                  ) AS ongoing_orders 
+                                                                                                                  WHERE ongoing_orders.assigned_rider = triders.id
+                                                                                                              )
+                                                                                                              AND (id != ? OR ? IS NULL)
+                                                                                                              ORDER BY last_name, first_name';
                                 
                                 $rider_stmt = $conn->prepare($rider_query);
-                                
-                                // Bind parameters based on whether vehicle type is required
-                                if ($required_vehicle_type) {
-                                    $rider_stmt->bind_param('ds', $commission, $required_vehicle_type);
-                                } else {
-                                    $rider_stmt->bind_param('d', $commission);
-                                }
-                                
+                                $rider_stmt->bind_param('ii', $row['assigned_rider'], $row['assigned_rider']);
                                 $rider_stmt->execute();
                                 $rider_result = $rider_stmt->get_result();
                                 
                                 if ($rider_result && $rider_result->num_rows > 0) {
                                     while ($rider = $rider_result->fetch_assoc()) {
-                                        $selected = $row['assigned_rider'] == $rider['id'] ? 'selected' : '';
-                                        echo "<option value='" . htmlspecialchars($rider['id']) . "' " . $selected . '>' . htmlspecialchars($rider['id']) . ' (' . htmlspecialchars($rider['vehicle_type']) . ')' . ' (Balance: ₱' . number_format($rider['topup_balance'], 2) . ')' . '</option>';
+                                        $full_name = $rider['first_name'];
+                                        if (!empty($rider['middle_name'])) {
+                                            $full_name .= ' ' . $rider['middle_name'];
+                                        }
+                                        $full_name .= ' ' . $rider['last_name'];
+                                
+                                        echo "<option value='" . htmlspecialchars($rider['id']) . "'>" . htmlspecialchars($full_name) . ' (' . htmlspecialchars($rider['vehicle_type']) . ')' . ' - Balance: ₱' . number_format($rider['topup_balance'], 2) . '</option>';
                                     }
-                                } else {
-                                    echo '<option value="" disabled>No eligible riders available</option>';
                                 }
                                 ?>
                             </select>
+                            <?php if (!empty($row['rider_assigned_by']) && !empty($row['rider_assigned_at'])): ?>
+                            <small class="text-muted d-block mt-1">
+                                Last assigned by <?= htmlspecialchars($row['rider_assigned_by']) ?>
+                                on <?= date('M d, Y h:i A', strtotime($row['rider_assigned_at'])) ?>
+                            </small>
+                            <?php endif; ?>
                         </form>
                     </div>
                 </div>

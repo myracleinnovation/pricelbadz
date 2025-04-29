@@ -17,17 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Validate and sanitize inputs
 $rider_id = filter_input(INPUT_POST, 'rider_id', FILTER_SANITIZE_NUMBER_INT);
-$first_name = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_STRING);
-$middle_name = filter_input(INPUT_POST, 'middle_name', FILTER_SANITIZE_STRING);
-$last_name = filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_STRING);
-$license_number = filter_input(INPUT_POST, 'license_number', FILTER_SANITIZE_STRING);
-$vehicle_type = filter_input(INPUT_POST, 'vehicle_type', FILTER_SANITIZE_STRING);
-$vehicle_plate_number = filter_input(INPUT_POST, 'vehicle_plate_number', FILTER_SANITIZE_STRING);
-$vehicle_cor = filter_input(INPUT_POST, 'vehicle_cor', FILTER_SANITIZE_STRING);
-$rider_status = filter_input(INPUT_POST, 'rider_status', FILTER_SANITIZE_STRING);
+$first_name = trim(htmlspecialchars($_POST['first_name'] ?? '', ENT_QUOTES, 'UTF-8'));
+$middle_name = trim(htmlspecialchars($_POST['middle_name'] ?? '', ENT_QUOTES, 'UTF-8'));
+$last_name = trim(htmlspecialchars($_POST['last_name'] ?? '', ENT_QUOTES, 'UTF-8'));
+$license_number = trim(htmlspecialchars($_POST['license_number'] ?? '', ENT_QUOTES, 'UTF-8'));
+$vehicle_type = trim(htmlspecialchars($_POST['vehicle_type'] ?? '', ENT_QUOTES, 'UTF-8'));
+$vehicle_plate_number = trim(htmlspecialchars($_POST['vehicle_plate_number'] ?? '', ENT_QUOTES, 'UTF-8'));
+$vehicle_cor = trim(htmlspecialchars($_POST['vehicle_cor'] ?? '', ENT_QUOTES, 'UTF-8'));
+$rider_status = trim(htmlspecialchars($_POST['rider_status'] ?? '', ENT_QUOTES, 'UTF-8'));
 
 // Additional validation
-if (!$rider_id || !$first_name || !$last_name || !$license_number || !$vehicle_type || !$vehicle_plate_number || !$vehicle_cor || !$rider_status) {
+if (!$rider_id || empty($first_name) || empty($last_name) || empty($license_number) || 
+    empty($vehicle_type) || empty($vehicle_plate_number) || empty($vehicle_cor) || empty($rider_status)) {
     $_SESSION['error_message'] = "Missing required fields!";
     header("Location: delivery_rider.php");
     exit();

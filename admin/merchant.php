@@ -305,6 +305,11 @@ $result = $stmt->get_result();
                                                         data-bs-target="#editMerchantModal<?= urlencode($row['id']) ?>">
                                                         Edit Merchant
                                                     </button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteMerchantModal<?= urlencode($row['id']) ?>">
+                                                        Delete Merchant
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -472,6 +477,43 @@ $result = $stmt->get_result();
                                                             Product</button>
                                                     </div>
                                                 </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delete Merchant Modal -->
+                                    <div class="modal fade" id="deleteMerchantModal<?= urlencode($row['id']) ?>"
+                                        tabindex="-1"
+                                        aria-labelledby="deleteMerchantModalLabel<?= urlencode($row['id']) ?>"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title fw-bold"
+                                                        id="deleteMerchantModalLabel<?= urlencode($row['id']) ?>">
+                                                        Delete
+                                                        Merchant</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Are you sure you want to delete this merchant? This action cannot
+                                                        be undone.</p>
+                                                    <p><strong>Merchant Name:</strong>
+                                                        <?= htmlspecialchars($row['merchant_name']) ?></p>
+                                                    <p class="text-danger">This will also delete all associated
+                                                        products and images.</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <form action="delete_merchant.php" method="POST">
+                                                        <input type="hidden" name="merchant_id"
+                                                            value="<?= htmlspecialchars($row['id']) ?>">
+                                                        <button type="submit" class="btn btn-danger">Delete
+                                                            Merchant</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

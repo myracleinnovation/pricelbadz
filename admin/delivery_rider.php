@@ -182,6 +182,8 @@ $result = $stmt->get_result();
                                                     <div id="editForm<?= urlencode($row['id']) ?>"
                                                         style="display: none;">
                                                         <form action="update_rider_details.php" method="POST">
+                                                            <input type="hidden" name="rider_id"
+                                                                value="<?= htmlspecialchars($row['id']) ?>">
                                                             <div class="mb-3">
                                                                 <label for="first_name" class="form-label">First
                                                                     Name</label>
@@ -218,15 +220,22 @@ $result = $stmt->get_result();
                                                                     Type</label>
                                                                 <select class="form-select" id="vehicle_type"
                                                                     name="vehicle_type" required>
-                                                                    <option value="Motorcycle"
-                                                                        <?= $row['vehicle_type'] === 'Motorcycle' ? 'selected' : '' ?>>
-                                                                        Motorcycle</option>
-                                                                    <option value="Tricycle"
-                                                                        <?= $row['vehicle_type'] === 'Tricycle' ? 'selected' : '' ?>>
-                                                                        Tricycle</option>
-                                                                    <option value="Car"
-                                                                        <?= $row['vehicle_type'] === 'Car' ? 'selected' : '' ?>>
-                                                                        Car</option>
+                                                                    <option value="">Select Vehicle Type</option>
+                                                                    <option value="Motorcycle (1 seat)"
+                                                                        <?= $row['vehicle_type'] === 'Motorcycle (1 seat)' ? 'selected' : '' ?>>
+                                                                        Motorcycle (1 seat)</option>
+                                                                    <option value="Tricycle (2-4 seats)"
+                                                                        <?= $row['vehicle_type'] === 'Tricycle (2-4 seats)' ? 'selected' : '' ?>>
+                                                                        Tricycle (2-4 seats)</option>
+                                                                    <option value="Car (3-4 seats)"
+                                                                        <?= $row['vehicle_type'] === 'Car (3-4 seats)' ? 'selected' : '' ?>>
+                                                                        Car (3-4 seats)</option>
+                                                                    <option value="Car (5-7 seats)"
+                                                                        <?= $row['vehicle_type'] === 'Car (5-7 seats)' ? 'selected' : '' ?>>
+                                                                        Car (5-7 seats)</option>
+                                                                    <option value="Van (10-14 seats)"
+                                                                        <?= $row['vehicle_type'] === 'Van (10-14 seats)' ? 'selected' : '' ?>>
+                                                                        Van (10-14 seats)</option>
                                                                 </select>
                                                             </div>
                                                             <div class="mb-3">
