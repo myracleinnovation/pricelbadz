@@ -884,83 +884,269 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="termsModalLabel">Terms and Conditions</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="termsModalLabel">
+                        <i class="bx bxs-file-doc me-2"></i>Terms and Conditions
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="terms-content">
-                        <p>PricelBadz governs the use of its website and services through these Terms and
+                        <div class="alert alert-info mb-4">
+                            <i class="bx bx-info-circle me-2"></i>
+                            <strong>PricelBadz</strong> governs the use of its website and services through these Terms
+                            and
                             Conditions. Accessing or using the website constitutes agreement to these terms. Users who
-                            do not agree should refrain from using the website.</p>
+                            do not agree should refrain from using the website.
+                        </div>
 
-                        <h6 class="mt-4">1. Definitions</h6>
-                        <p>1.1. "Company" refers to PricelBadz.</p>
-                        <p>1.2. "Website" refers to https://www.pricelbadz.com/.</p>
-                        <p>1.3. "User" or "You" refers to individuals accessing or using the website.</p>
-                        <p>1.4. "Services" refers to software solutions, consulting, and business offerings provided by
-                            PricelBadz.</p>
+                        <div class="accordion" id="termsAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne" aria-expanded="true"
+                                        aria-controls="collapseOne">
+                                        1. Definitions
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show"
+                                    aria-labelledby="headingOne" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>1.1. "Company" refers to PricelBadz.</p>
+                                        <p>1.2. "Website" refers to https://www.pricelbadz.com/.</p>
+                                        <p>1.3. "User" or "You" refers to individuals accessing or using the website.
+                                        </p>
+                                        <p>1.4. "Services" refers to software solutions, consulting, and business
+                                            offerings provided by
+                                            PricelBadz.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">2. Use of Website</h6>
-                        <p>2.1. Users must be at least 18 years old to access services.</p>
-                        <p>2.2. Users must utilize the website lawfully and refrain from fraudulent, abusive, or
-                            malicious activities.</p>
-                        <p>2.3. Unauthorized use, modification, or exploitation of the website is prohibited.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                                        aria-controls="collapseTwo">
+                                        2. Use of Website
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse"
+                                    aria-labelledby="headingTwo" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>2.1. Users must be at least 18 years old to access services.</p>
+                                        <p>2.2. Users must utilize the website lawfully and refrain from fraudulent,
+                                            abusive, or
+                                            malicious activities.</p>
+                                        <p>2.3. Unauthorized use, modification, or exploitation of the website is
+                                            prohibited.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">3. Intellectual Property Rights</h6>
-                        <p>3.1. PricelBadz or its licensors own all website content, including text,
-                            graphics, logos, and software.</p>
-                        <p>3.2. Reproduction, distribution, or modification of website content without written consent
-                            is prohibited.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                        aria-expanded="false" aria-controls="collapseThree">
+                                        3. Intellectual Property Rights
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse"
+                                    aria-labelledby="headingThree" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>3.1. PricelBadz or its licensors own all website content, including text,
+                                            graphics, logos, and software.</p>
+                                        <p>3.2. Reproduction, distribution, or modification of website content without
+                                            written consent
+                                            is prohibited.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">4. Service Disclaimer</h6>
-                        <p>4.1. Services are provided "as is" without warranties.</p>
-                        <p>4.2. The website's availability, security, or error-free status is not guaranteed.</p>
-                        <p>4.3. PricelBadz disclaims liability for loss or damage arising from the use of
-                            its services.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingFour">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                        aria-expanded="false" aria-controls="collapseFour">
+                                        4. Service Disclaimer
+                                    </button>
+                                </h2>
+                                <div id="collapseFour" class="accordion-collapse collapse"
+                                    aria-labelledby="headingFour" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>4.1. Services are provided "as is" without warranties.</p>
+                                        <p>4.2. The website's availability, security, or error-free status is not
+                                            guaranteed.</p>
+                                        <p>4.3. PricelBadz disclaims liability for loss or damage arising from the use
+                                            of
+                                            its services.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">5. User Accounts</h6>
-                        <p>5.1. Accessing certain services requires account creation.</p>
-                        <p>5.2. Users must maintain the confidentiality of account credentials.</p>
-                        <p>5.3. PricelBadz reserves the right to suspend or terminate accounts violating
-                            these terms.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingFive">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseFive"
+                                        aria-expanded="false" aria-controls="collapseFive">
+                                        5. User Accounts
+                                    </button>
+                                </h2>
+                                <div id="collapseFive" class="accordion-collapse collapse"
+                                    aria-labelledby="headingFive" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>5.1. Accessing certain services requires account creation.</p>
+                                        <p>5.2. Users must maintain the confidentiality of account credentials.</p>
+                                        <p>5.3. PricelBadz reserves the right to suspend or terminate accounts violating
+                                            these terms.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">6. Payment and Billing</h6>
-                        <p>6.1. Users purchasing paid services must provide accurate billing information.</p>
-                        <p>6.2. Payments are non-refundable unless otherwise specified.</p>
-                        <p>6.3. PricelBadz reserves the right to modify pricing and payment terms.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingSix">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false"
+                                        aria-controls="collapseSix">
+                                        6. Payment and Billing
+                                    </button>
+                                </h2>
+                                <div id="collapseSix" class="accordion-collapse collapse"
+                                    aria-labelledby="headingSix" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>6.1. Users purchasing paid services must provide accurate billing
+                                            information.</p>
+                                        <p>6.2. Payments are non-refundable unless otherwise specified.</p>
+                                        <p>6.3. PricelBadz reserves the right to modify pricing and payment terms.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">7. Limitation of Liability</h6>
-                        <p>7.1. PricelBadz is not liable for direct, indirect, incidental, or consequential
-                            damages resulting from service use.</p>
-                        <p>7.2. Users dissatisfied with services may discontinue use as the sole remedy.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingSeven">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseSeven"
+                                        aria-expanded="false" aria-controls="collapseSeven">
+                                        7. Limitation of Liability
+                                    </button>
+                                </h2>
+                                <div id="collapseSeven" class="accordion-collapse collapse"
+                                    aria-labelledby="headingSeven" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>7.1. PricelBadz is not liable for direct, indirect, incidental, or
+                                            consequential
+                                            damages resulting from service use.</p>
+                                        <p>7.2. Users dissatisfied with services may discontinue use as the sole remedy.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">8. Third-Party Links</h6>
-                        <p>8.1. The website may contain third-party links, for which PricelBadz holds no
-                            responsibility.</p>
-                        <p>8.2. Users visit third-party sites at their own risk.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingEight">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseEight"
+                                        aria-expanded="false" aria-controls="collapseEight">
+                                        8. Third-Party Links
+                                    </button>
+                                </h2>
+                                <div id="collapseEight" class="accordion-collapse collapse"
+                                    aria-labelledby="headingEight" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>8.1. The website may contain third-party links, for which PricelBadz holds no
+                                            responsibility.</p>
+                                        <p>8.2. Users visit third-party sites at their own risk.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">9. Termination</h6>
-                        <p>9.1. PricelBadz reserves the right to terminate or suspend access to services
-                            without notice.</p>
-                        <p>9.2. Termination does not affect pre-existing rights or obligations.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingNine">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseNine"
+                                        aria-expanded="false" aria-controls="collapseNine">
+                                        9. Termination
+                                    </button>
+                                </h2>
+                                <div id="collapseNine" class="accordion-collapse collapse"
+                                    aria-labelledby="headingNine" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>9.1. PricelBadz reserves the right to terminate or suspend access to services
+                                            without notice.</p>
+                                        <p>9.2. Termination does not affect pre-existing rights or obligations.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">10. Changes to Terms</h6>
-                        <p>10.1. PricelBadz may update these Terms and Conditions at any time. Changes will
-                            be posted on this page.</p>
-                        <p>10.2. Continued website use after changes constitutes acceptance of revised terms.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTen">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false"
+                                        aria-controls="collapseTen">
+                                        10. Changes to Terms
+                                    </button>
+                                </h2>
+                                <div id="collapseTen" class="accordion-collapse collapse"
+                                    aria-labelledby="headingTen" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>10.1. PricelBadz may update these Terms and Conditions at any time. Changes
+                                            will
+                                            be posted on this page.</p>
+                                        <p>10.2. Continued website use after changes constitutes acceptance of revised
+                                            terms.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">11. Governing Law</h6>
-                        <p>11.1. These terms are governed by and interpreted in accordance with the laws of the
-                            Philippines.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingEleven">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseEleven"
+                                        aria-expanded="false" aria-controls="collapseEleven">
+                                        11. Governing Law
+                                    </button>
+                                </h2>
+                                <div id="collapseEleven" class="accordion-collapse collapse"
+                                    aria-labelledby="headingEleven" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>11.1. These terms are governed by and interpreted in accordance with the laws
+                                            of the
+                                            Philippines.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">12. Contact Information</h6>
-                        <p>For inquiries regarding these Terms and Conditions, contact:</p>
-                        <p>PricelBadz</p>
-                        <p>Email: pricelbadz@gmail.com</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwelve">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseTwelve"
+                                        aria-expanded="false" aria-controls="collapseTwelve">
+                                        12. Contact Information
+                                    </button>
+                                </h2>
+                                <div id="collapseTwelve" class="accordion-collapse collapse"
+                                    aria-labelledby="headingTwelve" data-bs-parent="#termsAccordion">
+                                    <div class="accordion-body">
+                                        <p>For inquiries regarding these Terms and Conditions, contact:</p>
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-title">PricelBadz</h6>
+                                                <p class="card-text"><i class="bx bx-envelope me-2"></i>Email:
+                                                    pricelbadz@gmail.com</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                        <p class="mt-4">By using the website, users acknowledge having read, understood, and agreed
-                            to these Terms and Conditions.</p>
+                        <div class="alert alert-success mt-4">
+                            <i class="bx bx-check-circle me-2"></i>
+                            By using the website, users acknowledge having read, understood, and agreed
+                            to these Terms and Conditions.
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -975,67 +1161,229 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="privacyModalLabel">Privacy Statement</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="privacyModalLabel">
+                        <i class="bx bxs-lock-alt me-2"></i>Privacy Statement
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="terms-content">
-                        <p>PricelBadz is committed to protecting the privacy of users accessing its website
+                        <div class="alert alert-info mb-4">
+                            <i class="bx bx-info-circle me-2"></i>
+                            <strong>PricelBadz</strong> is committed to protecting the privacy of users accessing its
+                            website
                             and services. This Privacy Statement outlines how we collect, use, and safeguard personal
                             information. By using our website, users agree to the practices described in this statement.
-                        </p>
+                        </div>
 
-                        <h6 class="mt-4">1. Information We Collect</h6>
-                        <p><strong>Personal Information:</strong> We collect user-provided details such as name, email
-                            address, phone number, and billing information.</p>
-                        <p><strong>Non-Personal Information:</strong> We collect data such as IP address, browser type,
-                            and device information to improve user experience.</p>
-                        <p><strong>Cookies and Tracking Technologies:</strong> We use cookies to enhance website
-                            functionality and gather analytical data.</p>
+                        <div class="accordion" id="privacyAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="privacyHeadingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#privacyCollapseOne" aria-expanded="true"
+                                        aria-controls="privacyCollapseOne">
+                                        1. Information We Collect
+                                    </button>
+                                </h2>
+                                <div id="privacyCollapseOne" class="accordion-collapse collapse show"
+                                    aria-labelledby="privacyHeadingOne" data-bs-parent="#privacyAccordion">
+                                    <div class="accordion-body">
+                                        <div class="card mb-3">
+                                            <div class="card-header bg-light">
+                                                <strong>Personal Information</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>We collect user-provided details such as name, email
+                                                    address, phone number, and billing information.</p>
+                                            </div>
+                                        </div>
 
-                        <h6 class="mt-4">2. How We Use Information</h6>
-                        <ul>
-                            <li>To provide and improve our services.</li>
-                            <li>To communicate with users regarding inquiries, transactions, and updates.</li>
-                            <li>To process payments and manage accounts.</li>
-                            <li>To analyze website usage and enhance user experience.</li>
-                            <li>To comply with legal obligations and protect against fraud or security threats.</li>
-                        </ul>
+                                        <div class="card mb-3">
+                                            <div class="card-header bg-light">
+                                                <strong>Non-Personal Information</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>We collect data such as IP address, browser type,
+                                                    and device information to improve user experience.</p>
+                                            </div>
+                                        </div>
 
-                        <h6 class="mt-4">3. Information Sharing</h6>
-                        <p>We do not sell, rent, or trade personal information.</p>
-                        <p>Information may be shared with third-party service providers for payment processing, website
-                            analytics, or customer support.</p>
-                        <p>We may disclose information if required by law or to protect our rights and users' safety.
-                        </p>
+                                        <div class="card">
+                                            <div class="card-header bg-light">
+                                                <strong>Cookies and Tracking Technologies</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>We use cookies to enhance website
+                                                    functionality and gather analytical data.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">4. Data Security</h6>
-                        <p>We implement security measures to protect user data from unauthorized access or breaches.</p>
-                        <p>While we strive for security, no system is entirely foolproof. Users should take precautions
-                            to safeguard their credentials.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="privacyHeadingTwo">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#privacyCollapseTwo"
+                                        aria-expanded="false" aria-controls="privacyCollapseTwo">
+                                        2. How We Use Information
+                                    </button>
+                                </h2>
+                                <div id="privacyCollapseTwo" class="accordion-collapse collapse"
+                                    aria-labelledby="privacyHeadingTwo" data-bs-parent="#privacyAccordion">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item"><i
+                                                    class="bx bx-check-circle text-success me-2"></i>To provide and
+                                                improve our services.</li>
+                                            <li class="list-group-item"><i
+                                                    class="bx bx-check-circle text-success me-2"></i>To communicate
+                                                with users regarding inquiries, transactions, and updates.</li>
+                                            <li class="list-group-item"><i
+                                                    class="bx bx-check-circle text-success me-2"></i>To process
+                                                payments and manage accounts.</li>
+                                            <li class="list-group-item"><i
+                                                    class="bx bx-check-circle text-success me-2"></i>To analyze website
+                                                usage and enhance user experience.</li>
+                                            <li class="list-group-item"><i
+                                                    class="bx bx-check-circle text-success me-2"></i>To comply with
+                                                legal obligations and protect against fraud or security threats.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">5. User Rights and Choices</h6>
-                        <p>Users may access, update, or delete their personal information by contacting us.</p>
-                        <p>Users can opt out of marketing communications at any time.</p>
-                        <p>Cookie settings can be managed through browser preferences.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="privacyHeadingThree">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#privacyCollapseThree"
+                                        aria-expanded="false" aria-controls="privacyCollapseThree">
+                                        3. Information Sharing
+                                    </button>
+                                </h2>
+                                <div id="privacyCollapseThree" class="accordion-collapse collapse"
+                                    aria-labelledby="privacyHeadingThree" data-bs-parent="#privacyAccordion">
+                                    <div class="accordion-body">
+                                        <p>We do not sell, rent, or trade personal information.</p>
+                                        <p>Information may be shared with third-party service providers for payment
+                                            processing, website
+                                            analytics, or customer support.</p>
+                                        <p>We may disclose information if required by law or to protect our rights and
+                                            users' safety.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">6. Third-Party Links</h6>
-                        <p>Our website may contain links to external websites. We are not responsible for their privacy
-                            practices.</p>
-                        <p>Users should review third-party privacy policies before providing personal data.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="privacyHeadingFour">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#privacyCollapseFour"
+                                        aria-expanded="false" aria-controls="privacyCollapseFour">
+                                        4. Data Security
+                                    </button>
+                                </h2>
+                                <div id="privacyCollapseFour" class="accordion-collapse collapse"
+                                    aria-labelledby="privacyHeadingFour" data-bs-parent="#privacyAccordion">
+                                    <div class="accordion-body">
+                                        <p>We implement security measures to protect user data from unauthorized access
+                                            or breaches.</p>
+                                        <p>While we strive for security, no system is entirely foolproof. Users should
+                                            take precautions
+                                            to safeguard their credentials.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">7. Changes to this Privacy Statement</h6>
-                        <p>We may update this Privacy Statement periodically. Changes will be posted on this page.</p>
-                        <p>Continued website use after changes signifies acceptance of the revised statement.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="privacyHeadingFive">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#privacyCollapseFive"
+                                        aria-expanded="false" aria-controls="privacyCollapseFive">
+                                        5. User Rights and Choices
+                                    </button>
+                                </h2>
+                                <div id="privacyCollapseFive" class="accordion-collapse collapse"
+                                    aria-labelledby="privacyHeadingFive" data-bs-parent="#privacyAccordion">
+                                    <div class="accordion-body">
+                                        <p>Users may access, update, or delete their personal information by contacting
+                                            us.</p>
+                                        <p>Users can opt out of marketing communications at any time.</p>
+                                        <p>Cookie settings can be managed through browser preferences.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mt-4">8. Contact Information</h6>
-                        <p>For inquiries regarding these Terms and Conditions, contact:</p>
-                        <p>PricelBadz</p>
-                        <p>Email: pricelbadz@gmail.com</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="privacyHeadingSix">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#privacyCollapseSix"
+                                        aria-expanded="false" aria-controls="privacyCollapseSix">
+                                        6. Third-Party Links
+                                    </button>
+                                </h2>
+                                <div id="privacyCollapseSix" class="accordion-collapse collapse"
+                                    aria-labelledby="privacyHeadingSix" data-bs-parent="#privacyAccordion">
+                                    <div class="accordion-body">
+                                        <p>Our website may contain links to external websites. We are not responsible
+                                            for their privacy
+                                            practices.</p>
+                                        <p>Users should review third-party privacy policies before providing personal
+                                            data.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p class="mt-4">By using this website, users acknowledge having read, understood, and agreed
-                            to this Privacy Statement.</p>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="privacyHeadingSeven">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#privacyCollapseSeven"
+                                        aria-expanded="false" aria-controls="privacyCollapseSeven">
+                                        7. Changes to this Privacy Statement
+                                    </button>
+                                </h2>
+                                <div id="privacyCollapseSeven" class="accordion-collapse collapse"
+                                    aria-labelledby="privacyHeadingSeven" data-bs-parent="#privacyAccordion">
+                                    <div class="accordion-body">
+                                        <p>We may update this Privacy Statement periodically. Changes will be posted on
+                                            this page.</p>
+                                        <p>Continued website use after changes signifies acceptance of the revised
+                                            statement.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="privacyHeadingEight">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#privacyCollapseEight"
+                                        aria-expanded="false" aria-controls="privacyCollapseEight">
+                                        8. Contact Information
+                                    </button>
+                                </h2>
+                                <div id="privacyCollapseEight" class="accordion-collapse collapse"
+                                    aria-labelledby="privacyHeadingEight" data-bs-parent="#privacyAccordion">
+                                    <div class="accordion-body">
+                                        <p>For inquiries regarding these Terms and Conditions, contact:</p>
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-title">PricelBadz</h6>
+                                                <p class="card-text"><i class="bx bx-envelope me-2"></i>Email:
+                                                    pricelbadz@gmail.com</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-success mt-4">
+                            <i class="bx bx-check-circle me-2"></i>
+                            By using this website, users acknowledge having read, understood, and agreed
+                            to this Privacy Statement.
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
