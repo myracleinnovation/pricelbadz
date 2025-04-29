@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'delivery_address' => sanitizeInput($_POST['dropoff_address']),
                     'delivery_note' => sanitizeInput($_POST['dropoff_note']),
                     'order_status' => 'Pending',
-                    'service_fee' => 0.00,
-                    'commission' => 0.00,
+                    'service_fee' => 0.0,
+                    'commission' => 0.0,
                 ];
                 createPabiliOrder($conn, $orderData['customer_name'], $orderData['contact_number'], $orderData['store_name'], $orderData['order_description'], $orderData['store_address'], $orderData['pickup_note'], $orderData['delivery_address'], $orderData['delivery_note'], null, $orderData['order_status'], $orderData['service_fee'], $orderData['commission']);
                 $_SESSION['form_submitted'] = true;
@@ -70,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'dropoff_note' => sanitizeInput($_POST['paangkas_dropoff_note']),
                     'assigned_rider' => !empty($_POST['paangkas_assigned_rider']) ? $_POST['paangkas_assigned_rider'] : null,
                     'order_status' => 'Pending',
-                    'service_fee' => 0.00,
-                    'commission' => 0.00,
+                    'service_fee' => 0.0,
+                    'commission' => 0.0,
                 ];
                 createPaangkasOrder($conn, ...array_values($orderData));
                 $_SESSION['form_submitted'] = true;
@@ -89,8 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'dropoff_note' => sanitizeInput($_POST['padala_dropoff_note']),
                     'assigned_rider' => !empty($_POST['padala_assigned_rider']) ? $_POST['padala_assigned_rider'] : null,
                     'order_status' => 'Pending',
-                    'service_fee' => 0.00,
-                    'commission' => 0.00,
+                    'service_fee' => 0.0,
+                    'commission' => 0.0,
                 ];
                 createPadalaOrder($conn, ...array_values($orderData));
                 $_SESSION['form_submitted'] = true;
@@ -708,8 +708,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img src="./public/img/logo.png" class="w-25 mt-5" alt="PricelBadz Image">
             <nav style="--bs-breadcrumb-divider: '|';">
                 <ol class="breadcrumb d-flex justify-content-center my-5">
-                    <li class="breadcrumb-item"><a href="index.html" class="text-black">Terms and Condition</a></li>
-                    <li class="breadcrumb-item"><a href="#" class="text-black">Privacy Statement</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="text-black" data-bs-toggle="modal"
+                            data-bs-target="#termsModal">Terms and Condition</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="text-black" data-bs-toggle="modal"
+                            data-bs-target="#privacyModal">Privacy Statement</a></li>
                 </ol>
             </nav>
             <footer>
@@ -878,6 +880,171 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <?php endforeach; ?>
 
+    <!-- Terms and Conditions Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="termsModalLabel">Terms and Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="terms-content">
+                        <p>PricelBadz governs the use of its website and services through these Terms and
+                            Conditions. Accessing or using the website constitutes agreement to these terms. Users who
+                            do not agree should refrain from using the website.</p>
+
+                        <h6 class="mt-4">1. Definitions</h6>
+                        <p>1.1. "Company" refers to PricelBadz.</p>
+                        <p>1.2. "Website" refers to https://www.pricelbadz.com/.</p>
+                        <p>1.3. "User" or "You" refers to individuals accessing or using the website.</p>
+                        <p>1.4. "Services" refers to software solutions, consulting, and business offerings provided by
+                            PricelBadz.</p>
+
+                        <h6 class="mt-4">2. Use of Website</h6>
+                        <p>2.1. Users must be at least 18 years old to access services.</p>
+                        <p>2.2. Users must utilize the website lawfully and refrain from fraudulent, abusive, or
+                            malicious activities.</p>
+                        <p>2.3. Unauthorized use, modification, or exploitation of the website is prohibited.</p>
+
+                        <h6 class="mt-4">3. Intellectual Property Rights</h6>
+                        <p>3.1. PricelBadz or its licensors own all website content, including text,
+                            graphics, logos, and software.</p>
+                        <p>3.2. Reproduction, distribution, or modification of website content without written consent
+                            is prohibited.</p>
+
+                        <h6 class="mt-4">4. Service Disclaimer</h6>
+                        <p>4.1. Services are provided "as is" without warranties.</p>
+                        <p>4.2. The website's availability, security, or error-free status is not guaranteed.</p>
+                        <p>4.3. PricelBadz disclaims liability for loss or damage arising from the use of
+                            its services.</p>
+
+                        <h6 class="mt-4">5. User Accounts</h6>
+                        <p>5.1. Accessing certain services requires account creation.</p>
+                        <p>5.2. Users must maintain the confidentiality of account credentials.</p>
+                        <p>5.3. PricelBadz reserves the right to suspend or terminate accounts violating
+                            these terms.</p>
+
+                        <h6 class="mt-4">6. Payment and Billing</h6>
+                        <p>6.1. Users purchasing paid services must provide accurate billing information.</p>
+                        <p>6.2. Payments are non-refundable unless otherwise specified.</p>
+                        <p>6.3. PricelBadz reserves the right to modify pricing and payment terms.</p>
+
+                        <h6 class="mt-4">7. Limitation of Liability</h6>
+                        <p>7.1. PricelBadz is not liable for direct, indirect, incidental, or consequential
+                            damages resulting from service use.</p>
+                        <p>7.2. Users dissatisfied with services may discontinue use as the sole remedy.</p>
+
+                        <h6 class="mt-4">8. Third-Party Links</h6>
+                        <p>8.1. The website may contain third-party links, for which PricelBadz holds no
+                            responsibility.</p>
+                        <p>8.2. Users visit third-party sites at their own risk.</p>
+
+                        <h6 class="mt-4">9. Termination</h6>
+                        <p>9.1. PricelBadz reserves the right to terminate or suspend access to services
+                            without notice.</p>
+                        <p>9.2. Termination does not affect pre-existing rights or obligations.</p>
+
+                        <h6 class="mt-4">10. Changes to Terms</h6>
+                        <p>10.1. PricelBadz may update these Terms and Conditions at any time. Changes will
+                            be posted on this page.</p>
+                        <p>10.2. Continued website use after changes constitutes acceptance of revised terms.</p>
+
+                        <h6 class="mt-4">11. Governing Law</h6>
+                        <p>11.1. These terms are governed by and interpreted in accordance with the laws of the
+                            Philippines.</p>
+
+                        <h6 class="mt-4">12. Contact Information</h6>
+                        <p>For inquiries regarding these Terms and Conditions, contact:</p>
+                        <p>PricelBadz</p>
+                        <p>Email: pricelbadz@gmail.com</p>
+
+                        <p class="mt-4">By using the website, users acknowledge having read, understood, and agreed
+                            to these Terms and Conditions.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Statement Modal -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="privacyModalLabel">Privacy Statement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="terms-content">
+                        <p>PricelBadz is committed to protecting the privacy of users accessing its website
+                            and services. This Privacy Statement outlines how we collect, use, and safeguard personal
+                            information. By using our website, users agree to the practices described in this statement.
+                        </p>
+
+                        <h6 class="mt-4">1. Information We Collect</h6>
+                        <p><strong>Personal Information:</strong> We collect user-provided details such as name, email
+                            address, phone number, and billing information.</p>
+                        <p><strong>Non-Personal Information:</strong> We collect data such as IP address, browser type,
+                            and device information to improve user experience.</p>
+                        <p><strong>Cookies and Tracking Technologies:</strong> We use cookies to enhance website
+                            functionality and gather analytical data.</p>
+
+                        <h6 class="mt-4">2. How We Use Information</h6>
+                        <ul>
+                            <li>To provide and improve our services.</li>
+                            <li>To communicate with users regarding inquiries, transactions, and updates.</li>
+                            <li>To process payments and manage accounts.</li>
+                            <li>To analyze website usage and enhance user experience.</li>
+                            <li>To comply with legal obligations and protect against fraud or security threats.</li>
+                        </ul>
+
+                        <h6 class="mt-4">3. Information Sharing</h6>
+                        <p>We do not sell, rent, or trade personal information.</p>
+                        <p>Information may be shared with third-party service providers for payment processing, website
+                            analytics, or customer support.</p>
+                        <p>We may disclose information if required by law or to protect our rights and users' safety.
+                        </p>
+
+                        <h6 class="mt-4">4. Data Security</h6>
+                        <p>We implement security measures to protect user data from unauthorized access or breaches.</p>
+                        <p>While we strive for security, no system is entirely foolproof. Users should take precautions
+                            to safeguard their credentials.</p>
+
+                        <h6 class="mt-4">5. User Rights and Choices</h6>
+                        <p>Users may access, update, or delete their personal information by contacting us.</p>
+                        <p>Users can opt out of marketing communications at any time.</p>
+                        <p>Cookie settings can be managed through browser preferences.</p>
+
+                        <h6 class="mt-4">6. Third-Party Links</h6>
+                        <p>Our website may contain links to external websites. We are not responsible for their privacy
+                            practices.</p>
+                        <p>Users should review third-party privacy policies before providing personal data.</p>
+
+                        <h6 class="mt-4">7. Changes to this Privacy Statement</h6>
+                        <p>We may update this Privacy Statement periodically. Changes will be posted on this page.</p>
+                        <p>Continued website use after changes signifies acceptance of the revised statement.</p>
+
+                        <h6 class="mt-4">8. Contact Information</h6>
+                        <p>For inquiries regarding these Terms and Conditions, contact:</p>
+                        <p>PricelBadz</p>
+                        <p>Email: pricelbadz@gmail.com</p>
+
+                        <p class="mt-4">By using this website, users acknowledge having read, understood, and agreed
+                            to this Privacy Statement.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Chat Support Icon -->
     <a href="https://www.facebook.com/messages/t/651650764687119" class="chat-support-icon" title="Chat Support"
         target="_blank">
@@ -909,6 +1076,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .chat-support-icon:hover {
             transform: scale(1.1);
             background-color: #0a5a94;
+        }
+
+        /* Terms and Conditions Modal Styles */
+        .terms-content {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .terms-content h6 {
+            color: #0E76BC;
+            font-weight: 600;
+        }
+
+        .terms-content p {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .terms-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terms-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .terms-content::-webkit-scrollbar-thumb {
+            background: #0E76BC;
+            border-radius: 10px;
+        }
+
+        .terms-content::-webkit-scrollbar-thumb:hover {
+            background: #0a5a94;
         }
     </style>
 
