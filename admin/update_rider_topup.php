@@ -16,10 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rider_id = $_POST['rider_id'];
     $transaction_type = $_POST['transaction_type'];
     $amount = (float)$_POST['amount'];
+    $withdraw_amount = isset($_POST['withdraw_amount']) ? (float)$_POST['withdraw_amount'] : 0;
     $notes = $_POST['notes'] ?? '';
 
     // Validate inputs
-    if (empty($rider_id) || empty($transaction_type) || $amount <= 0) {
+    if (empty($rider_id) || empty($transaction_type) || ($amount <= 0 && $withdraw_amount <= 0)) {
         $_SESSION['error_message'] = "Invalid input data.";
         header("Location: delivery_rider.php");
         exit();
@@ -42,6 +43,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $previous_balance = $rider['topup_balance'];
+        
+        // Handle withdrawal
+        if ($withdraw_amount > 0) {
+            $amount = $withdraw_amount;
+            $transaction_type = 'withdraw';
+        }
+        
         $new_balance = $transaction_type === 'add' ? $previous_balance + $amount : $previous_balance - $amount;
 
         // Check if withdrawal is possible

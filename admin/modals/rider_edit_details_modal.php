@@ -74,15 +74,17 @@
                                 <select class="form-select" id="vehicle_type<?= $row['id'] ?>" name="vehicle_type"
                                     required>
                                     <option value="">Select Vehicle Type</option>
-                                    <option value="Motorcycle"
-                                        <?= $row['vehicle_type'] === 'Motorcycle' ? 'selected' : '' ?>>Motorcycle
+                                    <option value="Motorcycle (1 seat)"
+                                        <?= $row['vehicle_type'] === 'Motorcycle (1 seat)' ? 'selected' : '' ?>>Motorcycle (1 seat)
                                     </option>
-                                    <option value="Bicycle"
-                                        <?= $row['vehicle_type'] === 'Bicycle' ? 'selected' : '' ?>>Bicycle</option>
-                                    <option value="Tricycle"
-                                        <?= $row['vehicle_type'] === 'Tricycle' ? 'selected' : '' ?>>Tricycle</option>
-                                    <option value="Car" <?= $row['vehicle_type'] === 'Car' ? 'selected' : '' ?>>
-                                        Car</option>
+                                    <option value="Tricycle (2-4 seats)"
+                                        <?= $row['vehicle_type'] === 'Tricycle (2-4 seats)' ? 'selected' : '' ?>>Tricycle (2-4 seats)</option>
+                                    <option value="Car (3-4 seats)" <?= $row['vehicle_type'] === 'Car (3-4 seats)' ? 'selected' : '' ?>>
+                                        Car (3-4 seats)</option>
+                                    <option value="Car (5-7 seats)" <?= $row['vehicle_type'] === 'Car (5-7 seats)' ? 'selected' : '' ?>>
+                                        Car (5-7 seats)</option>
+                                    <option value="Van (10-14 seats)" <?= $row['vehicle_type'] === 'Van (10-14 seats)' ? 'selected' : '' ?>>
+                                        Van (10-14 seats)</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-2">

@@ -7,8 +7,8 @@ function createPabiliOrder($conn, $customer_name, $contact_number, $merchant_sto
         $sql = "INSERT INTO tpabili_orders (
             order_number, customer_name, contact_number, merchant_store_name,
             order_description, store_address, pickup_note, delivery_address, 
-            delivery_note, assigned_rider, order_status, service_fee, commission
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            delivery_note, assigned_rider, vehicle_type, order_status, service_fee, commission
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql) ?? throw new Exception('Prepare failed: ' . $conn->error);
         $stmt->bind_param('sssssssssssdd', $order_number, $customer_name, $contact_number, $merchant_store_name, $order_description, $store_address, $pickup_note, $delivery_address, $delivery_note, $assigned_rider, $order_status, $service_fee, $commission);
@@ -105,8 +105,8 @@ function createPadalaOrder($conn, $customer_name, $contact_number, $pickup_addre
         $sql = "INSERT INTO tpadala_orders (
             order_number, customer_name, contact_number, pickup_address,
             order_description, pickup_note, dropoff_address, dropoff_note,
-            assigned_rider, order_status, service_fee, commission
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            assigned_rider, vehicle_type, order_status, service_fee, commission
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql) ?? throw new Exception('Prepare failed: ' . $conn->error);
         $stmt->bind_param('ssssssssssdd', $order_number, $customer_name, $contact_number, $pickup_address, $order_description, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider, $order_status, $service_fee, $commission);

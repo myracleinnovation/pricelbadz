@@ -8,7 +8,8 @@ first_name VARCHAR(50) NOT NULL,
 middle_name VARCHAR(50),
 last_name VARCHAR(50) NOT NULL,
 license_number VARCHAR(20) NOT NULL,
-vehicle_type ENUM('Motorcycle', 'Tricycle', 'Car') NOT NULL,
+vehicle_type ENUM('Motorcycle (1 seat)', 'Tricycle (2-4 seats)', 'Car (3-4 seats)', 'Car (5-7 seats)', 'Van (10-14
+seats)') NOT NULL,
 vehicle_cor VARCHAR(50) NOT NULL,
 vehicle_plate_number VARCHAR(20) NOT NULL,
 topup_balance DECIMAL(10, 2) DEFAULT 0.00,
@@ -44,6 +45,8 @@ pickup_note TEXT,
 delivery_address TEXT NOT NULL,
 delivery_note TEXT,
 assigned_rider INT,
+vehicle_type ENUM('Motorcycle (1 seat)', 'Tricycle (2-4 seats)', 'Car (3-4 seats)', 'Car (5-7 seats)', 'Van (10-14
+seats)') NULL,
 order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
 service_fee DECIMAL(10, 2) DEFAULT 0.00,
 commission DECIMAL(10, 2) DEFAULT 0.00,
@@ -61,7 +64,8 @@ order_number VARCHAR(20) NOT NULL,
 customer_name VARCHAR(100) NOT NULL,
 contact_number VARCHAR(20) NOT NULL,
 pickup_address TEXT NOT NULL,
-vehicle_type ENUM('Motorcycle', 'Tricycle', 'Car') NOT NULL,
+vehicle_type ENUM('Motorcycle (1 seat)', 'Tricycle (2-4 seats)', 'Car (3-4 seats)', 'Car (5-7 seats)', 'Van (10-14
+seats)') NOT NULL,
 pickup_note TEXT,
 dropoff_address TEXT NOT NULL,
 dropoff_note TEXT,
@@ -88,6 +92,8 @@ pickup_note TEXT,
 dropoff_address TEXT NOT NULL,
 dropoff_note TEXT,
 assigned_rider INT,
+vehicle_type ENUM('Motorcycle (1 seat)', 'Tricycle (2-4 seats)', 'Car (3-4 seats)', 'Car (5-7 seats)', 'Van (10-14
+seats)') NULL,
 order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
 service_fee DECIMAL(10, 2) DEFAULT 0.00,
 commission DECIMAL(10, 2) DEFAULT 0.00,
@@ -121,11 +127,11 @@ CONSTRAINT `trider_topup_ledger_ibfk_1` FOREIGN KEY (`rider_id`) REFERENCES `tri
 -- Insert sample data for riders
 INSERT INTO triders (first_name, middle_name, last_name, license_number, vehicle_type, vehicle_cor,
 vehicle_plate_number, topup_balance, rider_status) VALUES
-('John', 'Doe', 'Smith', 'LIC123456', 'Motorcycle', 'COR123456', 'ABC1234', 1000.00, 'Active'),
-('Jane', 'Marie', 'Johnson', 'LIC789012', 'Tricycle', 'COR789012', 'XYZ5678', 1500.00, 'Active'),
-('Michael', 'James', 'Brown', 'LIC345678', 'Car', 'COR345678', 'DEF9012', 2000.00, 'Active'),
-('Mark', 'Lopez', 'Reyes', 'D1234567', 'Motorcycle', 'COR123456', 'ABC-1234', 150.00, 'Active'),
-('Miguel', 'Santos', 'Cruz', 'E7654321', 'Motorcycle', 'COR654321', 'XYZ-5678', 200.00, 'Active');
+('John', 'Doe', 'Smith', 'LIC123456', 'Motorcycle (1 seat)', 'COR123456', 'ABC1234', 1000.00, 'Active'),
+('Jane', 'Marie', 'Johnson', 'LIC789012', 'Tricycle (2-4 seats)', 'COR789012', 'XYZ5678', 1500.00, 'Active'),
+('Michael', 'James', 'Brown', 'LIC345678', 'Car (3-4 seats)', 'COR345678', 'DEF9012', 2000.00, 'Active'),
+('Mark', 'Lopez', 'Reyes', 'D1234567', 'Motorcycle (1 seat)', 'COR123456', 'ABC-1234', 150.00, 'Active'),
+('Miguel', 'Santos', 'Cruz', 'E7654321', 'Motorcycle (1 seat)', 'COR654321', 'XYZ-5678', 200.00, 'Active');
 
 -- Insert sample data for users
 INSERT INTO tusers (username, password, first_name, last_name, email, role, user_status) VALUES

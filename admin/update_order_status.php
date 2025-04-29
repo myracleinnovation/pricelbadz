@@ -67,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             !empty($assigned_rider)) {
             
             // Get rider's current balance
-            $rider_query = "SELECT id, topup_balance FROM triders WHERE CONCAT(first_name, ' ', last_name) = ?";
+            $rider_query = "SELECT id, topup_balance FROM triders WHERE id = ?";
             $rider_stmt = $conn->prepare($rider_query);
-            $rider_stmt->bind_param("s", $assigned_rider);
+            $rider_stmt->bind_param("i", $assigned_rider);
             $rider_stmt->execute();
             $rider_result = $rider_stmt->get_result();
             $rider_data = $rider_result->fetch_assoc();
@@ -104,9 +104,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // If changing to "On-Going" and there's an assigned rider
         else if ($new_status === 'On-Going' && !empty($assigned_rider)) {
             // Get rider's current balance
-            $rider_query = "SELECT id, topup_balance FROM triders WHERE CONCAT(first_name, ' ', last_name) = ?";
+            $rider_query = "SELECT id, topup_balance FROM triders WHERE id = ?";
             $rider_stmt = $conn->prepare($rider_query);
-            $rider_stmt->bind_param("s", $assigned_rider);
+            $rider_stmt->bind_param("i", $assigned_rider);
             $rider_stmt->execute();
             $rider_result = $rider_stmt->get_result();
             $rider_data = $rider_result->fetch_assoc();

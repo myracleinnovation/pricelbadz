@@ -132,8 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="./public/img/logo.png" rel="icon">
-    <link href="./public/img/logo.png" rel="apple-touch-icon">
+    <link href="./public/img/favicon.ico" rel="icon">
+    <link href="./public/img/favicon.ico" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -1132,9 +1132,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <p>For inquiries regarding these Terms and Conditions, contact:</p>
                                         <div class="card bg-light">
                                             <div class="card-body">
-                                                <h6 class="card-title">PricelBadz</h6>
+                                                <h6 class="card-title">@PricelBadz</h6>
                                                 <p class="card-text"><i class="bx bx-envelope me-2"></i>Email:
-                                                    pricelbadz@gmail.com</p>
+                                                    pcbpricelbadz@gmail.com</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1369,9 +1369,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <p>For inquiries regarding these Terms and Conditions, contact:</p>
                                         <div class="card bg-light">
                                             <div class="card-body">
-                                                <h6 class="card-title">PricelBadz</h6>
+                                                <h6 class="card-title">@PricelBadz</h6>
                                                 <p class="card-text"><i class="bx bx-envelope me-2"></i>Email:
-                                                    pricelbadz@gmail.com</p>
+                                                    pcbpricelbadz@gmail.com</p>
                                             </div>
                                         </div>
                                     </div>

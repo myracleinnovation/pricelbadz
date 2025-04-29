@@ -4,82 +4,77 @@ include '../config/connect.php';
 
 // Check if the request is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the order details
-    $order_number = $_POST['order_number'];
-    $order_type = $_POST['order_type'];
-    $assigned_rider_id = $_POST['assigned_rider'];
+    // Get the order number and type
+    $order_number = $_POST['order_number'] ?? '';
+    $order_type = $_POST['order_type'] ?? '';
+    $assigned_rider = $_POST['assigned_rider'] ?? '';
     
-    // Initialize rider_id as NULL
-    $rider_id = null;
-    
-    // If a rider ID is provided, use it directly
-    if (!empty($assigned_rider_id)) {
-        $rider_id = $assigned_rider_id;
-        
-        // Verify that the rider exists
-        $rider_query = "SELECT id FROM triders WHERE id = ?";
-        $rider_stmt = $conn->prepare($rider_query);
-        $rider_stmt->bind_param('i', $rider_id);
-        $rider_stmt->execute();
-        $rider_result = $rider_stmt->get_result();
-        
-        if ($rider_result->num_rows === 0) {
-            $_SESSION['error_message'] = "Rider not found in the database.";
-            header("Location: customer_orders.php");
-            exit();
-        }
-        
-        $rider_stmt->close();
+    // Validate inputs
+    if (empty($order_number) || empty($order_type)) {
+        $_SESSION['error_message'] = "Invalid order information.";
+        header("Location: customer_orders.php");
+        exit;
     }
-
+    
     // Determine which table to update based on order type
-    $table = '';
+    $table_name = '';
     switch ($order_type) {
         case 'PABILI/PASUYO':
-            $table = 'tpabili_orders';
+            $table_name = 'tpabili_orders';
             break;
         case 'PAHATID/PASUNDO':
-            $table = 'tpaangkas_orders';
+            $table_name = 'tpaangkas_orders';
             break;
         case 'PADALA':
-            $table = 'tpadala_orders';
+            $table_name = 'tpadala_orders';
             break;
         default:
             $_SESSION['error_message'] = "Invalid order type.";
             header("Location: customer_orders.php");
-            exit();
+            exit;
     }
-
-    // Update the assigned rider
-    $update_query = "UPDATE $table SET assigned_rider = ? WHERE order_number = ?";
-    $stmt = $conn->prepare($update_query);
-    $stmt->bind_param('is', $rider_id, $order_number);
     
-    if ($stmt->execute()) {
-        // If a rider is assigned, automatically update status to On-Going
-        if (!empty($rider_id)) {
-            $status_query = "UPDATE $table SET order_status = 'On-Going' WHERE order_number = ?";
-            $status_stmt = $conn->prepare($status_query);
-            $status_stmt->bind_param('s', $order_number);
-            $status_stmt->execute();
-            
-            $_SESSION['success_message'] = "Rider assigned and order status updated to On-Going.";
-        } else {
-            $_SESSION['success_message'] = "Rider assignment updated.";
+    // If a rider is assigned, get their vehicle type
+    $vehicle_type = null;
+    if (!empty($assigned_rider)) {
+        $rider_query = "SELECT vehicle_type FROM triders WHERE id = ?";
+        $stmt = $conn->prepare($rider_query);
+        $stmt->bind_param('i', $assigned_rider);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result && $result->num_rows > 0) {
+            $rider_data = $result->fetch_assoc();
+            $vehicle_type = $rider_data['vehicle_type'];
         }
-    } else {
-        $_SESSION['error_message'] = "Error updating rider assignment: " . $conn->error;
     }
     
-    $stmt->close();
-    if (isset($status_stmt)) {
-        $status_stmt->close();
+    // Update the order with the assigned rider and vehicle type
+    if (!empty($assigned_rider)) {
+        // For all order types, update both assigned_rider and vehicle_type
+        $update_query = "UPDATE $table_name SET assigned_rider = ?, vehicle_type = ?, order_status = 'On-Going' WHERE order_number = ?";
+        $stmt = $conn->prepare($update_query);
+        $stmt->bind_param('iss', $assigned_rider, $vehicle_type, $order_number);
+    } else {
+        // If no rider is assigned, set assigned_rider to NULL and vehicle_type to NULL
+        $update_query = "UPDATE $table_name SET assigned_rider = NULL, vehicle_type = NULL WHERE order_number = ?";
+        $stmt = $conn->prepare($update_query);
+        $stmt->bind_param('s', $order_number);
     }
+    
+    // Execute the update
+    if ($stmt->execute()) {
+        $_SESSION['success_message'] = "Assigned rider updated successfully.";
+    } else {
+        $_SESSION['error_message'] = "Error updating assigned rider: " . $conn->error;
+    }
+    
+    // Redirect back to the orders page
+    header("Location: customer_orders.php");
+    exit;
 } else {
-    $_SESSION['error_message'] = "Invalid request method.";
+    // If not a POST request, redirect to the orders page
+    header("Location: customer_orders.php");
+    exit;
 }
-
-// Redirect back to the customer orders page
-header("Location: customer_orders.php");
-exit();
 ?> 
