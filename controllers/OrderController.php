@@ -1,5 +1,5 @@
 <?php
-function createPabiliOrder($conn, $customer_name, $contact_number, $merchant_store_name, $order_description, $store_address, $pickup_note, $delivery_address, $delivery_note, $assigned_rider = null, $order_status = 'Pending')
+function createPabiliOrder($conn, $customer_name, $contact_number, $merchant_store_name, $order_description, $store_address, $pickup_note, $delivery_address, $delivery_note, $assigned_rider = null, $order_status = 'Pending', $service_fee = 0.00, $commission = 0.00)
 {
     try {
         $order_number = 'PAB-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
@@ -7,11 +7,11 @@ function createPabiliOrder($conn, $customer_name, $contact_number, $merchant_sto
         $sql = "INSERT INTO tpabili_orders (
             order_number, customer_name, contact_number, merchant_store_name,
             order_description, store_address, pickup_note, delivery_address, 
-            delivery_note, assigned_rider, order_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            delivery_note, assigned_rider, order_status, service_fee, commission
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql) ?? throw new Exception('Prepare failed: ' . $conn->error);
-        $stmt->bind_param('sssssssssss', $order_number, $customer_name, $contact_number, $merchant_store_name, $order_description, $store_address, $pickup_note, $delivery_address, $delivery_note, $assigned_rider, $order_status);
+        $stmt->bind_param('sssssssssssdd', $order_number, $customer_name, $contact_number, $merchant_store_name, $order_description, $store_address, $pickup_note, $delivery_address, $delivery_note, $assigned_rider, $order_status, $service_fee, $commission);
 
         if (!$stmt->execute()) {
             throw new Exception('Execute failed: ' . $stmt->error);
@@ -48,7 +48,7 @@ function createPabiliOrder($conn, $customer_name, $contact_number, $merchant_sto
     }
 }
 
-function createPaangkasOrder($conn, $customer_name, $contact_number, $pickup_address, $vehicle_type, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider = null, $order_status = 'Pending')
+function createPaangkasOrder($conn, $customer_name, $contact_number, $pickup_address, $vehicle_type, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider = null, $order_status = 'Pending', $service_fee = 0.00, $commission = 0.00)
 {
     try {
         $order_number = 'PAA-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
@@ -56,11 +56,11 @@ function createPaangkasOrder($conn, $customer_name, $contact_number, $pickup_add
         $sql = "INSERT INTO tpaangkas_orders (
             order_number, customer_name, contact_number, pickup_address,
             vehicle_type, pickup_note, dropoff_address, dropoff_note,
-            assigned_rider, order_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            assigned_rider, order_status, service_fee, commission
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql) ?? throw new Exception('Prepare failed: ' . $conn->error);
-        $stmt->bind_param('ssssssssss', $order_number, $customer_name, $contact_number, $pickup_address, $vehicle_type, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider, $order_status);
+        $stmt->bind_param('ssssssssssdd', $order_number, $customer_name, $contact_number, $pickup_address, $vehicle_type, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider, $order_status, $service_fee, $commission);
 
         if (!$stmt->execute()) {
             throw new Exception('Execute failed: ' . $stmt->error);
@@ -97,7 +97,7 @@ function createPaangkasOrder($conn, $customer_name, $contact_number, $pickup_add
     }
 }
 
-function createPadalaOrder($conn, $customer_name, $contact_number, $pickup_address, $order_description, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider = null, $order_status = 'Pending')
+function createPadalaOrder($conn, $customer_name, $contact_number, $pickup_address, $order_description, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider = null, $order_status = 'Pending', $service_fee = 0.00, $commission = 0.00)
 {
     try {
         $order_number = 'PAD-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
@@ -105,11 +105,11 @@ function createPadalaOrder($conn, $customer_name, $contact_number, $pickup_addre
         $sql = "INSERT INTO tpadala_orders (
             order_number, customer_name, contact_number, pickup_address,
             order_description, pickup_note, dropoff_address, dropoff_note,
-            assigned_rider, order_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            assigned_rider, order_status, service_fee, commission
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql) ?? throw new Exception('Prepare failed: ' . $conn->error);
-        $stmt->bind_param('ssssssssss', $order_number, $customer_name, $contact_number, $pickup_address, $order_description, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider, $order_status);
+        $stmt->bind_param('ssssssssssdd', $order_number, $customer_name, $contact_number, $pickup_address, $order_description, $pickup_note, $dropoff_address, $dropoff_note, $assigned_rider, $order_status, $service_fee, $commission);
 
         if (!$stmt->execute()) {
             throw new Exception('Execute failed: ' . $stmt->error);

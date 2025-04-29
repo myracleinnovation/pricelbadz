@@ -556,17 +556,20 @@ while ($row = $result->fetch_assoc()):
                                 onchange="this.form.submit()">
                                 <option value="Pending" <?= $row['order_status'] === 'Pending' ? 'selected' : '' ?>>
                                     Pending</option>
-                                <option value="Accepted" <?= $row['order_status'] === 'Accepted' ? 'selected' : '' ?>>
-                                    Accepted</option>
-                                <option value="In Progress"
-                                    <?= $row['order_status'] === 'In Progress' ? 'selected' : '' ?>>In Progress
-                                </option>
+                                <option value="On-Going" <?= $row['order_status'] === 'On-Going' ? 'selected' : '' ?>>
+                                    On-Going</option>
                                 <option value="Completed"
                                     <?= $row['order_status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
                                 <option value="Cancelled"
                                     <?= $row['order_status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
                             </select>
                         </form>
+                        <?php if (!empty($row['status_changed_at']) && !empty($row['status_changed_by'])): ?>
+                        <small class="text-muted d-block mt-1">
+                            Last changed by <?= htmlspecialchars($row['status_changed_by']) ?> 
+                            on <?= date('M d, Y h:i A', strtotime($row['status_changed_at'])) ?>
+                        </small>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php if ($row['order_type'] === 'PABILI/PASUYO'): ?>
@@ -611,6 +614,41 @@ while ($row = $result->fetch_assoc()):
                     <div class="col-md-8"><?= htmlspecialchars($row['delivery_note'] ?? 'N/A') ?></div>
                 </div>
                 <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Service Fee:</div>
+                    <div class="col-md-8">
+                        <form method="POST" action="update_order_fees.php" class="d-inline">
+                            <input type="hidden" name="order_number"
+                                value="<?= htmlspecialchars($row['order_number']) ?>">
+                            <input type="hidden" name="order_type"
+                                value="<?= htmlspecialchars($row['order_type']) ?>">
+                            <div class="input-group input-group-sm d-inline-block w-auto">
+                                <span class="input-group-text">₱</span>
+                                <input type="number" name="service_fee" class="form-control form-control-sm"
+                                    value="<?= number_format($row['service_fee'] ?? 0.0, 2, '.', '') ?>"
+                                    step="0.01" min="0" required>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">PricelBadz Commission:</div>
+                    <div class="col-md-8">
+                        <form method="POST" action="update_order_fees.php" class="d-inline">
+                            <input type="hidden" name="order_number"
+                                value="<?= htmlspecialchars($row['order_number']) ?>">
+                            <input type="hidden" name="order_type"
+                                value="<?= htmlspecialchars($row['order_type']) ?>">
+                            <div class="input-group input-group-sm d-inline-block w-auto">
+                                <span class="input-group-text">₱</span>
+                                <input type="number" name="commission" class="form-control form-control-sm"
+                                    value="<?= number_format($row['commission'] ?? 0.0, 2, '.', '') ?>" step="0.01"
+                                    min="0" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary ms-2">Update Fees</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Assigned Rider:</div>
                     <div class="col-md-8">
                         <form method="POST" action="update_assigned_rider.php" class="d-inline">
@@ -622,15 +660,45 @@ while ($row = $result->fetch_assoc()):
                                 onchange="this.form.submit()">
                                 <option value="">Not assigned</option>
                                 <?php
-                                // Get all active riders
-                                $rider_query = "SELECT id, CONCAT(first_name, ' ', last_name) as rider_name FROM triders WHERE rider_status = 'Active' ORDER BY rider_name";
-                                $rider_result = $conn->query($rider_query);
+                                // Get the commission amount for this order
+                                $commission = $row['commission'] ?? 0.0;
+                                
+                                // Get eligible riders (active, with sufficient balance, and without ongoing orders)
+                                $rider_query = "
+                                    SELECT r.id, CONCAT(r.first_name, ' ', r.last_name) as rider_name, r.topup_balance 
+                                    FROM triders r 
+                                    WHERE r.rider_status = 'Active' 
+                                    AND r.topup_balance >= ?
+                                    AND NOT EXISTS (
+                                        SELECT 1 FROM (
+                                            SELECT assigned_rider, order_status FROM tpabili_orders 
+                                            WHERE order_status = 'On-Going'
+                                            UNION ALL
+                                            SELECT assigned_rider, order_status FROM tpaangkas_orders 
+                                            WHERE order_status = 'On-Going'
+                                            UNION ALL
+                                            SELECT assigned_rider, order_status FROM tpadala_orders 
+                                            WHERE order_status = 'On-Going'
+                                        ) AS all_orders 
+                                        WHERE all_orders.assigned_rider = CONCAT(r.first_name, ' ', r.last_name)
+                                    )
+                                    ORDER BY r.topup_balance DESC, r.last_name, r.first_name";
+                                
+                                $stmt = $conn->prepare($rider_query);
+                                $stmt->bind_param("d", $commission);
+                                $stmt->execute();
+                                $rider_result = $stmt->get_result();
                                 
                                 if ($rider_result && $rider_result->num_rows > 0) {
                                     while ($rider = $rider_result->fetch_assoc()) {
                                         $selected = $row['assigned_rider'] === $rider['rider_name'] ? 'selected' : '';
-                                        echo "<option value='" . htmlspecialchars($rider['rider_name']) . "' " . $selected . '>' . htmlspecialchars($rider['rider_name']) . '</option>';
+                                        echo "<option value='" . htmlspecialchars($rider['rider_name']) . "' " . $selected . '>' 
+                                            . htmlspecialchars($rider['rider_name']) 
+                                            . ' (Balance: ₱' . number_format($rider['topup_balance'], 2) . ')' 
+                                            . '</option>';
                                     }
+                                } else {
+                                    echo '<option value="" disabled>No eligible riders available</option>';
                                 }
                                 ?>
                             </select>

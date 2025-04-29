@@ -51,8 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'delivery_address' => sanitizeInput($_POST['dropoff_address']),
                     'delivery_note' => sanitizeInput($_POST['dropoff_note']),
                     'order_status' => 'Pending',
+                    'service_fee' => 0.00,
+                    'commission' => 0.00,
                 ];
-                createPabiliOrder($conn, $orderData['customer_name'], $orderData['contact_number'], $orderData['store_name'], $orderData['order_description'], $orderData['store_address'], $orderData['pickup_note'], $orderData['delivery_address'], $orderData['delivery_note'], null, $orderData['order_status']);
+                createPabiliOrder($conn, $orderData['customer_name'], $orderData['contact_number'], $orderData['store_name'], $orderData['order_description'], $orderData['store_address'], $orderData['pickup_note'], $orderData['delivery_address'], $orderData['delivery_note'], null, $orderData['order_status'], $orderData['service_fee'], $orderData['commission']);
                 $_SESSION['form_submitted'] = true;
                 $_SESSION['form_type'] = 'PABILI/PASUYO Order';
                 break;
@@ -68,6 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'dropoff_note' => sanitizeInput($_POST['paangkas_dropoff_note']),
                     'assigned_rider' => !empty($_POST['paangkas_assigned_rider']) ? $_POST['paangkas_assigned_rider'] : null,
                     'order_status' => 'Pending',
+                    'service_fee' => 0.00,
+                    'commission' => 0.00,
                 ];
                 createPaangkasOrder($conn, ...array_values($orderData));
                 $_SESSION['form_submitted'] = true;
@@ -85,6 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'dropoff_note' => sanitizeInput($_POST['padala_dropoff_note']),
                     'assigned_rider' => !empty($_POST['padala_assigned_rider']) ? $_POST['padala_assigned_rider'] : null,
                     'order_status' => 'Pending',
+                    'service_fee' => 0.00,
+                    'commission' => 0.00,
                 ];
                 createPadalaOrder($conn, ...array_values($orderData));
                 $_SESSION['form_submitted'] = true;

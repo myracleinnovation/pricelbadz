@@ -47,8 +47,7 @@ while ($row = $monthlyResult->fetch_assoc()) {
 $statusQuery = "SELECT 
     CASE 
         WHEN order_status = 'Pending' THEN 'Pending'
-        WHEN order_status = 'Accepted' THEN 'Assigned'
-        WHEN order_status = 'In Progress' THEN 'In Progress'
+        WHEN order_status = 'On-Going' THEN 'On-Going'
         WHEN order_status = 'Completed' THEN 'Completed'
         WHEN order_status = 'Cancelled' THEN 'Cancelled'
         ELSE 'Other'
@@ -64,8 +63,7 @@ FROM (
 GROUP BY 
     CASE 
         WHEN order_status = 'Pending' THEN 'Pending'
-        WHEN order_status = 'Accepted' THEN 'Assigned'
-        WHEN order_status = 'In Progress' THEN 'In Progress'
+        WHEN order_status = 'On-Going' THEN 'On-Going'
         WHEN order_status = 'Completed' THEN 'Completed'
         WHEN order_status = 'Cancelled' THEN 'Cancelled'
         ELSE 'Other'
@@ -84,7 +82,7 @@ while ($row = $statusResult->fetch_assoc()) {
 }
 
 // Ensure all statuses are included even if they have zero count
-$allStatuses = ['Pending', 'Assigned', 'In Progress', 'Completed', 'Cancelled'];
+$allStatuses = ['Pending', 'On-Going', 'Completed', 'Cancelled'];
 $statusMap = array_combine($statusLabels, $statusCounts);
 
 $statusLabels = [];
@@ -320,8 +318,8 @@ foreach ($allStatuses as $status) {
                         }
                     },
                     {
-                        value: <?= isset($statusMap['Assigned']) ? $statusMap['Assigned'] : 0 ?>,
-                        name: 'Assigned',
+                        value: <?= isset($statusMap['On-Going']) ? $statusMap['On-Going'] : 0 ?>,
+                        name: 'On-Going',
                         itemStyle: {
                             color: '#0dcaf0'
                         }

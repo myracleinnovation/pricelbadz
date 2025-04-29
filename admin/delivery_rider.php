@@ -189,17 +189,17 @@ $result = $stmt->get_result();
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary btn-sm"
+                                                    <button type="button" class="btn btn-primary"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#editStatusModal<?= urlencode($row['id']) ?>">
                                                         Edit Status
-                                                    </button>
-                                                    <button type="button" class="btn btn-success btn-sm"
+                                                    </button>   
+                                                    <button type="button" class="btn btn-success"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#editTopupModal<?= urlencode($row['id']) ?>">
                                                         Edit Top-up Balance
                                                     </button>
-                                                    <button type="button" class="btn btn-info btn-sm"
+                                                    <button type="button" class="btn btn-info"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#editDetailsModal<?= urlencode($row['id']) ?>">
                                                         Edit Details

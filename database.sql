@@ -14,7 +14,11 @@ pickup_note TEXT,
 delivery_address TEXT NOT NULL,
 delivery_note TEXT,
 assigned_rider VARCHAR(100),
-order_status ENUM('Pending', 'Accepted', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Pending',
+order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
+service_fee DECIMAL(10, 2) DEFAULT 0.00,
+commission DECIMAL(10, 2) DEFAULT 0.00,
+status_changed_at TIMESTAMP NULL,
+status_changed_by VARCHAR(100) NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -31,7 +35,11 @@ pickup_note TEXT,
 dropoff_address TEXT NOT NULL,
 dropoff_note TEXT,
 assigned_rider VARCHAR(100),
-order_status ENUM('Pending', 'Accepted', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Pending',
+order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
+service_fee DECIMAL(10, 2) DEFAULT 0.00,
+commission DECIMAL(10, 2) DEFAULT 0.00,
+status_changed_at TIMESTAMP NULL,
+status_changed_by VARCHAR(100) NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -48,7 +56,11 @@ pickup_note TEXT,
 dropoff_address TEXT NOT NULL,
 dropoff_note TEXT,
 assigned_rider VARCHAR(100),
-order_status ENUM('Pending', 'Accepted', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Pending',
+order_status ENUM('Pending', 'On-Going', 'Completed', 'Cancelled') DEFAULT 'Pending',
+service_fee DECIMAL(10, 2) DEFAULT 0.00,
+commission DECIMAL(10, 2) DEFAULT 0.00,
+status_changed_at TIMESTAMP NULL,
+status_changed_by VARCHAR(100) NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -82,6 +94,21 @@ user_status ENUM('Active', 'Inactive') DEFAULT 'Active',
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- Table for rider top-up transaction history
+CREATE TABLE IF NOT EXISTS `trider_topup_ledger` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rider_id` int(11) NOT NULL,
+  `transaction_type` enum('Additional Top-up', 'Commission Deduction', 'Refund Top-up', 'Top-up Withdrawal') NOT NULL,
+  `amount` decimal(10, 2) NOT NULL,
+  `order_number` varchar(50) DEFAULT NULL,
+  `author` varchar(100) NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `rider_id` (`rider_id`),
+  CONSTRAINT `trider_topup_ledger_ibfk_1` FOREIGN KEY (`rider_id`) REFERENCES `triders` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Insert sample data for riders
 INSERT INTO triders (first_name, middle_name, last_name, license_number, vehicle_type, vehicle_cor,
