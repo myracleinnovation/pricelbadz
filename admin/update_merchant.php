@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../includes/db_connection.php';
+include '../config/connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $merchant_id = $_POST['merchant_id'];
