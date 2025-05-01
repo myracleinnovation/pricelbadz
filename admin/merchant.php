@@ -195,9 +195,10 @@ $result = $stmt->get_result();
                                                                             </p>
                                                                             <div class="btn-group btn-group-sm">
                                                                                 <button type="button"
-                                                                                    class="btn btn-primary"
+                                                                                    class="btn btn-primary edit-product"
                                                                                     data-bs-toggle="modal"
-                                                                                    data-bs-target="#editProductModal<?= urlencode($product['id']) ?>">
+                                                                                    data-bs-target="#editProductModal<?= $product['id'] ?>"
+                                                                                    data-product-id="<?= $product['id'] ?>">
                                                                                     Edit
                                                                                 </button>
                                                                                 <button type="button"
@@ -207,84 +208,6 @@ $result = $stmt->get_result();
                                                                                     Delete
                                                                                 </button>
                                                                             </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- Edit Product Modal -->
-                                                                <div class="modal fade"
-                                                                    id="editProductModal<?= urlencode($product['id']) ?>"
-                                                                    tabindex="-1" aria-hidden="true">
-                                                                    <div class="modal-dialog modal-dialog-centered">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title">Edit
-                                                                                    Product/Service</h5>
-                                                                                <button type="button"
-                                                                                    class="btn-close"
-                                                                                    data-bs-dismiss="modal"
-                                                                                    aria-label="Close"></button>
-                                                                            </div>
-                                                                            <form action="update_product.php"
-                                                                                method="POST"
-                                                                                enctype="multipart/form-data">
-                                                                                <div class="modal-body">
-                                                                                    <input type="hidden"
-                                                                                        name="product_id"
-                                                                                        value="<?= $product['id'] ?>">
-                                                                                    <div class="mb-3">
-                                                                                        <label
-                                                                                            class="form-label">Name</label>
-                                                                                        <input type="text"
-                                                                                            class="form-control"
-                                                                                            name="name"
-                                                                                            value="<?= htmlspecialchars($product['name']) ?>"
-                                                                                            required>
-                                                                                    </div>
-                                                                                    <div class="mb-3">
-                                                                                        <label
-                                                                                            class="form-label">Description</label>
-                                                                                        <textarea class="form-control" name="description" rows="3"><?= htmlspecialchars($product['description']) ?></textarea>
-                                                                                    </div>
-                                                                                    <div class="mb-3">
-                                                                                        <label
-                                                                                            class="form-label">Price</label>
-                                                                                        <input type="number"
-                                                                                            class="form-control"
-                                                                                            name="price"
-                                                                                            value="<?= $product['price'] ?>"
-                                                                                            step="0.01"
-                                                                                            min="0" required>
-                                                                                    </div>
-                                                                                    <div class="mb-3">
-                                                                                        <label
-                                                                                            class="form-label">Current
-                                                                                            Image</label>
-                                                                                        <img src="../public/img/<?= htmlspecialchars($product['image_path']) ?>"
-                                                                                            class="img-thumbnail d-block"
-                                                                                            style="height: 100px;">
-                                                                                    </div>
-                                                                                    <div class="mb-3">
-                                                                                        <label class="form-label">New
-                                                                                            Image</label>
-                                                                                        <input type="file"
-                                                                                            class="form-control"
-                                                                                            name="product_image"
-                                                                                            accept="image/*">
-                                                                                        <small class="text-muted">Leave
-                                                                                            empty to keep current
-                                                                                            image</small>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="modal-footer">
-                                                                                    <button type="button"
-                                                                                        class="btn btn-secondary"
-                                                                                        data-bs-dismiss="modal">Cancel</button>
-                                                                                    <button type="submit"
-                                                                                        class="btn btn-primary">Update
-                                                                                        Product</button>
-                                                                                </div>
-                                                                            </form>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -481,6 +404,70 @@ $result = $stmt->get_result();
                                         </div>
                                     </div>
 
+                                    <!-- Edit Product Modals -->
+                                    <?php 
+                                    // Reset the products result set
+                                    $products->data_seek(0);
+                                    while ($product = $products->fetch_assoc()): 
+                                    ?>
+                                    <div class="modal fade" id="editProductModal<?= $product['id'] ?>" tabindex="-1"
+                                        aria-labelledby="editProductModalLabel<?= $product['id'] ?>"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"
+                                                        id="editProductModalLabel<?= $product['id'] ?>">Edit
+                                                        Product/Service</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form action="update_product.php" method="POST"
+                                                    enctype="multipart/form-data">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="product_id"
+                                                            value="<?= $product['id'] ?>">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Name</label>
+                                                            <input type="text" class="form-control" name="name"
+                                                                value="<?= htmlspecialchars($product['name']) ?>"
+                                                                required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Description</label>
+                                                            <textarea class="form-control" name="description" rows="3"><?= htmlspecialchars($product['description']) ?></textarea>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Price</label>
+                                                            <input type="number" class="form-control" name="price"
+                                                                value="<?= $product['price'] ?>" step="0.01"
+                                                                min="0" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Current Image</label>
+                                                            <img src="../public/img/<?= htmlspecialchars($product['image_path']) ?>"
+                                                                class="img-thumbnail d-block" style="height: 100px;">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">New Image</label>
+                                                            <input type="file" class="form-control"
+                                                                name="product_image" accept="image/*">
+                                                            <small class="text-muted">Leave empty to keep current
+                                                                image</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Update
+                                                            Product</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endwhile; ?>
+
                                     <!-- Delete Merchant Modal -->
                                     <div class="modal fade" id="deleteMerchantModal<?= urlencode($row['id']) ?>"
                                         tabindex="-1"
@@ -587,3 +574,34 @@ mysqli_close($conn);
         </div>
     </div>
 </div>
+
+<!-- Add this before the closing body tag -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle product deletion
+        const deleteButtons = document.querySelectorAll('.delete-product');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                const productName = this.getAttribute('data-product-name');
+
+                if (confirm(
+                        `Are you sure you want to delete the product "${productName}"? This action cannot be undone.`
+                    )) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'delete_product.php';
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'product_id';
+                    input.value = productId;
+
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>

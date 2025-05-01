@@ -845,7 +845,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <!-- Additional images from tmerchant_images table -->
                         <?php 
-                          // Fetch additional images for this merchant
+                        // Fetch additional images for this merchant
                         $images_query = "SELECT * FROM tmerchant_images WHERE merchant_id = ? ORDER BY display_order";
                         $images_stmt = $conn->prepare($images_query);
                         $images_stmt->bind_param('i', $merchant['id']);
@@ -870,6 +870,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             endwhile;
                         endif;
                         ?>
+                    </div>
+
+                    <!-- Products/Services Section -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6 class="fw-bold mb-3">Products & Services</h6>
+                            <div class="row g-3">
+                                <?php
+                                // Fetch products for this merchant
+                                $products_query = "SELECT * FROM tmerchant_products WHERE merchant_id = ? AND is_active = 1 ORDER BY name";
+                                $products_stmt = $conn->prepare($products_query);
+                                $products_stmt->bind_param('i', $merchant['id']);
+                                $products_stmt->execute();
+                                $products = $products_stmt->get_result();
+                                
+                                if ($products && $products->num_rows > 0):
+                                    while ($product = $products->fetch_assoc()):
+                                ?>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <img src="./public/img/<?= htmlspecialchars($product['image_path']) ?>"
+                                            class="card-img-top" alt="<?= htmlspecialchars($product['name']) ?>"
+                                            style="height: 200px; object-fit: cover;">
+                                        <div class="card-body">
+                                            <h6 class="card-title"><?= htmlspecialchars($product['name']) ?></h6>
+                                            <p class="card-text small mb-0">
+                                                <?= htmlspecialchars($product['description']) ?></p>
+                                            <p class="card-text text-primary fw-bold mt-2 mb-0">
+                                                ₱<?= number_format($product['price'], 2) ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php 
+                                    endwhile;
+                                else:
+                                ?>
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        No products or services available at the moment.
+                                    </div>
+                                </div>
+                                <?php
+                                endif;
+                                ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

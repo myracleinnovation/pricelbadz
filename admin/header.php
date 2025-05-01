@@ -131,6 +131,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span>Merchant</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?= $current_page === 'logs.php' ? '' : 'collapsed' ?>" href="logs.php">
+                    <i class="bi bi-grid"></i>
+                    <span>Logs</span>
+                </a>
+            </li>
         </ul>
     </aside>
 
