@@ -184,9 +184,126 @@ $result = $stmt->get_result();
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editRiderModal<?= urlencode($row['id']) ?>">
+                                                        Edit Details
+                                                    </button>
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Close</button>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Edit Rider Modal -->
+                                    <div class="modal fade" id="editRiderModal<?= urlencode($row['id']) ?>"
+                                        tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Rider Details</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form action="update_rider.php" method="POST">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="rider_id"
+                                                            value="<?= urlencode($row['id']) ?>">
+
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="mb-3">
+                                                                    <label for="first_name" class="form-label">First
+                                                                        Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="first_name" name="first_name"
+                                                                        value="<?= htmlspecialchars($row['first_name']) ?>"
+                                                                        required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="middle_name" class="form-label">Middle
+                                                                        Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="middle_name" name="middle_name"
+                                                                        value="<?= htmlspecialchars($row['middle_name']) ?>">
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="last_name" class="form-label">Last
+                                                                        Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="last_name" name="last_name"
+                                                                        value="<?= htmlspecialchars($row['last_name']) ?>"
+                                                                        required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="license_number"
+                                                                        class="form-label">License
+                                                                        Number</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="license_number" name="license_number"
+                                                                        value="<?= htmlspecialchars($row['license_number']) ?>"
+                                                                        required>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="mb-3">
+                                                                    <label for="vehicle_type"
+                                                                        class="form-label">Vehicle
+                                                                        Type</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="vehicle_type" name="vehicle_type"
+                                                                        value="<?= htmlspecialchars($row['vehicle_type']) ?>"
+                                                                        required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="vehicle_plate_number"
+                                                                        class="form-label">Vehicle Plate Number</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="vehicle_plate_number"
+                                                                        name="vehicle_plate_number"
+                                                                        value="<?= htmlspecialchars($row['vehicle_plate_number']) ?>"
+                                                                        required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="vehicle_cor"
+                                                                        class="form-label">Vehicle
+                                                                        COR</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="vehicle_cor" name="vehicle_cor"
+                                                                        value="<?= htmlspecialchars($row['vehicle_cor']) ?>"
+                                                                        required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="rider_status"
+                                                                        class="form-label">Status</label>
+                                                                    <select class="form-select" id="rider_status"
+                                                                        name="rider_status" required>
+                                                                        <option value="Active"
+                                                                            <?= $row['rider_status'] === 'Active' ? 'selected' : '' ?>>
+                                                                            Active</option>
+                                                                        <option value="Inactive"
+                                                                            <?= $row['rider_status'] === 'Inactive' ? 'selected' : '' ?>>
+                                                                            Inactive</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Save
+                                                            Changes</button>
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Cancel</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -237,8 +354,7 @@ $result = $stmt->get_result();
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="submit"
-                                                            class="btn btn-primary">Submit</button>
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">Close</button>
                                                     </div>
