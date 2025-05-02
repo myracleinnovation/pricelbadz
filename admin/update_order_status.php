@@ -89,10 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Add entry to top-up ledger for refund
                 $ledger_query = "INSERT INTO trider_topup_ledger (rider_id, transaction_type, amount, order_number, processed_by, notes) 
-                                VALUES (?, 'Refund Top-up', ABS(?), ?, 'System', ?)";
+                                VALUES (?, ?, ?, ?, ?, ?)";
                 $ledger_stmt = $conn->prepare($ledger_query);
-                $transaction_note = "Commission refunded for order #$order_number (Status changed from On-Going to $new_status)";
-                $ledger_stmt->bind_param("idss", $rider_id, $commission, $order_number, $transaction_note);
+                $transaction_type = "Refund";
+                $processed_by = isset($_SESSION['username']) ? $_SESSION['username'] : 'System';
+                $transaction_note = "Commission refunded for order #$order_number (Status changed to Cancelled)";
+                $ledger_stmt->bind_param("isdsss", $rider_id, $transaction_type, $commission, $order_number, $processed_by, $transaction_note);
                 $ledger_stmt->execute();
                 $ledger_stmt->close();
                 

@@ -93,18 +93,26 @@ $result = $stmt->get_result();
                                     $count = 1;
                                     if ($result->num_rows > 0):
                                         while ($row = $result->fetch_assoc()):
-                                            $amount_class = $row['transaction_type'] === 'Add Top-up' ? 'text-success' : 'text-danger';
-                                            $amount_prefix = $row['transaction_type'] === 'Add Top-up' ? '+' : '-';
-                                            $transaction_type = $row['transaction_type'];
+                                            // Check if it's a positive transaction (add or refund)
+                                            $is_positive_transaction = (
+                                                $row['transaction_type'] === 'Add Top-up' || 
+                                                $row['transaction_type'] === 'Refund Top-up' ||
+                                                $row['transaction_type'] === 'Refund'
+                                            );
                                             
-                                            if ($row['order_number']) {
-                                                $transaction_type .= ' (#' . $row['order_number'] . ')';
+                                            $amount_class = $is_positive_transaction ? 'text-success' : 'text-danger';
+                                            $amount_prefix = $is_positive_transaction ? '+' : '-';
+
+                                            // Format the transaction type to include order number if it exists
+                                            $display_transaction = $row['transaction_type'];
+                                            if ($row['order_number'] && $row['transaction_type'] === 'Refund') {
+                                                $display_transaction .= ' (#' . $row['order_number'] . ')';
                                             }
                                     ?>
                                     <tr>
                                         <td><?= $count++ ?></td>
                                         <td><?= htmlspecialchars($row['fullname']) ?></td>
-                                        <td><?= htmlspecialchars($transaction_type) ?></td>
+                                        <td><?= htmlspecialchars($display_transaction) ?></td>
                                         <td class="<?= $amount_class ?>">
                                             <?= $amount_prefix ?>₱<?= number_format($row['amount'], 2) ?>
                                         </td>
