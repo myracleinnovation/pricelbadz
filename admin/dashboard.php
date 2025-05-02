@@ -20,6 +20,11 @@ $userQuery = 'SELECT COUNT(*) as total_users FROM tusers';
 $userResult = $conn->query($userQuery);
 $totalUsers = $userResult->fetch_assoc()['total_users'];
 
+// Get new users registered in the last 7 days
+$newUsersQuery = 'SELECT COUNT(*) as new_users FROM tusers WHERE created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)';
+$newUsersResult = $conn->query($newUsersQuery);
+$newUsers = $newUsersResult->fetch_assoc()['new_users'];
+
 // Get monthly orders data for the last 6 months
 $monthlyQuery = "SELECT 
     DATE_FORMAT(created_at, '%Y-%m') as month,
@@ -43,7 +48,24 @@ while ($row = $monthlyResult->fetch_assoc()) {
     $orderCounts[] = $row['order_count'];
 }
 
-// Get order status distribution
+// Get order status distribution with date filter
+$dateFilter = isset($_GET['status_filter']) ? $_GET['status_filter'] : 'all_time';
+$whereClause = '';
+
+switch ($dateFilter) {
+    case 'today':
+        $whereClause = 'WHERE DATE(created_at) = CURRENT_DATE';
+        break;
+    case 'this_week':
+        $whereClause = 'WHERE YEARWEEK(created_at) = YEARWEEK(CURRENT_DATE)';
+        break;
+    case 'this_month':
+        $whereClause = 'WHERE YEAR(created_at) = YEAR(CURRENT_DATE) AND MONTH(created_at) = MONTH(CURRENT_DATE)';
+        break;
+    default:
+        $whereClause = '';
+}
+
 $statusQuery = "SELECT 
     CASE 
         WHEN order_status = 'Pending' THEN 'Pending'
@@ -54,12 +76,13 @@ $statusQuery = "SELECT
     END as order_status,
     COUNT(*) as status_count
 FROM (
-    SELECT order_status FROM tpabili_orders
+    SELECT order_status, created_at FROM tpabili_orders
     UNION ALL
-    SELECT order_status FROM tpaangkas_orders
+    SELECT order_status, created_at FROM tpaangkas_orders
     UNION ALL
-    SELECT order_status FROM tpadala_orders
+    SELECT order_status, created_at FROM tpadala_orders
 ) AS all_orders
+$whereClause
 GROUP BY 
     CASE 
         WHEN order_status = 'Pending' THEN 'Pending'
@@ -110,11 +133,11 @@ foreach ($allStatuses as $status) {
 
     <section class="section dashboard">
         <div class="row">
-            <!-- Left side columns -->
-            <div class="col-lg-8">
+            <!-- Stats Cards Row -->
+            <div class="col-12">
                 <div class="row">
                     <!-- Orders Card -->
-                    <div class="col-xxl-4 col-md-6">
+                    <div class="col-xxl-3 col-md-6">
                         <div class="card info-card sales-card">
                             <div class="card-body">
                                 <h5 class="card-title">Total Orders</h5>
@@ -133,7 +156,7 @@ foreach ($allStatuses as $status) {
                     </div>
 
                     <!-- Riders Card -->
-                    <div class="col-xxl-4 col-md-6">
+                    <div class="col-xxl-3 col-md-6">
                         <div class="card info-card revenue-card">
                             <div class="card-body">
                                 <h5 class="card-title">Total Riders</h5>
@@ -152,7 +175,7 @@ foreach ($allStatuses as $status) {
                     </div>
 
                     <!-- Users Card -->
-                    <div class="col-xxl-4 col-md-6">
+                    <div class="col-xxl-3 col-md-6">
                         <div class="card info-card customers-card">
                             <div class="card-body">
                                 <h5 class="card-title">Total Users</h5>
@@ -170,8 +193,32 @@ foreach ($allStatuses as $status) {
                         </div>
                     </div>
 
+                    <!-- New Users Card -->
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card info-card new-users-card">
+                            <div class="card-body">
+                                <h5 class="card-title">New Users</h5>
+                                <div class="d-flex align-items-center">
+                                    <div
+                                        class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-person-plus"></i>
+                                    </div>
+                                    <div class="ps-3">
+                                        <h6>+<?= $newUsers ?></h6>
+                                        <span class="text-success small pt-1 fw-bold">This Week</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="col-12">
+                <div class="row">
                     <!-- Monthly Orders Chart -->
-                    <div class="col-12">
+                    <div class="col-lg-8">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Monthly Orders</h5>
@@ -179,29 +226,34 @@ foreach ($allStatuses as $status) {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Right side columns -->
-            <div class="col-lg-4">
-                <!-- Order Status Distribution -->
-                <div class="card">
-                    <div class="filter">
-                        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                            <li class="dropdown-header text-start">
-                                <h6>Filter</h6>
-                            </li>
-                            <li><a class="dropdown-item" href="#">Today</a></li>
-                            <li><a class="dropdown-item" href="#">This Week</a></li>
-                            <li><a class="dropdown-item" href="#">This Month</a></li>
-                            <li><a class="dropdown-item" href="#">All Time</a></li>
-                        </ul>
-                    </div>
+                    <!-- Order Status Distribution -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i
+                                        class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+                                    <li><a class="dropdown-item <?= $dateFilter === 'today' ? 'active' : '' ?>"
+                                            href="?status_filter=today">Today</a></li>
+                                    <li><a class="dropdown-item <?= $dateFilter === 'this_week' ? 'active' : '' ?>"
+                                            href="?status_filter=this_week">This Week</a></li>
+                                    <li><a class="dropdown-item <?= $dateFilter === 'this_month' ? 'active' : '' ?>"
+                                            href="?status_filter=this_month">This Month</a></li>
+                                    <li><a class="dropdown-item <?= $dateFilter === 'all_time' ? 'active' : '' ?>"
+                                            href="?status_filter=all_time">All Time</a></li>
+                                </ul>
+                            </div>
 
-                    <div class="card-body pb-0">
-                        <h5 class="card-title">Order Status Distribution <span>| All Time</span></h5>
-                        <div id="orderStatusChart" style="min-height: 400px;" class="echart"></div>
+                            <div class="card-body pb-0">
+                                <h5 class="card-title">Order Status Distribution <span>|
+                                        <?= ucwords(str_replace('_', ' ', $dateFilter)) ?></span></h5>
+                                <div id="orderStatusChart" style="min-height: 400px;" class="echart"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -343,6 +395,30 @@ foreach ($allStatuses as $status) {
         });
     });
 </script>
+
+<style>
+    .card-icon {
+        width: 45px;
+        height: 45px;
+        background-color: #f6f6fe;
+    }
+
+    .sales-card .card-icon {
+        color: #4154f1;
+    }
+
+    .revenue-card .card-icon {
+        color: #2eca6a;
+    }
+
+    .customers-card .card-icon {
+        color: #ff771d;
+    }
+
+    .new-users-card .card-icon {
+        color: #ffc107;
+    }
+</style>
 
 <?php
 mysqli_close($conn);
