@@ -206,7 +206,7 @@ $result = $stmt->get_result();
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                                 </div>
-                                                <form action="update_rider.php" method="POST">
+                                                <form action="update_rider_details.php" method="POST">
                                                     <div class="modal-body">
                                                         <input type="hidden" name="rider_id"
                                                             value="<?= urlencode($row['id']) ?>">
