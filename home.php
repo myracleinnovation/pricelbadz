@@ -104,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'first_name' => sanitizeInput($_POST['first_name']),
             'middle_name' => sanitizeInput($_POST['middle_name']),
             'last_name' => sanitizeInput($_POST['last_name']),
+            'contact_number' => sanitizeInput($_POST['contact_number']),
             'license_number' => sanitizeInput($_POST['license_number']),
             'vehicle_type' => sanitizeInput($_POST['vehicle_type']),
             'vehicle_cor' => sanitizeInput($_POST['vehicle_cor']),
@@ -655,6 +656,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <input type="text" class="form-control" id="last_name" name="last_name"
                                             placeholder="Last Name">
                                         <label for="last_name">Last Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="contact_number" name="contact_number"
+                                            placeholder="Contact Number">
+                                        <label for="contact_number">Contact Number</label>
                                     </div>
                                 </div>
                                 <div class="col-12">

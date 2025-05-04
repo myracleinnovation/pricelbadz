@@ -7,6 +7,7 @@ id INT AUTO_INCREMENT PRIMARY KEY,
 first_name VARCHAR(50) NOT NULL,
 middle_name VARCHAR(50),
 last_name VARCHAR(50) NOT NULL,
+contact_number VARCHAR(20) NOT NULL,
 license_number VARCHAR(20) NOT NULL,
 vehicle_type ENUM('Motorcycle (1 seat)', 'Tricycle (2-4 seats)', 'Car (3-4 seats)', 'Car (5-7 seats)', 'Van (10-14
 seats)') NOT NULL,

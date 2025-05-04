@@ -24,6 +24,7 @@ $query = "SELECT * FROM (
         END as assigned_rider_name,
         r.vehicle_type as rider_vehicle_type,
         r.topup_balance as rider_balance,
+        r.contact_number as rider_contact_number,
         o.order_status,
         o.order_description,
         o.vehicle_type,
@@ -52,6 +53,7 @@ $query = "SELECT * FROM (
         END as assigned_rider_name,
         r.vehicle_type as rider_vehicle_type,
         r.topup_balance as rider_balance,
+        r.contact_number as rider_contact_number,
         o.order_status,
         NULL as order_description,
         o.vehicle_type,
@@ -80,6 +82,7 @@ $query = "SELECT * FROM (
         END as assigned_rider_name,
         r.vehicle_type as rider_vehicle_type,
         r.topup_balance as rider_balance,
+        r.contact_number as rider_contact_number,
         o.order_status,
         o.order_description,
         o.vehicle_type,
@@ -645,6 +648,7 @@ while ($row = $result->fetch_assoc()):
                                 <option value="<?= htmlspecialchars($row['assigned_rider']) ?>" selected>
                                     <?= htmlspecialchars($row['assigned_rider_name']) ?>
                                     (<?= htmlspecialchars($row['rider_vehicle_type']) ?>) -
+                                    Contact: <?= htmlspecialchars($row['rider_contact_number']) ?> -
                                     Balance: ₱<?= number_format($row['rider_balance'], 2) ?>
                                 </option>
                                 <?php endif; ?>
