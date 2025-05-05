@@ -33,9 +33,11 @@ $query = "SELECT * FROM (
         o.service_fee,
         o.commission,
         o.rider_assigned_by,
-        o.rider_assigned_at
+        o.rider_assigned_at,
+        c.registration_date
     FROM tpabili_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
+    LEFT JOIN tcustomers c ON o.customer_name = CONCAT(c.first_name, ' ', c.last_name)
     UNION ALL
     SELECT 
         o.order_number, 
@@ -62,9 +64,11 @@ $query = "SELECT * FROM (
         o.service_fee,
         o.commission,
         o.rider_assigned_by,
-        o.rider_assigned_at
+        o.rider_assigned_at,
+        c.registration_date
     FROM tpaangkas_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
+    LEFT JOIN tcustomers c ON o.customer_name = CONCAT(c.first_name, ' ', c.last_name)
     UNION ALL
     SELECT 
         o.order_number, 
@@ -91,9 +95,11 @@ $query = "SELECT * FROM (
         o.service_fee,
         o.commission,
         o.rider_assigned_by,
-        o.rider_assigned_at
+        o.rider_assigned_at,
+        c.registration_date
     FROM tpadala_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
+    LEFT JOIN tcustomers c ON o.customer_name = CONCAT(c.first_name, ' ', c.last_name)
 ) AS all_orders
 WHERE (order_number LIKE ? OR customer_name LIKE ? OR assigned_rider_name LIKE ?)";
 
@@ -101,7 +107,7 @@ if ($status !== 'All Status') {
     $query .= ' AND order_status = ?';
 }
 
-$query .= ' ORDER BY created_at DESC';
+$query .= ' ORDER BY registration_date DESC, created_at DESC';
 
 // Prepare and execute the query
 $stmt = $conn->prepare($query);
@@ -655,19 +661,19 @@ while ($row = $result->fetch_assoc()):
                                 <?php
                                 // Get all available riders
                                 $rider_query = 'SELECT id, first_name, middle_name, last_name, vehicle_type, topup_balance 
-                                                                                                                                              FROM triders 
-                                                                                                                                              WHERE NOT EXISTS (
-                                                                                                                                                  SELECT 1 FROM (
-                                                                                                                                                      SELECT assigned_rider FROM tpabili_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
-                                                                                                                                                      UNION ALL
-                                                                                                                                                      SELECT assigned_rider FROM tpaangkas_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
-                                                                                                                                                      UNION ALL
-                                                                                                                                                      SELECT assigned_rider FROM tpadala_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
-                                                                                                                                                  ) AS ongoing_orders 
-                                                                                                                                                  WHERE ongoing_orders.assigned_rider = triders.id
-                                                                                                                                              )
-                                                                                                                                              AND (id != ? OR ? IS NULL)
-                                                                                                                                              ORDER BY last_name, first_name';
+                                                                                                                                                                              FROM triders 
+                                                                                                                                                                              WHERE NOT EXISTS (
+                                                                                                                                                                                  SELECT 1 FROM (
+                                                                                                                                                                                      SELECT assigned_rider FROM tpabili_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
+                                                                                                                                                                                      UNION ALL
+                                                                                                                                                                                      SELECT assigned_rider FROM tpaangkas_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
+                                                                                                                                                                                      UNION ALL
+                                                                                                                                                                                      SELECT assigned_rider FROM tpadala_orders WHERE order_status = "On-Going" AND assigned_rider IS NOT NULL
+                                                                                                                                                                                  ) AS ongoing_orders 
+                                                                                                                                                                                  WHERE ongoing_orders.assigned_rider = triders.id
+                                                                                                                                                                              )
+                                                                                                                                                                              AND (id != ? OR ? IS NULL)
+                                                                                                                                                                              ORDER BY last_name, first_name';
                                 
                                 $rider_stmt = $conn->prepare($rider_query);
                                 $rider_stmt->bind_param('ii', $row['assigned_rider'], $row['assigned_rider']);

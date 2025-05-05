@@ -16,7 +16,7 @@ if ($status !== 'All Status') {
     $query .= ' AND rider_status = ?';
 }
 
-$query .= ' ORDER BY rider_status ASC, last_name ASC, first_name ASC';
+$query .= ' ORDER BY id DESC';
 
 // Prepare and execute the query
 $stmt = $conn->prepare($query);
@@ -55,12 +55,12 @@ $result = $stmt->get_result();
                         <h5 class="card-title">Manage Delivery Riders</h5>
                         <form method="POST" class="row g-3">
                             <div class="col-md-7">
-                                <input type="text" class="form-control form-control-sm" name="search" id="inputText"
+                                <input type="text" class="form-control form-control" name="search" id="inputText"
                                     value="<?= htmlspecialchars($search) ?>"
                                     placeholder="Enter rider name or vehicle plate number">
                             </div>
                             <div class="col-md-4">
-                                <select name="status" id="inputState" class="form-select form-select-sm">
+                                <select name="status" id="inputState" class="form-select form-select">
                                     <option value="All Status" <?= $status === 'All Status' ? 'selected' : '' ?>>All
                                         Status</option>
                                     <option value="Active" <?= $status === 'Active' ? 'selected' : '' ?>>Active
@@ -80,7 +80,7 @@ $result = $stmt->get_result();
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-sm table-striped table-hover">
+                            <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -345,7 +345,7 @@ $result = $stmt->get_result();
                                                         <div class="mb-3">
                                                             <label for="topup_amount" class="form-label">Top-up
                                                                 Amount</label>
-                                                            <input type="number" class="form-control form-control-sm"
+                                                            <input type="number" class="form-control"
                                                                 id="topup_amount" name="amount" step="0.01"
                                                                 min="0">
                                                             <input type="hidden" name="transaction_type"
@@ -354,7 +354,7 @@ $result = $stmt->get_result();
                                                         <div class="mb-3">
                                                             <label for="withdraw_amount" class="form-label">Withdraw
                                                                 Amount</label>
-                                                            <input type="number" class="form-control form-control-sm"
+                                                            <input type="number" class="form-control"
                                                                 id="withdraw_amount" name="withdraw_amount"
                                                                 step="0.01" min="0"
                                                                 max="<?= $row['topup_balance'] ?>"
@@ -364,8 +364,8 @@ $result = $stmt->get_result();
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="notes" class="form-label">Notes</label>
-                                                            <input type="text" class="form-control form-control-sm"
-                                                                id="notes" name="notes">
+                                                            <input type="text" class="form-control" id="notes"
+                                                                name="notes">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
