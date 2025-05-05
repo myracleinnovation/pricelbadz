@@ -108,9 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'license_number' => sanitizeInput($_POST['license_number']),
             'vehicle_type' => sanitizeInput($_POST['vehicle_type']),
             'vehicle_cor' => sanitizeInput($_POST['vehicle_cor']),
-            'vehicle_plate' => sanitizeInput($_POST['vehicle_plate_number']),
-            'topup_balance' => (float) ($_POST['topup_balance'] ?? 0.0),
-            'rider_status' => $_POST['rider_status'] ?? 'Active',
+            'vehicle_plate_number' => sanitizeInput($_POST['vehicle_plate_number']),
+            'topup_balance' => 0.0,
+            'rider_status' => 'Active'
         ];
 
         createRider($conn, ...array_values($riderData));

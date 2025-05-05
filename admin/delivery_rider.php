@@ -8,7 +8,7 @@ $status = isset($_POST['status']) ? $_POST['status'] : 'All Status';
 
 // Build the query with optional filters
 $query = "SELECT id, first_name, middle_name, last_name, CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', last_name) AS fullname, 
-    license_number, vehicle_type, vehicle_plate_number, rider_status, topup_balance, vehicle_cor 
+    license_number, vehicle_type, vehicle_plate_number, rider_status, topup_balance, vehicle_cor, contact_number 
     FROM triders 
     WHERE (first_name LIKE ? OR last_name LIKE ? OR vehicle_plate_number LIKE ?)";
 
@@ -182,6 +182,12 @@ $result = $stmt->get_result();
                                                         <div class="col-8"><?= htmlspecialchars($row['vehicle_cor']) ?>
                                                         </div>
                                                     </div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-4 fw-bold">Contact Number:</div>
+                                                        <div class="col-8">
+                                                            <?= htmlspecialchars($row['contact_number']) ?>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-primary"
@@ -278,6 +284,15 @@ $result = $stmt->get_result();
                                                                     <input type="text" class="form-control"
                                                                         id="vehicle_cor" name="vehicle_cor"
                                                                         value="<?= htmlspecialchars($row['vehicle_cor']) ?>"
+                                                                        required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="contact_number"
+                                                                        class="form-label">Contact Number</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="contact_number" name="contact_number"
+                                                                        value="<?= htmlspecialchars($row['contact_number']) ?>"
                                                                         required>
                                                                 </div>
 
