@@ -34,10 +34,9 @@ $query = "SELECT * FROM (
         o.commission,
         o.rider_assigned_by,
         o.rider_assigned_at,
-        c.registration_date
+        o.created_at as registration_date
     FROM tpabili_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
-    LEFT JOIN tcustomers c ON o.customer_name = CONCAT(c.first_name, ' ', c.last_name)
     UNION ALL
     SELECT 
         o.order_number, 
@@ -65,10 +64,9 @@ $query = "SELECT * FROM (
         o.commission,
         o.rider_assigned_by,
         o.rider_assigned_at,
-        c.registration_date
+        o.created_at as registration_date
     FROM tpaangkas_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
-    LEFT JOIN tcustomers c ON o.customer_name = CONCAT(c.first_name, ' ', c.last_name)
     UNION ALL
     SELECT 
         o.order_number, 
@@ -96,10 +94,9 @@ $query = "SELECT * FROM (
         o.commission,
         o.rider_assigned_by,
         o.rider_assigned_at,
-        c.registration_date
+        o.created_at as registration_date
     FROM tpadala_orders o
     LEFT JOIN triders r ON o.assigned_rider = r.id
-    LEFT JOIN tcustomers c ON o.customer_name = CONCAT(c.first_name, ' ', c.last_name)
 ) AS all_orders
 WHERE (order_number LIKE ? OR customer_name LIKE ? OR assigned_rider_name LIKE ?)";
 
