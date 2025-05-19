@@ -259,6 +259,11 @@ $result = $stmt->get_result();
                                                         data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
                                                         View
                                                     </button>
+                                                    <button type="button" class="btn btn-danger delete-order-btn"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal<?= urlencode($row['order_number']) ?>">
+                                                        Delete
+                                                    </button>
                                                 </td>
                                             </tr>
                                             <?php
@@ -334,6 +339,11 @@ $result = $stmt->get_result();
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
                                                         View
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger delete-order-btn"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal<?= urlencode($row['order_number']) ?>">
+                                                        Delete
                                                     </button>
                                                 </td>
                                             </tr>
@@ -416,6 +426,11 @@ $result = $stmt->get_result();
                                                         data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
                                                         View
                                                     </button>
+                                                    <button type="button" class="btn btn-danger delete-order-btn"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal<?= urlencode($row['order_number']) ?>">
+                                                        Delete
+                                                    </button>
                                                 </td>
                                             </tr>
                                             <?php
@@ -495,6 +510,11 @@ $result = $stmt->get_result();
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#orderModal<?= urlencode($row['order_number']) ?>">
                                                         View
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger delete-order-btn"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal<?= urlencode($row['order_number']) ?>">
+                                                        Delete
                                                     </button>
                                                 </td>
                                             </tr>
@@ -795,6 +815,31 @@ while ($row = $result->fetch_assoc()):
                     Update Payment
                 </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal<?= urlencode($row['order_number']) ?>" tabindex="-1"
+    aria-labelledby="deleteModalLabel<?= urlencode($row['order_number']) ?>" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete order <strong><?= htmlspecialchars($row['order_number']) ?></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="delete_orders.php">
+                    <input type="hidden" name="order_number" value="<?= htmlspecialchars($row['order_number']) ?>">
+                    <input type="hidden" name="order_type" value="<?= htmlspecialchars($row['order_type']) ?>">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete Order</button>
+                </form>
             </div>
         </div>
     </div>
